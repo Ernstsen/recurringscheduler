@@ -9,6 +9,17 @@ repositories {
 }
 
 dependencies {
+    implementation group: 'jakarta.persistence', name: 'jakarta.persistence-api', version: '3.1.0'
+
+    implementation("org.jboss.slf4j:slf4j-jboss-logmanager")
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.9'
+
+    // Hibernate ORM specific dependencies
+    implementation("io.quarkus:quarkus-hibernate-orm")
+
+    // JDBC driver dependencies
+    implementation("io.quarkus:quarkus-jdbc-h2")
+
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
     implementation 'io.quarkus:quarkus-resteasy-reactive'
     implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
@@ -28,6 +39,7 @@ java {
 test {
     systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
 }
+
 compileJava {
     options.encoding = 'UTF-8'
     options.compilerArgs << '-parameters'

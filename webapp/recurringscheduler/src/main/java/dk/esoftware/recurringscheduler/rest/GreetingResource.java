@@ -1,4 +1,4 @@
-package dk.esoftware;
+package dk.esoftware.recurringscheduler.rest;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
