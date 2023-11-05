@@ -10,14 +10,14 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-public class RecurConfig {
+public class RecurranceConfiguration {
 
-    public RecurConfig() {
+    public RecurranceConfiguration() {
 
     }
 
 
-    public RecurConfig(String name, TimeUnit timeUnit, Integer occurrencesPerTimePeriod) {
+    public RecurranceConfiguration(String name, TimeUnit timeUnit, Integer occurrencesPerTimePeriod) {
         this.name = name;
         this.timeUnit = timeUnit;
         this.occurrencesPerTimePeriod = occurrencesPerTimePeriod;
@@ -31,7 +31,7 @@ public class RecurConfig {
     @Column(name = "id", nullable = false)
     private UUID id;
 
-    @OneToMany(mappedBy = "recurConfig", orphanRemoval = true)
+    @OneToMany(mappedBy = "recurranceConfiguration", orphanRemoval = true)
     private Set<EventType> usedBy = new LinkedHashSet<>();
 
     @Enumerated
