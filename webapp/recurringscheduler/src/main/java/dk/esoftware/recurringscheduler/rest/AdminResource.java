@@ -3,7 +3,7 @@ package dk.esoftware.recurringscheduler.rest;
 import dk.esoftware.recurringscheduler.domain.Overview;
 import dk.esoftware.recurringscheduler.persistence.DefaultInitializationUtility;
 import dk.esoftware.recurringscheduler.persistence.EventType;
-import dk.esoftware.recurringscheduler.persistence.RecurranceConfiguration;
+import dk.esoftware.recurringscheduler.persistence.RecurrenceConfiguration;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -39,7 +39,7 @@ public class AdminResource {
     public Overview getOverview() {
         return new Overview(
                 getAll(EventType.class),
-                getAll(RecurranceConfiguration.class)
+                getAll(RecurrenceConfiguration.class)
         );
     }
 

@@ -16,14 +16,14 @@ public class EventType {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "recur_config_id")
-    private RecurranceConfiguration recurranceConfiguration;
+    private RecurrenceConfiguration recurrenceConfiguration;
 
-    public RecurranceConfiguration getRecurConfig() {
-        return recurranceConfiguration;
+    public RecurrenceConfiguration getRecurConfig() {
+        return recurrenceConfiguration;
     }
 
-    public void setRecurConfig(RecurranceConfiguration recurranceConfiguration) {
-        this.recurranceConfiguration = recurranceConfiguration;
+    public void setRecurConfig(RecurrenceConfiguration recurrenceConfiguration) {
+        this.recurrenceConfiguration = recurrenceConfiguration;
     }
 
 

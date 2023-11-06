@@ -1,7 +1,7 @@
 package dk.esoftware.recurringscheduler.rest;
 
 import dk.esoftware.recurringscheduler.domain.ManagerProvider;
-import dk.esoftware.recurringscheduler.persistence.RecurranceConfiguration;
+import dk.esoftware.recurringscheduler.persistence.RecurrenceConfiguration;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.GET;
@@ -20,7 +20,7 @@ public class RecurrenceConfigurationResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    public List<RecurranceConfiguration> getRecurrenceConfigurations(){
+    public List<RecurrenceConfiguration> getRecurrenceConfigurations(){
         return managerProvider.getRecurranceConfigurationManager().getEntities();
     }
 

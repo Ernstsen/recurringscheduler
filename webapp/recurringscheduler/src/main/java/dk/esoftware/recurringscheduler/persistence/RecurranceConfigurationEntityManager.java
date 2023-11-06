@@ -6,29 +6,29 @@ import jakarta.persistence.EntityManager;
 
 import java.util.List;
 
-public class RecurranceConfigurationEntityManager implements DomainEntityManager<RecurranceConfiguration> {
+public class RecurranceConfigurationEntityManager implements DomainEntityManager<RecurrenceConfiguration> {
 
     private final EntityManager entityManager;
-    private final QueryHelper<RecurranceConfiguration> queryHelper;
+    private final QueryHelper<RecurrenceConfiguration> queryHelper;
 
     @Inject
     public RecurranceConfigurationEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
-        queryHelper = new QueryHelper<>(entityManager, RecurranceConfiguration.class);
+        queryHelper = new QueryHelper<>(entityManager, RecurrenceConfiguration.class);
     }
 
     @Override
-    public List<RecurranceConfiguration> getEntities() {
+    public List<RecurrenceConfiguration> getEntities() {
         return queryHelper.getAll();
     }
 
     @Override
-    public RecurranceConfiguration getEntity(String id) {
-        return entityManager.find(RecurranceConfiguration.class, id);
+    public RecurrenceConfiguration getEntity(String id) {
+        return entityManager.find(RecurrenceConfiguration.class, id);
     }
 
     @Override
-    public void createEntity(RecurranceConfiguration entity) {
+    public void createEntity(RecurrenceConfiguration entity) {
         entityManager.persist(entity);
     }
 

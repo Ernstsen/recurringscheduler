@@ -13,29 +13,29 @@ import java.util.function.Supplier;
 public class DefaultInitializationUtility {
     private static final Logger logger = LoggerFactory.getLogger(DefaultInitializationUtility.class);
 
-    private static final Map<String, Supplier<RecurranceConfiguration>> defaults = getDefaults();
+    private static final Map<String, Supplier<RecurrenceConfiguration>> defaults = getDefaults();
 
     public static void InitializeStorageWithDefaults(EntityManager entityManager) {
         for (String name : defaults.keySet()) {
 
-            final List defaultConfig = entityManager.createQuery("select rc from RecurranceConfiguration rc where rc.name = :defaultName")
+            final List defaultConfig = entityManager.createQuery("select rc from RecurrenceConfiguration rc where rc.name = :defaultName")
                     .setParameter("defaultName", name)
                     .getResultList();
 
             if (defaultConfig.isEmpty()) {
                 logger.info("Did not find default recurrence configuration '{}' in DB - creating it", name);
-                final RecurranceConfiguration entity = defaults.get(name).get();
+                final RecurrenceConfiguration entity = defaults.get(name).get();
                 entityManager.persist(entity);
             }
         }
     }
 
-    private static Map<String, Supplier<RecurranceConfiguration>> getDefaults() {
-        final HashMap<String, Supplier<RecurranceConfiguration>> defaults = new HashMap<>();
+    private static Map<String, Supplier<RecurrenceConfiguration>> getDefaults() {
+        final HashMap<String, Supplier<RecurrenceConfiguration>> defaults = new HashMap<>();
 
-        defaults.put("Once a week", () -> new RecurranceConfiguration("Once a week", TimeUnit.WEEK, 1));
-        defaults.put("Once a month", () -> new RecurranceConfiguration("Once a month", TimeUnit.MONTH, 1));
-        defaults.put("Twice a year", () -> new RecurranceConfiguration("Twice a year", TimeUnit.YEAR, 2));
+        defaults.put("Once a week", () -> new RecurrenceConfiguration("Once a week", TimeUnit.WEEK, 1));
+        defaults.put("Once a month", () -> new RecurrenceConfiguration("Once a month", TimeUnit.MONTH, 1));
+        defaults.put("Twice a year", () -> new RecurrenceConfiguration("Twice a year", TimeUnit.YEAR, 2));
 
         return defaults;
     }

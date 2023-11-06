@@ -27,4 +27,11 @@ public class RecurrenceConfigurationResourceTest {
                         containsString("Twice a year")
                 );
     }
+
+    @Test
+    void testCreateEndpoint(){
+        new RecurreCon
+
+        System.out.println(new String(given().when().get("/recurrenceConfiguration").getBody().asByteArray()));
+    }
 }
