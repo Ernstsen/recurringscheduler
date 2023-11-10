@@ -5,6 +5,7 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 
 import java.util.List;
+import java.util.UUID;
 
 public class EventTypeEntityManager implements DomainEntityManager<EventType> {
 
@@ -23,7 +24,7 @@ public class EventTypeEntityManager implements DomainEntityManager<EventType> {
     }
 
     @Override
-    public EventType getEntity(String id) {
+    public EventType getEntity(UUID id) {
         return entityManager.find(EventType.class, id);
     }
 
@@ -33,7 +34,7 @@ public class EventTypeEntityManager implements DomainEntityManager<EventType> {
     }
 
     @Override
-    public void deleteEntity(String id) {
+    public void deleteEntity(UUID id) {
         entityManager.remove(id);
     }
 }

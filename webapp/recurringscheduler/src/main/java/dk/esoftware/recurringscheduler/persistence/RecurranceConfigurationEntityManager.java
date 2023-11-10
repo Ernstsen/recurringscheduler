@@ -5,6 +5,7 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 
 import java.util.List;
+import java.util.UUID;
 
 public class RecurranceConfigurationEntityManager implements DomainEntityManager<RecurrenceConfiguration> {
 
@@ -23,7 +24,7 @@ public class RecurranceConfigurationEntityManager implements DomainEntityManager
     }
 
     @Override
-    public RecurrenceConfiguration getEntity(String id) {
+    public RecurrenceConfiguration getEntity(UUID id) {
         return entityManager.find(RecurrenceConfiguration.class, id);
     }
 
@@ -33,7 +34,7 @@ public class RecurranceConfigurationEntityManager implements DomainEntityManager
     }
 
     @Override
-    public void deleteEntity(String id) {
+    public void deleteEntity(UUID id) {
         entityManager.remove(id);
     }
 }

@@ -6,6 +6,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface DomainEntityManager<T> {
 
@@ -18,7 +19,7 @@ public interface DomainEntityManager<T> {
      * @param id identifier for the wanted entity
      * @return the entity for the given id, if one exists. Null otherwise
      */
-    T getEntity(String id);
+    T getEntity(UUID id);
 
     /**
      * Creates an entity with the given data
@@ -32,6 +33,6 @@ public interface DomainEntityManager<T> {
      *
      * @param id identifier for the entity to be deleted
      */
-    void deleteEntity(String id);
+    void deleteEntity(UUID id);
 
 }
