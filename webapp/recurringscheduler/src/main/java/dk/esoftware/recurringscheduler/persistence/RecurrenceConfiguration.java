@@ -12,17 +12,6 @@ import java.util.UUID;
 @Entity
 public class RecurrenceConfiguration {
 
-    public RecurrenceConfiguration() {
-
-    }
-
-
-    public RecurrenceConfiguration(String name, TimeUnit timeUnit, Integer occurrencesPerTimePeriod) {
-        this.name = name;
-        this.timeUnit = timeUnit;
-        this.occurrencesPerTimePeriod = occurrencesPerTimePeriod;
-    }
-
     @Column(name = "name", nullable = false)
     private String name;
 
@@ -40,6 +29,17 @@ public class RecurrenceConfiguration {
 
     @Column(name = "occurrences_per_time_period")
     private Integer occurrencesPerTimePeriod;
+
+    public RecurrenceConfiguration() {
+
+    }
+
+
+    public RecurrenceConfiguration(String name, TimeUnit timeUnit, Integer occurrencesPerTimePeriod) {
+        this.name = name;
+        this.timeUnit = timeUnit;
+        this.occurrencesPerTimePeriod = occurrencesPerTimePeriod;
+    }
 
     public String getName() {
         return name;

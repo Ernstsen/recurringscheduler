@@ -18,11 +18,19 @@ public class EventType {
     @JoinColumn(name = "recur_config_id")
     private RecurrenceConfiguration recurrenceConfiguration;
 
-    public RecurrenceConfiguration getRecurConfig() {
+    public EventType() {
+    }
+
+    public EventType(String name, RecurrenceConfiguration recurrenceConfiguration) {
+        this.name = name;
+        this.recurrenceConfiguration = recurrenceConfiguration;
+    }
+
+    public RecurrenceConfiguration getRecurrenceConfiguration() {
         return recurrenceConfiguration;
     }
 
-    public void setRecurConfig(RecurrenceConfiguration recurrenceConfiguration) {
+    public void setRecurrenceConfiguration(RecurrenceConfiguration recurrenceConfiguration) {
         this.recurrenceConfiguration = recurrenceConfiguration;
     }
 
