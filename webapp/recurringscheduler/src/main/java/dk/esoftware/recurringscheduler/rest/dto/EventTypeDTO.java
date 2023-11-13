@@ -4,7 +4,7 @@ import dk.esoftware.recurringscheduler.persistence.EventType;
 
 import java.util.UUID;
 
-public record EventTypeDTO(String name, UUID id, RecurrenceConfigurationDTO recurrenceConfiguration) {
+public record EventTypeDTO(String name, UUID id, RecurrenceConfigurationDTO recurrenceConfiguration) implements Identifiable {
 
     public static EventTypeDTO createEventTypeDTO(EventType eventType) {
         return new EventTypeDTO(
@@ -12,5 +12,10 @@ public record EventTypeDTO(String name, UUID id, RecurrenceConfigurationDTO recu
                 eventType.getId(),
                 RecurrenceConfigurationDTO.createRecurrenceConfigurationDTO(eventType.getRecurrenceConfiguration())
         );
+    }
+
+    @Override
+    public UUID getId() {
+        return id();
     }
 }

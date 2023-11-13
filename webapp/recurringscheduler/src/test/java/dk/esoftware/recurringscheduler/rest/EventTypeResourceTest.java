@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.esoftware.recurringscheduler.domain.TimeUnit;
 import dk.esoftware.recurringscheduler.persistence.EventType;
 import dk.esoftware.recurringscheduler.persistence.RecurrenceConfiguration;
+import dk.esoftware.recurringscheduler.rest.dto.EventTypeDTO;
+import dk.esoftware.recurringscheduler.rest.dto.RecurrenceConfigurationDTO;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -19,9 +21,13 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.*;
 
 @QuarkusTest
-public class EventTypeResourceTest {
+public class EventTypeResourceTest extends DefaultCRUDResourceTest<EventTypeDTO> {
 
-    private List<RecurrenceConfiguration> recurrenceConfigurations;
+    private List<RecurrenceConfigurationDTO> recurrenceConfigurations;
+
+    public EventTypeResourceTest() {
+        super("eventType");
+    }
 
     @BeforeEach
     void setUp() throws IOException {
@@ -39,74 +45,13 @@ public class EventTypeResourceTest {
                         });
     }
 
-    @Test
-    void testCreateEndpoint() {
-        final EventType creationTestConf = new EventType("CreationTest", recurrenceConfigurations.get(0));
-
-        final Response response = given().contentType(ContentType.JSON)
-                .when().body(creationTestConf).post("/eventType")
-                .thenReturn();
-
-        response.then().statusCode(201)
-                .contentType(ContentType.JSON)
-                .body("name", equalTo("CreationTest"))
-                .body("recurrenceConfiguration.id", equalTo(recurrenceConfigurations.get(0).getId().toString()));
-        System.out.println(new String(given().when().get("/eventType").getBody().asByteArray()));
+    @Override
+    protected EventTypeDTO createNewEntity() {
+        return new EventTypeDTO("CreationTest", null, recurrenceConfigurations.get(0));
     }
 
-    @Test
-    void testFetchAfterCreateEndpoint() throws IOException {
-        final EventType creationTestConf = new EventType(
-                "CreationTest2", recurrenceConfigurations.get(1));
-
-        final Response response = given().contentType(ContentType.JSON)
-                .when().body(creationTestConf).post("/eventType")
-                .thenReturn();
-
-        final EventType createdConf = new ObjectMapper().readValue(response.asByteArray(), EventType.class);
-
-        final Response getResponse = given().contentType(ContentType.JSON)
-                .when().body(creationTestConf).get("/eventType/" + createdConf.getId().toString())
-                .thenReturn();
-
-        getResponse.then().statusCode(200)
-                .contentType(ContentType.JSON)
-                .body("name", equalTo("CreationTest2"))
-                .body("recurrenceConfiguration.id", equalTo(recurrenceConfigurations.get(1).getId().toString()));
-
-    }
-
-    @Test
-    void testModifyAfterCreateEndpoint() throws IOException {
-        final EventType creationTestConf = new EventType(
-                "ModificationTest", recurrenceConfigurations.get(2));
-
-        final Response response = given().contentType(ContentType.JSON)
-                .when().body(creationTestConf).post("/eventType")
-                .thenReturn();
-
-        final EventType createdConf = new ObjectMapper().readValue(response.asByteArray(), EventType.class);
-
-
-        createdConf.setRecurrenceConfiguration(recurrenceConfigurations.get(1));
-
-        final Response modifyResponse = given().contentType(ContentType.JSON)
-                .when().body(createdConf).put("/eventType/" + createdConf.getId())
-                .thenReturn();
-
-        modifyResponse.then().statusCode(201)
-                .contentType(ContentType.JSON)
-                .body("name", equalTo("ModificationTest"))
-                .body("recurrenceConfiguration.id", equalTo(recurrenceConfigurations.get(1).getId().toString()));
-
-
-        final Response getResponse = given().contentType(ContentType.JSON)
-                .when().body(creationTestConf).get("/eventType/" + createdConf.getId().toString())
-                .thenReturn();
-
-
-        getResponse.then().statusCode(200)
-                .body("name", equalTo("ModificationTest"))
-                .body("recurrenceConfiguration.id", equalTo(recurrenceConfigurations.get(1).getId().toString()));
+    @Override
+    protected EventTypeDTO modifyEntity(EventTypeDTO entity) {
+        return new EventTypeDTO(entity.name() + "_modified", entity.getId(), recurrenceConfigurations.get(1));
     }
 }

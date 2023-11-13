@@ -10,7 +10,7 @@ import java.util.UUID;
 /**
  * DTO for {@link dk.esoftware.recurringscheduler.persistence.RecurrenceConfiguration}
  */
-public record RecurrenceConfigurationDTO(String name, UUID id, TimeUnit timeUnit, Integer occurrencesPerTimePeriod) {
+public record RecurrenceConfigurationDTO(String name, UUID id, TimeUnit timeUnit, Integer occurrencesPerTimePeriod) implements Identifiable {
 
     public static RecurrenceConfigurationDTO createRecurrenceConfigurationDTO(RecurrenceConfiguration recurrenceConfiguration) {
         return new RecurrenceConfigurationDTO(
@@ -19,5 +19,10 @@ public record RecurrenceConfigurationDTO(String name, UUID id, TimeUnit timeUnit
                 recurrenceConfiguration.getTimeUnit(),
                 recurrenceConfiguration.getOccurrencesPerTimePeriod()
         );
+    }
+
+    @Override
+    public UUID getId() {
+        return id();
     }
 }
