@@ -35,6 +35,10 @@ public class EventTypeEntityManager implements DomainEntityManager<EventType> {
 
     @Override
     public void deleteEntity(UUID id) {
-        entityManager.remove(id);
+        final EventType entity = getEntity(id);
+
+        if (entity != null) {
+            entityManager.remove(entity);
+        }
     }
 }

@@ -35,6 +35,10 @@ public class RecurranceConfigurationEntityManager implements DomainEntityManager
 
     @Override
     public void deleteEntity(UUID id) {
-        entityManager.remove(id);
+        final RecurrenceConfiguration entity = getEntity(id);
+
+        if (entity != null) {
+            entityManager.remove(entity);
+        }
     }
 }

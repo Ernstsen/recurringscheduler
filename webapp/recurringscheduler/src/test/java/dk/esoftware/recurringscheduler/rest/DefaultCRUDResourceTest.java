@@ -124,4 +124,28 @@ public abstract class DefaultCRUDResourceTest<T extends Identifiable> {
         }
     }
 
+    @Test
+    void testCreateAndDelete() throws IOException {
+        // Create entity
+        final T creationTestEntity = createNewEntity();
+
+        final Response response = given().contentType(ContentType.JSON)
+                .when().body(creationTestEntity).post(endpoint)
+                .thenReturn();
+
+        // Assert created matches requested
+        final T createdEntity = mapper.readValue(response.asByteArray(), getEntityClass());
+        compareFieldExceptId(creationTestEntity, createdEntity);
+
+        given().contentType(ContentType.JSON)
+                .when().delete(endpoint + "/" + createdEntity.getId().toString())
+                .then().statusCode(200);
+
+        given().contentType(ContentType.JSON)
+                .when().get(endpoint + "/" + createdEntity.getId().toString())
+                .then().statusCode(404);
+
+    }
+
+
 }

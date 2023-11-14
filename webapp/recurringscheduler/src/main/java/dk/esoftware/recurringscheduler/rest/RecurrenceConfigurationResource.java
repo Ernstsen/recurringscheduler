@@ -19,6 +19,17 @@ public class RecurrenceConfigurationResource {
     @Inject
     ManagerProvider managerProvider;
 
+    @POST
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Transactional
+    public Response createRecurrenceConfiguration(RecurrenceConfigurationDTO configurationDTO) {
+        final RecurrenceConfiguration newConfiguration = new RecurrenceConfiguration(configurationDTO.name(), configurationDTO.timeUnit(), configurationDTO.occurrencesPerTimePeriod());
+        managerProvider.getRecurranceConfigurationManager().createEntity(newConfiguration);
+
+        return Response.status(201).entity(RecurrenceConfigurationDTO.createRecurrenceConfigurationDTO(newConfiguration)).build();
+    }
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
@@ -31,20 +42,14 @@ public class RecurrenceConfigurationResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
     @Transactional
-    public RecurrenceConfigurationDTO getRecurrenceConfiguration(@PathParam("id") UUID id) {
+    public Response getRecurrenceConfiguration(@PathParam("id") UUID id) {
         final RecurrenceConfiguration entity = managerProvider.getRecurranceConfigurationManager().getEntity(id);
-        return RecurrenceConfigurationDTO.createRecurrenceConfigurationDTO(entity);
-    }
 
-    @POST
-    @Produces({MediaType.APPLICATION_JSON})
-    @Consumes({MediaType.APPLICATION_JSON})
-    @Transactional
-    public Response createRecurrenceConfiguration(RecurrenceConfigurationDTO configurationDTO) {
-        final RecurrenceConfiguration newConfiguration = new RecurrenceConfiguration(configurationDTO.name(), configurationDTO.timeUnit(), configurationDTO.occurrencesPerTimePeriod());
-        managerProvider.getRecurranceConfigurationManager().createEntity(newConfiguration);
+        if(entity != null){
+            return Response.ok().entity(RecurrenceConfigurationDTO.createRecurrenceConfigurationDTO(entity)).build();
+        }
 
-        return Response.status(201).entity(RecurrenceConfigurationDTO.createRecurrenceConfigurationDTO(newConfiguration)).build();
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
 
 
@@ -64,6 +69,15 @@ public class RecurrenceConfigurationResource {
         entity.setTimeUnit(payload.timeUnit());
 
         return Response.status(201).entity(entity).build();
+    }
+
+    @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{id}")
+    @Transactional
+    public Response deleteRecurrenceConfiguration(@PathParam("id") UUID id) {
+        managerProvider.getRecurranceConfigurationManager().deleteEntity(id);
+        return Response.ok().build();
     }
 
 }

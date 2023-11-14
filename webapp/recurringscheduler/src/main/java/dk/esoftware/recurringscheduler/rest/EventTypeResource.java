@@ -20,6 +20,19 @@ public class EventTypeResource {
     @Inject
     ManagerProvider managerProvider;
 
+    @POST
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Transactional
+    public Response createEventType(EventTypeDTO configurationDTO) {
+        final RecurrenceConfiguration recurrenceConfiguration = managerProvider.getRecurranceConfigurationManager().getEntity(configurationDTO.recurrenceConfiguration().id());
+
+        final EventType eventType = new EventType(configurationDTO.name(), recurrenceConfiguration);
+        managerProvider.getEventTypeManager().createEntity(eventType);
+
+        return Response.status(201).entity(EventTypeDTO.createEventTypeDTO(eventType)).build();
+    }
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
@@ -32,22 +45,14 @@ public class EventTypeResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
     @Transactional
-    public EventTypeDTO getEventType(@PathParam("id") UUID id) {
+    public Response getEventType(@PathParam("id") UUID id) {
         final EventType entity = managerProvider.getEventTypeManager().getEntity(id);
-        return EventTypeDTO.createEventTypeDTO(entity);
-    }
 
-    @POST
-    @Produces({MediaType.APPLICATION_JSON})
-    @Consumes({MediaType.APPLICATION_JSON})
-    @Transactional
-    public Response createEventType(EventTypeDTO configurationDTO) {
-        final RecurrenceConfiguration recurrenceConfiguration = managerProvider.getRecurranceConfigurationManager().getEntity(configurationDTO.recurrenceConfiguration().id());
+        if (entity != null) {
+            return Response.ok().entity(EventTypeDTO.createEventTypeDTO(entity)).build();
+        }
 
-        final EventType eventType = new EventType(configurationDTO.name(), recurrenceConfiguration);
-        managerProvider.getEventTypeManager().createEntity(eventType);
-
-        return Response.status(201).entity(EventTypeDTO.createEventTypeDTO(eventType)).build();
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
 
 
@@ -68,6 +73,15 @@ public class EventTypeResource {
         entity.setRecurrenceConfiguration(targetRecurrenceConfiguration);
 
         return Response.status(201).entity(EventTypeDTO.createEventTypeDTO(entity)).build();
+    }
+
+    @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{id}")
+    @Transactional
+    public Response deleteEventType(@PathParam("id") UUID id) {
+         managerProvider.getEventTypeManager().deleteEntity(id);
+        return Response.ok().build();
     }
 
 }
