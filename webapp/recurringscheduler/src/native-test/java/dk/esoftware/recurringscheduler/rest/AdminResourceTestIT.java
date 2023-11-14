@@ -3,6 +3,6 @@ package dk.esoftware.recurringscheduler.rest;
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 
 @QuarkusIntegrationTest
-public class GreetingResourceIT extends GreetingResourceTest {
-    // Execute the same tests but in packaged mode.
+public class AdminResourceTestIT extends AdminResourceTest {
+
 }
