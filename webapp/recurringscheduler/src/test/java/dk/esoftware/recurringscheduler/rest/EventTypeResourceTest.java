@@ -26,7 +26,7 @@ public class EventTypeResourceTest extends DefaultCRUDResourceTest<EventTypeDTO>
     private List<RecurrenceConfigurationDTO> recurrenceConfigurations;
 
     public EventTypeResourceTest() {
-        super("eventType");
+        super("eventTypes");
     }
 
     @BeforeEach
@@ -37,7 +37,7 @@ public class EventTypeResourceTest extends DefaultCRUDResourceTest<EventTypeDTO>
                 .body(is("Ensured proper initialization"));
 
 
-        final byte[] byteArray = given().when().get("/recurrenceConfiguration").getBody().asByteArray();
+        final byte[] byteArray = given().when().get("/recurrenceConfigurations").getBody().asByteArray();
         recurrenceConfigurations = new ObjectMapper()
                 .readValue(
                         byteArray,

@@ -31,7 +31,7 @@ public class UserResourceTest extends DefaultCRUDResourceTest<UserDTO> {
                 .body(is("Ensured proper initialization"));
 
 
-        final byte[] byteArray = given().when().get("/recurrenceConfiguration").getBody().asByteArray();
+        final byte[] byteArray = given().when().get("/recurrenceConfigurations").getBody().asByteArray();
         List<RecurrenceConfigurationDTO> recurrenceConfigurations = new ObjectMapper()
                 .readValue(
                         byteArray,
@@ -43,11 +43,11 @@ public class UserResourceTest extends DefaultCRUDResourceTest<UserDTO> {
         final EventTypeDTO creationTestEntity2 = new EventTypeDTO("eventType2", null, recurrenceConfigurations.get(2));
 
         final Response response = given().contentType(ContentType.JSON)
-                .when().body(creationTestEntity).post("/eventType")
+                .when().body(creationTestEntity).post("/eventTypes")
                 .thenReturn();
 
         final Response response2 = given().contentType(ContentType.JSON)
-                .when().body(creationTestEntity2).post("/eventType")
+                .when().body(creationTestEntity2).post("/eventTypes")
                 .thenReturn();
 
         eventTypes = new HashSet<>();

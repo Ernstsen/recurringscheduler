@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Path("/eventType")
+@Path("/eventTypes")
 public class EventTypeResource {
 
     @Inject

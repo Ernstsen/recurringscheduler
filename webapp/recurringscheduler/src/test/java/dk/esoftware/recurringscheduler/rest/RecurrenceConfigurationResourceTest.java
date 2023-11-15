@@ -13,7 +13,7 @@ public class RecurrenceConfigurationResourceTest extends DefaultCRUDResourceTest
 
 
     public RecurrenceConfigurationResourceTest() {
-        super("/recurrenceConfiguration");
+        super("/recurrenceConfigurations");
     }
 
     @Override
@@ -39,7 +39,7 @@ public class RecurrenceConfigurationResourceTest extends DefaultCRUDResourceTest
                 .body(is("Ensured proper initialization"));
 
         given()
-                .when().get("/recurrenceConfiguration")
+                .when().get("/recurrenceConfigurations")
                 .then()
                 .body(
                         containsString("Once a week"),
