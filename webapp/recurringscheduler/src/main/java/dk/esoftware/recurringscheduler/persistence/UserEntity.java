@@ -36,11 +36,6 @@ public class UserEntity {
     }
 
     public UserEntity(String email, String name) {
-        this(new HashSet<>(), email, name);
-    }
-
-    public UserEntity(Set<EventType> eventTypes, String email, String name) {
-//        this.eventTypes = eventTypes;
         this.email = email;
         this.name = name;
     }

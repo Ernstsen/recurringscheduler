@@ -3,10 +3,8 @@ package dk.esoftware.recurringscheduler.rest;
 import dk.esoftware.recurringscheduler.domain.DomainEntityManager;
 import dk.esoftware.recurringscheduler.domain.ManagerProvider;
 import dk.esoftware.recurringscheduler.persistence.EventType;
-import dk.esoftware.recurringscheduler.persistence.RecurrenceConfiguration;
 import dk.esoftware.recurringscheduler.persistence.UserEntity;
 import dk.esoftware.recurringscheduler.rest.dto.EventTypeDTO;
-import dk.esoftware.recurringscheduler.rest.dto.RecurrenceConfigurationDTO;
 import dk.esoftware.recurringscheduler.rest.dto.UserDTO;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -29,7 +27,7 @@ public class UserResource {
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
     @Transactional
-    public Response createRecurrenceConfiguration(UserDTO userDTO) {
+    public Response createUser(UserDTO userDTO) {
         final UserEntity newUser = new UserEntity(userDTO.email(), userDTO.name());
 
         if(userDTO.eventTypes() != null){
