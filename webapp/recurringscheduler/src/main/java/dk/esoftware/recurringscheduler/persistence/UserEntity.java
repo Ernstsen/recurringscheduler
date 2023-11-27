@@ -2,7 +2,6 @@ package dk.esoftware.recurringscheduler.persistence;
 
 import jakarta.persistence.*;
 
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -64,11 +63,4 @@ public class UserEntity {
         this.email = email;
     }
 
-//    public Set<EventType> getEventTypes() {
-//        return eventTypes;
-//    }
-//
-//    public void setEventTypes(Set<EventType> eventTypes) {
-//        this.eventTypes = eventTypes;
-//    }
 }

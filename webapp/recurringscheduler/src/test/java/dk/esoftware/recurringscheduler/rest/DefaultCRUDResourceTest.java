@@ -1,6 +1,7 @@
 package dk.esoftware.recurringscheduler.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import dk.esoftware.recurringscheduler.domain.TimeUnit;
 import dk.esoftware.recurringscheduler.persistence.RecurrenceConfiguration;
 import dk.esoftware.recurringscheduler.rest.dto.Identifiable;
@@ -9,6 +10,7 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.response.ValidatableResponse;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -34,6 +36,11 @@ public abstract class DefaultCRUDResourceTest<T extends Identifiable> {
     private Class<? extends T> getEntityClass() {
         //noinspection unchecked
         return (Class<? extends T>) createNewEntity().getClass();
+    }
+
+    @BeforeAll
+    static void beforeAll() {
+        mapper.registerModule(new JavaTimeModule());
     }
 
     @Test
@@ -111,12 +118,12 @@ public abstract class DefaultCRUDResourceTest<T extends Identifiable> {
     }
 
     private void compareFieldExceptId(T expected, T actual) {
-        for (Field field : expected.getClass().getFields()) {
+        for (Field field : expected.getClass().getDeclaredFields()) {
             if (field.getName().equals("id")) continue;
 
             try {
                 field.setAccessible(true);
-                Assertions.assertEquals(field.get(expected), field.get(actual));
+                Assertions.assertEquals(field.get(expected), field.get(actual), "Unexpected value for field: " + field.getName());
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }

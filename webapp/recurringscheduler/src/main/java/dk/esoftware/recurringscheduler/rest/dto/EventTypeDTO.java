@@ -7,6 +7,9 @@ import java.util.UUID;
 public record EventTypeDTO(String name, UUID id, RecurrenceConfigurationDTO recurrenceConfiguration) implements Identifiable {
 
     public static EventTypeDTO createEventTypeDTO(EventType eventType) {
+        if(eventType == null){
+            return null;
+        }
         return new EventTypeDTO(
                 eventType.getName(),
                 eventType.getId(),

@@ -18,6 +18,11 @@ public class PersistenceManagerProvider implements ManagerProvider {
     }
 
     @Override
+    public DomainEntityManager<Event> getEventManager() {
+        return new EventEntityManager(entityManager);
+    }
+
+    @Override
     public DomainEntityManager<RecurrenceConfiguration> getRecurranceConfigurationManager() {
         return new RecurranceConfigurationEntityManager(entityManager);
     }

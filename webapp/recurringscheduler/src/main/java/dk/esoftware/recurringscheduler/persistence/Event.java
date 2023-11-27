@@ -1,13 +1,20 @@
 package dk.esoftware.recurringscheduler.persistence;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.proxy.HibernateProxy;
+import org.hibernate.type.SqlTypes;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-public class EventType {
+public class Event {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
@@ -17,12 +24,37 @@ public class EventType {
     private String name;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "recur_config_id")
-    private RecurrenceConfiguration recurrenceConfiguration;
+    @JoinColumn(name = "event_type")
+    private EventType eventType;
 
     @ManyToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "owner_id")
     private UserEntity owner;
+
+    @ElementCollection
+    @Column(name = "time_possibility")
+    @CollectionTable(name = "Event_timePossibilities", joinColumns = @JoinColumn(name = "owner_id"))
+    private List<LocalDate> possibleTimes = new ArrayList<>();
+
+    @Column(name = "chosen_time")
+    @JdbcTypeCode(SqlTypes.DATE)
+    private LocalDate chosenTime;
+
+    public LocalDate getChosenTime() {
+        return chosenTime;
+    }
+
+    public void setChosenTime(LocalDate chosenTime) {
+        this.chosenTime = chosenTime;
+    }
+
+    public List<LocalDate> getPossibleTimes() {
+        return possibleTimes;
+    }
+
+    public void setPossibleTimes(List<LocalDate> possibleTimes) {
+        this.possibleTimes = possibleTimes;
+    }
 
     public UserEntity getOwner() {
         return owner;
@@ -32,22 +64,24 @@ public class EventType {
         this.owner = owner;
     }
 
-    public EventType() {
+    public Event() {
     }
 
-    public EventType(String name, RecurrenceConfiguration recurrenceConfiguration) {
+    public Event(String name, EventType eventType, UserEntity owner, List<LocalDate> possibleTimes, LocalDate chosenTime) {
         this.name = name;
-        this.recurrenceConfiguration = recurrenceConfiguration;
+        this.eventType = eventType;
+        this.owner = owner;
+        this.possibleTimes = possibleTimes;
+        this.chosenTime = chosenTime;
     }
 
-    public RecurrenceConfiguration getRecurrenceConfiguration() {
-        return recurrenceConfiguration;
+    public EventType getEventType() {
+        return eventType;
     }
 
-    public void setRecurrenceConfiguration(RecurrenceConfiguration recurrenceConfiguration) {
-        this.recurrenceConfiguration = recurrenceConfiguration;
+    public void setEventType(EventType eventType) {
+        this.eventType = eventType;
     }
-
 
     public String getName() {
         return name;
@@ -68,7 +102,7 @@ public class EventType {
         Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        EventType eventType = (EventType) o;
+        Event eventType = (Event) o;
         return getId() != null && Objects.equals(getId(), eventType.getId());
     }
 

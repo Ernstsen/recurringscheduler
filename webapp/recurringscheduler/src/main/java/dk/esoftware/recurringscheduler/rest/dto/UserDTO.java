@@ -9,6 +9,10 @@ import java.util.stream.Collectors;
 public record UserDTO(UUID id, String name, String email, Set<EventTypeDTO> eventTypes) implements Identifiable{
 
     public static UserDTO createUserDTO(UserEntity userEntity) {
+        if(userEntity == null){
+            return null;
+        }
+
         return new UserDTO(
                 userEntity.getId(),
                 userEntity.getName(),
