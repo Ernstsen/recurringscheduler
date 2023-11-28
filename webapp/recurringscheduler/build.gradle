@@ -19,6 +19,7 @@ dependencies {
 
     // JDBC driver dependencies
     implementation("io.quarkus:quarkus-jdbc-h2")
+    implementation("io.quarkus:quarkus-jdbc-postgresql")
 
 //    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.16.0'
 

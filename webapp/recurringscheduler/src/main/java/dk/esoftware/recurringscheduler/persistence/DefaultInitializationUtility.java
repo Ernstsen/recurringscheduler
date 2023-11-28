@@ -2,6 +2,7 @@ package dk.esoftware.recurringscheduler.persistence;
 
 import dk.esoftware.recurringscheduler.domain.TimeUnit;
 import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +16,7 @@ public class DefaultInitializationUtility {
 
     private static final Map<String, Supplier<RecurrenceConfiguration>> defaults = getDefaults();
 
+    @Transactional
     public static void InitializeStorageWithDefaults(EntityManager entityManager) {
         for (String name : defaults.keySet()) {
 
