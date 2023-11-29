@@ -14,6 +14,9 @@ dependencies {
     implementation("org.jboss.slf4j:slf4j-jboss-logmanager")
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.9'
 
+    // Packaging and deployment
+    implementation 'io.quarkus:quarkus-container-image-jib'
+
     // Hibernate ORM specific dependencies
     implementation("io.quarkus:quarkus-hibernate-orm")
 
@@ -41,6 +44,7 @@ java {
 
 test {
     systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
+
 }
 
 compileJava {
