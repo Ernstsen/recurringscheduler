@@ -1,7 +1,8 @@
 import './App.css'
 import Button from '@mui/material/Button';
 
-function App() {
+
+function Frontpage() {
     return (
         <>
             <h1>RecurringScheduler Administration Panel</h1>
@@ -17,4 +18,4 @@ function App() {
     )
 }
 
-export default App
+export default Frontpage
