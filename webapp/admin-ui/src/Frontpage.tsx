@@ -1,4 +1,4 @@
-import './App.css'
+import './Frontpage.css'
 import Button from '@mui/material/Button';
 
 
