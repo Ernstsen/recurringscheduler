@@ -1,13 +1,15 @@
 import './Frontpage.css'
 import Button from '@mui/material/Button';
+import {useNavigate} from "react-router-dom";
 
 
 function Frontpage() {
+    let navigate = useNavigate();
+
     return (
         <>
-            <h1>RecurringScheduler Administration Panel</h1>
             <div className="card">
-                <Button variant="contained" href="/console">
+                <Button variant="contained" onClick={() => navigate("/console")}>
                     Enter Admin Panel
                 </Button>
             </div>
