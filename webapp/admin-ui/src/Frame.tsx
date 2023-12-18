@@ -8,12 +8,16 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import HomeIcon from '@mui/icons-material/Home';
 import MenuIcon from '@mui/icons-material/Menu';
+import GroupIcon from '@mui/icons-material/Group';
+import EventRepeatIcon from '@mui/icons-material/EventRepeat';
 import React from "react";
 
 
 const pages = [
     {"name": "Frontpage", "path": "/", "icon": <HomeIcon/>},
-    {"name": "Console", "path": "/console", "icon": <InboxIcon/>}
+    // {"name": "Console", "path": "/console", "icon": <InboxIcon/>},
+    {"name": "Users", "path": "/users", "icon": <GroupIcon/>},
+    {"name": "Event Types", "path": "/eventtypes", "icon": <EventRepeatIcon/>},
 ];
 
 const drawerWidth = 240;

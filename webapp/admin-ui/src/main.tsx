@@ -2,10 +2,11 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
 import {createBrowserRouter, RouterProvider,} from "react-router-dom";
-import Frontpage from "./Frontpage.tsx";
+import Frontpage from "./pages/Frontpage.tsx";
 import ErrorPage from "./error-page.tsx";
-import Console from "./Console.tsx";
+import Console from "./pages/Console.tsx";
 import Frame from "./Frame.tsx";
+import Users from "./pages/UsersPage.tsx";
 
 const router = createBrowserRouter([
     {
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
             {
                 path: "/console",
                 element: <Console/>,
+            },
+            {
+                path: "/users",
+                element: <Users/>,
             }
         ]
     }

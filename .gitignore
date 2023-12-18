@@ -41,3 +41,5 @@ nb-configuration.xml
 # Node
 **/node_modules/
 
+# Docker Compose volumes
+apps/**
