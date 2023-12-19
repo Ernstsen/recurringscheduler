@@ -10,13 +10,17 @@ import useUserClient from "../client/UserClient.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {User} from "../model/User.ts";
 
-function Console() {
+function UsersPage() {
     const [users, addUser, updateUser, deleteUser] = useUserClient()
     const [createUserOpen, setCreateUserOpen] = useState(false)
     const {userId} = useParams()
-    let navigate = useNavigate();
+    const navigate = useNavigate();
 
     const editingUser: User | null = userId ? users.filter(user => user.id === userId)[0] : null
+
+    if(userId && !editingUser) {
+        navigate('/users')
+    }
 
     const columns: GridColDef[] = [
         {field: 'id', headerName: 'ID', width: 300},
@@ -45,7 +49,6 @@ function Console() {
         },
     ];
 
-
     return (
         <>
             <Box>
@@ -70,7 +73,10 @@ function Console() {
                     />
                 }
                 <CreateUserDialogue open={createUserOpen} onClose={() => setCreateUserOpen(false)} addUser={addUser}/>
-                <Fab size="large" color="primary" onClick={() => setCreateUserOpen(true)} aria-label="add"
+                <Fab size="large"
+                     color="primary"
+                     onClick={() => setCreateUserOpen(true)}
+                     aria-label="add"
                      style={{
                          position: "absolute",
                          bottom: '5%',
@@ -83,4 +89,4 @@ function Console() {
     );
 }
 
-export default Console
+export default UsersPage
