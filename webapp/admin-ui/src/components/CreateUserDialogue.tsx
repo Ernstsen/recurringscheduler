@@ -9,7 +9,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import {User} from "../model/User.ts";
 import {useState} from "react";
 
-interface Props {
+interface CreateUserProps {
     open: boolean,
     onClose: () => void,
     addUser: (user: User) => void
@@ -23,18 +23,73 @@ const validateEmail = (email: string) => {
         );
 };
 
-const CreateUserDialogue: React.FC<Props> = ({open, onClose, addUser}) => {
+export const CreateUserDialogue: React.FC<CreateUserProps> = ({open, onClose, addUser}) => {
+    return (
+        <React.Fragment>
+            <GenericUserDialogue
+                open={open}
+                onClose={onClose}
+                commitChanges={addUser}
+                commitButtonText="Create"
+                title="Create new User">
+            </GenericUserDialogue>
+        </React.Fragment>
+    );
+}
 
-    const [username, setUsername] = useState("")
-    const [email, setEmail] = useState("")
+interface ModifyUserProps {
+    open: boolean,
+    onClose: () => void,
+    saveChanges: (user: User) => void,
+    existingUser: User
+}
+
+export const ModifyUserDialogue: React.FC<ModifyUserProps> = ({open, onClose, saveChanges, existingUser}) => {
+    return (
+        <React.Fragment>
+            <GenericUserDialogue
+                open={open}
+                onClose={onClose}
+                commitChanges={saveChanges}
+                commitButtonText="Update"
+                title="Update User"
+                existingUser={existingUser}
+            >
+            </GenericUserDialogue>
+        </React.Fragment>
+    );
+
+}
+
+interface GenericProps {
+    open: boolean,
+    onClose: () => void,
+    commitChanges: (user: User) => void,
+    commitButtonText: string,
+    title: string,
+    existingUser?: User
+}
+
+export const GenericUserDialogue: React.FC<GenericProps> = (
+    {
+        open,
+        onClose,
+        commitChanges,
+        commitButtonText,
+        title,
+        existingUser
+    }) => {
+
+    const [username, setUsername] = useState(existingUser?.name || "")
+    const [email, setEmail] = useState(existingUser?.email || "")
     const handleClose = () => {
         onClose()
     };
 
     const handleCreate = () => {
         if (validateEmail(email) && email.length > 0) {
-            addUser(new User(
-                null,
+            commitChanges(new User(
+                existingUser?.id || null,
                 username,
                 email
             ))
@@ -45,10 +100,10 @@ const CreateUserDialogue: React.FC<Props> = ({open, onClose, addUser}) => {
     return (
         <React.Fragment>
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Create new User</DialogTitle>
+                <DialogTitle>{title}</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Enter information of the user you want to create.
+                        User information
                     </DialogContentText>
                     <TextField
                         autoFocus
@@ -61,6 +116,7 @@ const CreateUserDialogue: React.FC<Props> = ({open, onClose, addUser}) => {
                         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                             setUsername(event.target.value);
                         }}
+                        defaultValue={existingUser?.name}
                     />
                     <TextField
                         margin="dense"
@@ -73,15 +129,15 @@ const CreateUserDialogue: React.FC<Props> = ({open, onClose, addUser}) => {
                         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                             setEmail(event.target.value);
                         }}
+                        defaultValue={existingUser?.email}
                     />
                 </DialogContent>
                 <DialogActions>
                     <Button color="error" onClick={handleClose}>Cancel</Button>
-                    <Button color="primary" onClick={handleCreate} disabled={!validateEmail(email)}>Create</Button>
+                    <Button color="primary" onClick={handleCreate}
+                            disabled={!validateEmail(email)}>{commitButtonText}</Button>
                 </DialogActions>
             </Dialog>
         </React.Fragment>
     );
 }
-
-export default CreateUserDialogue;

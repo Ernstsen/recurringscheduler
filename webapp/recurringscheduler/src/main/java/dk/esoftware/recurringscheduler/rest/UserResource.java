@@ -54,7 +54,7 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
     @Transactional
-    public Response getRecurrenceConfiguration(@PathParam("id") UUID id) {
+    public Response getUser(@PathParam("id") UUID id) {
         final UserEntity entity = managerProvider.getUserManager().getEntity(id);
 
         if(entity != null){
@@ -70,7 +70,7 @@ public class UserResource {
     @Consumes({MediaType.APPLICATION_JSON})
     @Path("/{id}")
     @Transactional
-    public Response updateRecurrenceConfiguration(@PathParam("id") UUID id, UserDTO payload) {
+    public Response updateUser(@PathParam("id") UUID id, UserDTO payload) {
         if (!id.equals(payload.id())) {
             return Response.status(400).entity("Id from path and payload must match").build();
         }
@@ -103,7 +103,7 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
     @Transactional
-    public Response deleteRecurrenceConfiguration(@PathParam("id") UUID id) {
+    public Response deleteUser(@PathParam("id") UUID id) {
         managerProvider.getUserManager().deleteEntity(id);
         return Response.ok().build();
     }
