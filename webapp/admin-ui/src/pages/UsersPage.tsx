@@ -11,7 +11,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {User} from "../model/User.ts";
 
 function Console() {
-    const [users, addUser, updateUser] = useUserClient()
+    const [users, addUser, updateUser, deleteUser] = useUserClient()
     const [createUserOpen, setCreateUserOpen] = useState(false)
     const {userId} = useParams()
     let navigate = useNavigate();
@@ -38,7 +38,7 @@ function Console() {
                 <GridActionsCellItem
                     label="Delete"
                     icon={<DeleteIcon/>}
-                    onClick={() => console.log(params.row.id)}
+                    onClick={() => deleteUser(params.row)}
 
                 />,
             ]

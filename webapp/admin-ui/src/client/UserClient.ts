@@ -51,17 +51,20 @@ export default function useUserClient(): [
     }
 
     const deleteUser = (user: User) => {
+        console.log("Deleting user: ", user)
         fetch('/api/users/' + user.id + "/", {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(user)
-        }).then(response => response.json())
-            .then(data => {
-                console.log("Deleting user: " + user.toString(), data)
+        }).then(response => {
+            if (response.ok) {
                 setUsers(users.filter(u => u.id !== user.id))
-            })
+            } else {
+                throw new Error("Failed to delete user: " + response.status)
+            }
+        }).catch(error => console.log("Failed to delete user", error))
     }
 
     return [users, addUser, updateUser, deleteUser]

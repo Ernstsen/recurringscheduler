@@ -120,7 +120,7 @@ export const GenericUserDialogue: React.FC<GenericProps> = (
                     />
                     <TextField
                         margin="dense"
-                        id="name"
+                        id="email"
                         label="Email Address"
                         type="email"
                         fullWidth
