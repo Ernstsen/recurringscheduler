@@ -93,7 +93,6 @@ public class UserResource {
                     .filter(eventTypeId -> !currentTypes.contains(eventTypeId))
                     .map(eventTypeManager::getEntity)
                     .forEach(evenType -> entity.getEventTypes().add(evenType));
-            ;
         }
 
         return Response.status(201).entity(entity).build();
