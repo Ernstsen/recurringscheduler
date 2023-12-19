@@ -58,7 +58,8 @@ function Console() {
                         },
                     }}
                     pageSizeOptions={[5, 10]}
-                    checkboxSelection
+                    checkboxSelection={false}
+                    rowSelection={false}
                 />
                 {editingUser &&
                     <ModifyUserDialogue
