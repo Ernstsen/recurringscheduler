@@ -109,7 +109,7 @@ export const GeneriRecurrenceConfigurationDialogue: React.FC<GenericProps> = (
 
     return (
         <React.Fragment>
-            <Dialog open={open} onClose={handleClose}>
+            <Dialog open={open} onClose={handleClose} fullWidth>
                 <DialogTitle>{title}</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
