@@ -23,7 +23,7 @@ const validateEmail = (email: string) => {
         );
 };
 
-export const CreateUserDialogue: React.FC<CreateUserProps> = ({open, onClose, addUser}) => {
+export const EditUserDialogue: React.FC<CreateUserProps> = ({open, onClose, addUser}) => {
     return (
         <React.Fragment>
             <GenericUserDialogue

@@ -3,7 +3,7 @@ import Fab from '@mui/material/Fab';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import {useState} from "react";
 import {DataGrid, GridActionsCellItem, GridColDef} from '@mui/x-data-grid';
-import {CreateUserDialogue, ModifyUserDialogue} from "../components/CreateUserDialogue.tsx";
+import {EditUserDialogue, ModifyUserDialogue} from "../components/EditUserDialogue.tsx";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import useUserClient from "../client/UserClient.ts";
@@ -72,7 +72,7 @@ function UsersPage() {
                         existingUser={editingUser}
                     />
                 }
-                <CreateUserDialogue open={createUserOpen} onClose={() => setCreateUserOpen(false)} addUser={addUser}/>
+                <EditUserDialogue open={createUserOpen} onClose={() => setCreateUserOpen(false)} addUser={addUser}/>
                 <Fab size="large"
                      color="primary"
                      onClick={() => setCreateUserOpen(true)}
