@@ -95,10 +95,10 @@ export const GeneriRecurrenceConfigurationDialogue: React.FC<GenericProps> = (
 
     const handleCreate = () => {
         commitChanges(new RecurrenceConfiguration(
-            existingRecurrenceConfiguration?.id || null,
             name,
             timeUnit,
-            occurrencesPerTimePeriod
+            occurrencesPerTimePeriod,
+            existingRecurrenceConfiguration?.id,
         ))
         onClose()
     }

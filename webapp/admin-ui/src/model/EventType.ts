@@ -1,6 +1,6 @@
 import {RecurrenceConfiguration} from "./RecurrenceConfiguration.ts";
 
-export class User {
+export class EventType {
     readonly id: String | null;
     name: string;
     recurrenceConfiguration: RecurrenceConfiguration;

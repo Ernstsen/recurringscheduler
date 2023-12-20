@@ -16,7 +16,7 @@ public class EventType {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JoinColumn(name = "recur_config_id")
     private RecurrenceConfiguration recurrenceConfiguration;
 

@@ -1,11 +1,11 @@
 export class RecurrenceConfiguration {
-    readonly id: String | null;
+    readonly id? : string;
     name: string;
     timeUnit: string;
     occurrencesPerTimePeriod: number;
 
 
-    constructor(id: String | null, name: string, timeUnit: string, occurrencesPerTimePeriod: number) {
+    constructor(name: string, timeUnit: string, occurrencesPerTimePeriod: number, id?: string,) {
         this.id = id;
         this.name = name;
         this.timeUnit = timeUnit;

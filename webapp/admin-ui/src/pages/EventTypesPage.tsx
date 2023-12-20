@@ -2,30 +2,35 @@ import Box from '@mui/material/Box';
 import Fab from '@mui/material/Fab';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import {useState} from "react";
-import {DataGrid, GridActionsCellItem, GridColDef} from '@mui/x-data-grid';
-import {EditUserDialogue, ModifyUserDialogue} from "../components/EditUserDialogue.tsx";
+import {DataGrid, GridActionsCellItem, GridColDef, GridValueGetterParams} from '@mui/x-data-grid';
+import {EditEventTypeDialogue, ModifyEventTypeDialogue} from "../components/EditEventTypeDialogue.tsx";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import useUserClient from "../client/UserClient.ts";
+import useEventTypeClient from "../client/EventTypeClient.ts";
 import {useNavigate, useParams} from "react-router-dom";
-import {User} from "../model/User.ts";
+import {EventType} from "../model/EventType.ts";
 
 function EventTypesPage() {
-    const [users, addUser, updateUser, deleteUser] = useUserClient()
-    const [createUserOpen, setCreateUserOpen] = useState(false)
-    const {userId} = useParams()
+    const [eventTypes, addEventType, updateEventType, deleteEventType] = useEventTypeClient()
+    const [createEventTypeOpen, setCreateEventTypeOpen] = useState(false)
+    const {eventTypeId} = useParams()
     const navigate = useNavigate();
 
-    const editingUser: User | null = userId ? users.filter(user => user.id === userId)[0] : null
+    const editingEventType: EventType | null = eventTypeId ? eventTypes.filter(eventType => eventType.id === eventTypeId)[0] : null
 
-    if(userId && !editingUser) {
-        navigate('/users')
+    if (eventTypeId && !editingEventType) {
+        navigate('/eventTypes')
     }
 
     const columns: GridColDef[] = [
         {field: 'id', headerName: 'ID', width: 300},
         {field: 'name', headerName: 'Name', width: 250},
-        {field: 'email', headerName: 'Email', width: 300},
+        {
+            valueGetter: (input: GridValueGetterParams<EventType>) => input.row.recurrenceConfiguration.name,
+            field: 'recurrenceConfiguration.name',
+            headerName: 'Recurrence Config',
+            width: 300
+        },
         {
             field: 'actions',
             type: 'actions',
@@ -35,14 +40,14 @@ function EventTypesPage() {
                     label="Edit"
                     icon={<EditIcon/>}
                     onClick={() => {
-                        navigate('/users/' + params.row.id)
+                        navigate('/eventTypes/' + params.row.id)
                     }}
 
                 />,
                 <GridActionsCellItem
                     label="Delete"
                     icon={<DeleteIcon/>}
-                    onClick={() => deleteUser(params.row)}
+                    onClick={() => deleteEventType(params.row)}
 
                 />,
             ]
@@ -53,7 +58,7 @@ function EventTypesPage() {
         <>
             <Box>
                 <DataGrid
-                    rows={users}
+                    rows={eventTypes}
                     columns={columns}
                     initialState={{
                         pagination: {
@@ -64,18 +69,19 @@ function EventTypesPage() {
                     checkboxSelection={false}
                     rowSelection={false}
                 />
-                {editingUser &&
-                    <ModifyUserDialogue
+                {editingEventType &&
+                    <ModifyEventTypeDialogue
                         open={true}
-                        onClose={() => navigate("/users")}
-                        saveChanges={updateUser}
-                        existingUser={editingUser}
+                        onClose={() => navigate("/eventTypes")}
+                        saveChanges={updateEventType}
+                        existingEventType={editingEventType}
                     />
                 }
-                <EditUserDialogue open={createUserOpen} onClose={() => setCreateUserOpen(false)} addUser={addUser}/>
+                <EditEventTypeDialogue open={createEventTypeOpen} onClose={() => setCreateEventTypeOpen(false)}
+                                       addEventType={addEventType}/>
                 <Fab size="large"
                      color="primary"
-                     onClick={() => setCreateUserOpen(true)}
+                     onClick={() => setCreateEventTypeOpen(true)}
                      aria-label="add"
                      style={{
                          position: "absolute",
