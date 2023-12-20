@@ -5,7 +5,9 @@ import {createBrowserRouter, RouterProvider,} from "react-router-dom";
 import Frontpage from "./pages/Frontpage.tsx";
 import ErrorPage from "./error-page.tsx";
 import Frame from "./Frame.tsx";
-import Users from "./pages/UsersPage.tsx";
+import UsersPage from "./pages/UsersPage.tsx";
+import EventTypesPage from "./pages/EventTypesPage.tsx";
+import RecurrenceConfigurationsPage from "./pages/RecurrenceConfigurationsPage.tsx";
 
 const router = createBrowserRouter([
     {
@@ -20,11 +22,27 @@ const router = createBrowserRouter([
             },
             {
                 path: "/users",
-                element: <Users/>,
+                element: <UsersPage/>,
             },
             {
                 path: "/users/:userId",
-                element: <Users/>,
+                element: <UsersPage/>,
+            },
+            {
+                path: "/recurrenceConfigurations",
+                element: <RecurrenceConfigurationsPage/>,
+            },
+            {
+                path: "/recurrenceConfigurations/:recurrenceConfigurationId",
+                element: <RecurrenceConfigurationsPage/>,
+            },
+            {
+                path: "/eventTypes",
+                element: <EventTypesPage/>,
+            },
+            {
+                path: "/eventTypes/:eventTypesId",
+                element: <EventTypesPage/>,
             }
         ]
     }

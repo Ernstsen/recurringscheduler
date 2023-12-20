@@ -1,5 +1,4 @@
 import {Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, styled} from "@mui/material";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
 import {Outlet, useNavigate} from "react-router-dom";
 import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
@@ -9,15 +8,16 @@ import Typography from '@mui/material/Typography';
 import HomeIcon from '@mui/icons-material/Home';
 import MenuIcon from '@mui/icons-material/Menu';
 import GroupIcon from '@mui/icons-material/Group';
+import LoopIcon from '@mui/icons-material/Loop';
 import EventRepeatIcon from '@mui/icons-material/EventRepeat';
 import React from "react";
 
 
 const pages = [
     {"name": "Frontpage", "path": "/", "icon": <HomeIcon/>},
-    // {"name": "Console", "path": "/console", "icon": <InboxIcon/>},
     {"name": "Users", "path": "/users", "icon": <GroupIcon/>},
-    {"name": "Event Types", "path": "/eventtypes", "icon": <EventRepeatIcon/>},
+    {"name": "Recurrence Configs.", "path": "/recurrenceConfigurations", "icon": <LoopIcon/>},
+    {"name": "Event Types", "path": "/eventTypes", "icon": <EventRepeatIcon/>},
 ];
 
 const drawerWidth = 240;
@@ -89,10 +89,8 @@ function Frame() {
                 </Box>
             </Drawer>
             <Main open={open}>
-                {/*<Box component="main" sx={{flexGrow: 1, p: 3}}>*/}
                 <Toolbar/>
                 <Outlet/>
-                {/*</Box>*/}
             </Main>
         </Box>
     );
