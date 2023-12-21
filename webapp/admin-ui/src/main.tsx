@@ -7,6 +7,7 @@ import ErrorPage from "./error-page.tsx";
 import Frame from "./Frame.tsx";
 import UsersPage from "./pages/UsersPage.tsx";
 import EventTypesPage from "./pages/EventTypesPage.tsx";
+import EventsPage from "./pages/EventsPage.tsx";
 import RecurrenceConfigurationsPage from "./pages/RecurrenceConfigurationsPage.tsx";
 
 const router = createBrowserRouter([
@@ -43,6 +44,14 @@ const router = createBrowserRouter([
             {
                 path: "/eventTypes/:eventTypesId",
                 element: <EventTypesPage/>,
+            },
+            {
+                path: "/events",
+                element: <EventsPage/>,
+            },
+            {
+                path: "/events/:eventId",
+                element: <EventsPage/>,
             }
         ]
     }

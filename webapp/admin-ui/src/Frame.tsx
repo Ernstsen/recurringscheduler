@@ -10,6 +10,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import GroupIcon from '@mui/icons-material/Group';
 import LoopIcon from '@mui/icons-material/Loop';
 import EventRepeatIcon from '@mui/icons-material/EventRepeat';
+import EventIcon from '@mui/icons-material/Event';
 import React from "react";
 
 
@@ -18,6 +19,7 @@ const pages = [
     {"name": "Users", "path": "/users", "icon": <GroupIcon/>},
     {"name": "Recurrence Configs.", "path": "/recurrenceConfigurations", "icon": <LoopIcon/>},
     {"name": "Event Types", "path": "/eventTypes", "icon": <EventRepeatIcon/>},
+    {"name": "Events", "path": "/events", "icon": <EventIcon/>},
 ];
 
 const drawerWidth = 240;
