@@ -9,6 +9,9 @@ import DialogTitle from '@mui/material/DialogTitle';
 import {Event} from "../model/Event.ts";
 import {useState} from "react";
 import InputLabel from "@mui/material/InputLabel";
+import Select, {SelectChangeEvent} from "@mui/material/Select";
+import {MenuItem} from "@mui/material";
+import useEventTypeClient from "../client/EventTypeClient.ts";
 
 interface CreateEventProps {
     open: boolean,
@@ -24,7 +27,7 @@ export const EditEventDialogue: React.FC<CreateEventProps> = ({open, onClose, ad
                 onClose={onClose}
                 commitChanges={addEvent}
                 commitButtonText="Create"
-                title="Create new Event Type">
+                title="Create new Event">
             </GenericEventDialogue>
         </React.Fragment>
     );
@@ -79,19 +82,25 @@ export const GenericEventDialogue: React.FC<GenericProps> = (
         existingEvent
     }) => {
     const [eventname, setEventname] = useState(existingEvent?.name || "")
+    const [eventTypeId, setEventTypeId] = useState(existingEvent?.type.id || "")
+    const [eventTypes] = useEventTypeClient();
     const handleClose = () => {
         onClose()
     };
 
     const validateInput = (): boolean => {
-        return eventname.length > 0;
+        let chosenEventType = eventTypes.find((eventType) => eventType.id === eventTypeId);
+        return chosenEventType !== undefined && eventname.length > 0;
     }
 
     const handleCreate = () => {
-        if (validateInput()) {
+        let chosenEventType = eventTypes.find((eventType) => eventType.id === eventTypeId);
+
+        if (chosenEventType && validateInput()) {
             commitChanges(new Event(
                 existingEvent?.id || null,
                 eventname,
+                chosenEventType,
                 [],
                 null
             ))
@@ -121,6 +130,26 @@ export const GenericEventDialogue: React.FC<GenericProps> = (
                         defaultValue={existingEvent?.name}
                     />
                     <InputLabel id="recurrenceConfigurationSelector">Recurrence Configuration</InputLabel>
+                    <Select
+                        margin="dense"
+                        labelId="recurrenceConfigurationSelector"
+                        name="Recurring Configuration"
+                        fullWidth
+                        variant="standard"
+                        onChange={(event: SelectChangeEvent) => {
+                            setEventTypeId(event.target.value)
+                        }}
+                        defaultValue={eventTypes.find((eventType) => eventType.id === eventTypeId)?.id}
+                        value={eventTypeId}
+                    >
+                        {
+                            eventTypes.map((eventType) =>
+                                <MenuItem value={eventType.id} key={eventType.id}>
+                                    {eventType.name}
+                                </MenuItem>
+                            )
+                        }
+                    </Select>
                 </DialogContent>
                 <DialogActions>
                     <Button color="error" onClick={handleClose}>Cancel</Button>

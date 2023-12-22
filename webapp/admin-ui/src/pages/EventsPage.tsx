@@ -26,6 +26,14 @@ function EventsPage() {
         {field: 'id', headerName: 'ID', width: 300},
         {field: 'name', headerName: 'Name', width: 250},
         {
+            field: 'type',
+            headerName: ' Event Type',
+            width: 250,
+            valueGetter: (input: GridValueGetterParams<Event>) => input.row.type.name
+        },
+        {field: 'chosenDate', headerName: 'Chosen Date', width: 150},
+        {field: 'availableDates', headerName: 'Available Dates', width: 300},
+        {
             field: 'actions',
             type: 'actions',
             width: 80,
@@ -72,7 +80,7 @@ function EventsPage() {
                     />
                 }
                 <EditEventDialogue open={createEventOpen} onClose={() => setCreateEventOpen(false)}
-                                       addEvent={addEvent}/>
+                                   addEvent={addEvent}/>
                 <Fab size="large"
                      color="primary"
                      onClick={() => setCreateEventOpen(true)}

@@ -1,12 +1,12 @@
 import {RecurrenceConfiguration} from "./RecurrenceConfiguration.ts";
 
 export class EventType {
-    readonly id: String | null;
+    readonly id?: string;
     name: string;
     recurrenceConfiguration: RecurrenceConfiguration;
 
 
-    constructor(id: String | null, name: string, recurrenceConfiguration: RecurrenceConfiguration) {
+    constructor(name: string, recurrenceConfiguration: RecurrenceConfiguration, id?: string) {
         this.id = id;
         this.name = name;
         this.recurrenceConfiguration = recurrenceConfiguration;

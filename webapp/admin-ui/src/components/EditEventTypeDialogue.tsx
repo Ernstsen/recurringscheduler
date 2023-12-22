@@ -98,9 +98,9 @@ export const GenericEventTypeDialogue: React.FC<GenericProps> = (
 
         if (chosenRecurrenceConfig && validateInput()) {
             commitChanges(new EventType(
-                existingEventType?.id || null,
                 eventTypename,
-                chosenRecurrenceConfig
+                chosenRecurrenceConfig,
+                existingEventType?.id
             ))
             onClose()
         }
@@ -127,11 +127,11 @@ export const GenericEventTypeDialogue: React.FC<GenericProps> = (
                         }}
                         defaultValue={existingEventType?.name}
                     />
-                    <InputLabel id="recurrenceConfigurationSelector">Recurrence Configuration</InputLabel>
+                    <InputLabel id="eventTypeSelector">Recurrence Configuration</InputLabel>
                     <Select
                         margin="dense"
-                        labelId="recurrenceConfigurationSelector"
-                        name="Recurring Configuration"
+                        labelId="eventTypeSelector"
+                        name="Event Type"
                         fullWidth
                         variant="standard"
                         onChange={(event: SelectChangeEvent) => {
