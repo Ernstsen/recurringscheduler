@@ -8,6 +8,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import {User} from "../model/User.ts";
 import {useState} from "react";
+import styles from "./GenericDialogue.module.css";
 
 interface CreateUserProps {
     open: boolean,
@@ -102,7 +103,7 @@ export const GenericUserDialogue: React.FC<GenericProps> = (
             <Dialog open={open} onClose={handleClose} fullWidth>
                 <DialogTitle>{title}</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>
+                    <DialogContentText className={styles.DialogContentText}>
                         User information
                     </DialogContentText>
                     <TextField

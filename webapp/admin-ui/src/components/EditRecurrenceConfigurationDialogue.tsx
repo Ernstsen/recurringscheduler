@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useState} from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -9,8 +10,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import {RecurrenceConfiguration} from "../model/RecurrenceConfiguration.ts";
-import {useState} from "react";
 import {MenuItem} from "@mui/material";
+import styles from "./GenericDialogue.module.css"
 
 interface CreateRecurrenceConfigurationProps {
     open: boolean,
@@ -112,7 +113,7 @@ export const GeneriRecurrenceConfigurationDialogue: React.FC<GenericProps> = (
             <Dialog open={open} onClose={handleClose} fullWidth>
                 <DialogTitle>{title}</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>
+                    <DialogContentText className={styles.DialogContentText}>
                         Recurrence Configuration Information
                     </DialogContentText>
                     <TextField

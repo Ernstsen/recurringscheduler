@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useState} from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -7,11 +8,11 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import {Event} from "../model/Event.ts";
-import {useState} from "react";
 import InputLabel from "@mui/material/InputLabel";
 import Select, {SelectChangeEvent} from "@mui/material/Select";
 import {MenuItem} from "@mui/material";
 import useEventTypeClient from "../client/EventTypeClient.ts";
+import styles from "./GenericDialogue.module.css"
 
 interface CreateEventProps {
     open: boolean,
@@ -83,6 +84,7 @@ export const GenericEventDialogue: React.FC<GenericProps> = (
     }) => {
     const [eventname, setEventname] = useState(existingEvent?.name || "")
     const [eventTypeId, setEventTypeId] = useState(existingEvent?.type.id || "")
+    const [chosenTime, setChosenTime] = useState(existingEvent?.chosenTime?.toString || "")
     const [eventTypes] = useEventTypeClient();
     const handleClose = () => {
         onClose()
@@ -113,8 +115,8 @@ export const GenericEventDialogue: React.FC<GenericProps> = (
             <Dialog open={open} onClose={handleClose} fullWidth>
                 <DialogTitle>{title}</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>
-                        Event information
+                    <DialogContentText className={styles.DialogContentText}>
+                        General information about the event
                     </DialogContentText>
                     <TextField
                         autoFocus
@@ -146,6 +148,31 @@ export const GenericEventDialogue: React.FC<GenericProps> = (
                             eventTypes.map((eventType) =>
                                 <MenuItem value={eventType.id} key={eventType.id}>
                                     {eventType.name}
+                                </MenuItem>
+                            )
+                        }
+                    </Select>
+                </DialogContent>
+                <DialogContent>
+                    <DialogContentText className={styles.DialogContentText}>
+                        Available Dates
+                    </DialogContentText>
+                    <InputLabel id="chosenDate">Chosen Date</InputLabel>
+                    <Select
+                        margin="dense"
+                        labelId="recurrenceConfigurationSelector"
+                        name="Recurring Configuration"
+                        fullWidth
+                        variant="standard"
+                        onChange={(event: SelectChangeEvent) => {
+                            setChosenTime(event.target.value)
+                        }}
+                        value={chosenTime}
+                    >
+                        {
+                            ["1/2/2023", "2/2/2023"].map((possibleDate) =>
+                                <MenuItem value={possibleDate}>
+                                    {possibleDate}
                                 </MenuItem>
                             )
                         }

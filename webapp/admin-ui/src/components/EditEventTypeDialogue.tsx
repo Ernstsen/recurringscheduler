@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useState} from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -7,11 +8,11 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import {EventType} from "../model/EventType.ts";
-import {useState} from "react";
 import useRecurrenceConfigurationClient from "../client/UseRecurrenceConfigurationClient.ts";
 import Select, {SelectChangeEvent} from "@mui/material/Select";
 import {MenuItem} from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
+import styles from "./GenericDialogue.module.css"
 
 interface CreateEventTypeProps {
     open: boolean,
@@ -111,7 +112,7 @@ export const GenericEventTypeDialogue: React.FC<GenericProps> = (
             <Dialog open={open} onClose={handleClose} fullWidth>
                 <DialogTitle>{title}</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>
+                    <DialogContentText className={styles.DialogContentText}>
                         EventType information
                     </DialogContentText>
                     <TextField
