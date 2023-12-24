@@ -10,7 +10,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import {EventType} from "../model/EventType.ts";
 import useRecurrenceConfigurationClient from "../client/UseRecurrenceConfigurationClient.ts";
 import Select, {SelectChangeEvent} from "@mui/material/Select";
-import {MenuItem} from "@mui/material";
+import {MenuItem, Alert} from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
 import styles from "./GenericDialogue.module.css"
 
@@ -82,7 +82,7 @@ export const GenericEventTypeDialogue: React.FC<GenericProps> = (
         title,
         existingEventType
     }) => {
-    const [recurrenceConfigurations] = useRecurrenceConfigurationClient();
+    const [recurrenceConfigurations, , , , recurrenceConfigurationError] = useRecurrenceConfigurationClient();
     const [eventTypename, setEventTypename] = useState(existingEventType?.name || "")
     const [recurrenceConfigurationId, setRecurrenceConfigurationId] = useState(existingEventType?.recurrenceConfiguration.id || "")
     const handleClose = () => {
@@ -106,6 +106,10 @@ export const GenericEventTypeDialogue: React.FC<GenericProps> = (
             onClose()
         }
     };
+
+    if (recurrenceConfigurationError) {
+        return <Alert severity="error">Failed to read RecurrenceConfigurations from server</Alert>
+    }
 
     return (
         <React.Fragment>

@@ -5,15 +5,23 @@ export default function useRecurrenceConfigurationClient(): [
     recurrenceConfigurations: RecurrenceConfiguration[],
     addRecurrenceConfiguration: (recurrenceConfiguration: RecurrenceConfiguration) => void,
     updateRecurrenceConfiguration: (recurrenceConfiguration: RecurrenceConfiguration) => void,
-    deleteRecurrenceConfiguration: (recurrenceConfiguration: RecurrenceConfiguration) => void] {
+    deleteRecurrenceConfiguration: (recurrenceConfiguration: RecurrenceConfiguration) => void,
+    recurrenceConfigurationError: boolean
+] {
     const [recurrenceConfigurations, setRecurrenceConfigurations] = useState<RecurrenceConfiguration[]>([])
+    const [recurrenceConfigurationError, setRecurrenceConfigurationError] = useState(false)
 
     useEffect(() => {
-        fetch('/api/recurrenceConfigurations').then(response => response.json())
-            .then(data => {
-                setRecurrenceConfigurations(data)
-                console.log(data)
-            })
+        fetch('/api/recurrenceConfigurations').then(response => {
+            if (response.ok) {
+                return response.json()
+            } else {
+                setRecurrenceConfigurationError(true)
+                throw new Error("Failed to fetch recurrenceConfigurations: " + response.status)
+            }
+        }).then(data => {
+            setRecurrenceConfigurations(data)
+        })
     }, [])
 
     const addRecurrenceConfiguration = (recurrenceConfiguration: RecurrenceConfiguration) => {
@@ -23,10 +31,16 @@ export default function useRecurrenceConfigurationClient(): [
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(recurrenceConfiguration)
-        }).then(response => response.json())
-            .then(data => {
-                setRecurrenceConfigurations([...recurrenceConfigurations, data])
-            })
+        }).then(response => {
+            if (response.ok) {
+                return response.json()
+            } else {
+                setRecurrenceConfigurationError(true)
+                throw new Error("Failed to create recurrenceConfiguration: " + response.status)
+            }
+        }).then(data => {
+            setRecurrenceConfigurations([...recurrenceConfigurations, data])
+        })
     }
 
     const updateRecurrenceConfiguration = (recurrenceConfiguration: RecurrenceConfiguration) => {
@@ -41,6 +55,7 @@ export default function useRecurrenceConfigurationClient(): [
                 if (response.ok) {
                     return response.json()
                 } else {
+                    setRecurrenceConfigurationError(true)
                     throw new Error("Failed to update recurrenceConfiguration: " + response.status)
                 }
             })
@@ -51,7 +66,6 @@ export default function useRecurrenceConfigurationClient(): [
     }
 
     const deleteRecurrenceConfiguration = (recurrenceConfiguration: RecurrenceConfiguration) => {
-        console.log("Deleting recurrenceConfiguration: ", recurrenceConfiguration)
         fetch('/api/recurrenceConfigurations/' + recurrenceConfiguration.id + "/", {
             method: 'DELETE',
             headers: {
@@ -62,10 +76,11 @@ export default function useRecurrenceConfigurationClient(): [
             if (response.ok) {
                 setRecurrenceConfigurations(recurrenceConfigurations.filter(u => u.id !== recurrenceConfiguration.id))
             } else {
+                setRecurrenceConfigurationError(true)
                 throw new Error("Failed to delete recurrenceConfiguration: " + response.status)
             }
         }).catch(error => console.log("Failed to delete recurrenceConfiguration", error))
     }
 
-    return [recurrenceConfigurations, addRecurrenceConfiguration, updateRecurrenceConfiguration, deleteRecurrenceConfiguration]
+    return [recurrenceConfigurations, addRecurrenceConfiguration, updateRecurrenceConfiguration, deleteRecurrenceConfiguration, recurrenceConfigurationError]
 }

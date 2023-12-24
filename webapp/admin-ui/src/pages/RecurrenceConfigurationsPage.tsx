@@ -12,12 +12,22 @@ import {
     CreateRecurrenceConfigurationDialogue,
     ModifyRecurrenceConfigurationDialogue
 } from "../components/EditRecurrenceConfigurationDialogue.tsx";
+import {Alert} from "@mui/material";
 
 function RecurrenceConfigurationsPage() {
-    const [recurrenceConfigurations, addRecurrenceConfiguration, updateRecurrenceConfiguration, deleteRecurrenceConfiguration] = useRecurrenceConfigurationClient()
+    const [
+        recurrenceConfigurations,
+        addRecurrenceConfiguration,
+        updateRecurrenceConfiguration,
+        deleteRecurrenceConfiguration,
+        recurrenceConfigurationError] = useRecurrenceConfigurationClient()
     const [createUserOpen, setCreateUserOpen] = useState(false)
     const {recurrenceConfigurationId} = useParams()
     const navigate = useNavigate();
+
+    if (recurrenceConfigurationError) {
+        return <Alert severity="error">Failed to read RecurrenceConfigurations from server</Alert>
+    }
 
     const editingConfiguration: RecurrenceConfiguration | undefined = recurrenceConfigurationId ? recurrenceConfigurations.filter(recurrenceConfiguration => recurrenceConfiguration.id === recurrenceConfigurationId)[0] : undefined
 

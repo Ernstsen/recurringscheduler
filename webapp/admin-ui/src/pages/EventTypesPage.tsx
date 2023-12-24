@@ -9,12 +9,17 @@ import EditIcon from '@mui/icons-material/Edit';
 import useEventTypeClient from "../client/EventTypeClient.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {EventType} from "../model/EventType.ts";
+import {Alert} from "@mui/material";
 
 function EventTypesPage() {
-    const [eventTypes, addEventType, updateEventType, deleteEventType] = useEventTypeClient()
+    const [eventTypes, addEventType, updateEventType, deleteEventType, eventTypeError] = useEventTypeClient()
     const [createEventTypeOpen, setCreateEventTypeOpen] = useState(false)
     const {eventTypeId} = useParams()
     const navigate = useNavigate();
+
+    if (eventTypeError) {
+        return <Alert severity="error">Failed to read EventTypes from server</Alert>
+    }
 
     const editingEventType: EventType | null = eventTypeId ? eventTypes.filter(eventType => eventType.id === eventTypeId)[0] : null
 

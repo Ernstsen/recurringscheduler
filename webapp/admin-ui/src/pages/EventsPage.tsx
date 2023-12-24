@@ -9,12 +9,17 @@ import EditIcon from '@mui/icons-material/Edit';
 import useEventClient from "../client/EventClient.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {Event} from "../model/Event.ts";
+import {Alert} from "@mui/material";
 
 function EventsPage() {
-    const [events, addEvent, updateEvent, deleteEvent] = useEventClient()
+    const [events, addEvent, updateEvent, deleteEvent, eventError] = useEventClient()
     const [createEventOpen, setCreateEventOpen] = useState(false)
     const {eventId} = useParams()
     const navigate = useNavigate();
+
+    if (eventError) {
+        return <Alert severity="error">Failed to read Events from server</Alert>
+    }
 
     const editingEvent: Event | null = eventId ? events.filter(event => event.id === eventId)[0] : null
 

@@ -10,7 +10,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import {Event} from "../model/Event.ts";
 import InputLabel from "@mui/material/InputLabel";
 import Select, {SelectChangeEvent} from "@mui/material/Select";
-import {MenuItem} from "@mui/material";
+import {Alert, MenuItem} from "@mui/material";
 import useEventTypeClient from "../client/EventTypeClient.ts";
 import styles from "./GenericDialogue.module.css"
 import PossibleTimesView from "./datepicking/PossibleTimesView.tsx";
@@ -87,7 +87,11 @@ export const GenericEventDialogue: React.FC<GenericProps> = (
     const [eventTypeId, setEventTypeId] = useState(existingEvent?.type.id || "")
     const [chosenTime, setChosenTime] = useState(existingEvent?.chosenTime)
     const [possibleTimes, setPossibleTimes] = useState(existingEvent?.possibleTimes || [])
-    const [eventTypes] = useEventTypeClient();
+    const [eventTypes, , , , eventTypeError] = useEventTypeClient();
+
+    if (eventTypeError) {
+        return <Alert severity="error">Failed to read EventTypes from server</Alert>
+    }
     const handleClose = () => {
         onClose()
     };

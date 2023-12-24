@@ -5,14 +5,24 @@ export default function useUserClient(): [
     users: User[],
     addUser: (user: User) => void,
     updateUser: (user: User) => void,
-    deleteUser: (user: User) => void] {
+    deleteUser: (user: User) => void,
+    userError: boolean
+] {
     const [users, setUsers] = useState<User[]>([])
+    const [userError, setUserError] = useState(false)
 
     useEffect(() => {
-        fetch('/api/users').then(response => response.json())
+        fetch('/api/users')
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    setUserError(true)
+                    throw new Error("Failed to fetch users: " + response.status)
+                }
+            })
             .then(data => {
                 setUsers(data)
-                console.log(data)
             })
     }, [])
 
@@ -23,7 +33,15 @@ export default function useUserClient(): [
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(user)
-        }).then(response => response.json())
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    setUserError(true)
+                    throw new Error("Failed to create user: " + response.status)
+                }
+            })
             .then(data => {
                 setUsers([...users, data])
             })
@@ -41,6 +59,7 @@ export default function useUserClient(): [
                 if (response.ok) {
                     return response.json()
                 } else {
+                    setUserError(true)
                     throw new Error("Failed to update user: " + response.status)
                 }
             })
@@ -62,10 +81,11 @@ export default function useUserClient(): [
             if (response.ok) {
                 setUsers(users.filter(u => u.id !== user.id))
             } else {
+                setUserError(true)
                 throw new Error("Failed to delete user: " + response.status)
             }
         }).catch(error => console.log("Failed to delete user", error))
     }
 
-    return [users, addUser, updateUser, deleteUser]
+    return [users, addUser, updateUser, deleteUser, userError]
 }

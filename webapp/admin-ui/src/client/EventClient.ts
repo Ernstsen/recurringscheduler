@@ -16,14 +16,20 @@ export default function useEventClient(): [
     events: Event[],
     addEvent: (event: Event) => void,
     updateEvent: (event: Event) => void,
-    deleteEvent: (event: Event) => void] {
+    deleteEvent: (event: Event) => void,
+    eventError: boolean
+] {
     const [events, setEvents] = useState<Event[]>([])
+    const [eventError, setEventError] = useState(false)
 
     useEffect(() => {
         fetch('/api/events').then(response => response.json())
             .then(data => {
                 setEvents(data.map(deserializeDatesInIncomingEvent))
-            })
+            }).catch(() => {
+            setEventError(true)
+
+        })
     }, [])
 
     const addEvent = (event: Event) => {
@@ -34,10 +40,18 @@ export default function useEventClient(): [
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(event)
-        }).then(response => response.json())
+        }).then(response => {
+            if (response.ok) {
+                response.json()
+            } else {
+                setEventError(true)
+                throw new Error("Failed to create event: " + response.status)
+            }
+        })
             .then(data => {
                 setEvents([...events, deserializeDatesInIncomingEvent(data)])
-            })
+            }).catch(() => {
+        })
     }
 
     const updateEvent = (event: Event) => {
@@ -53,13 +67,14 @@ export default function useEventClient(): [
                 if (response.ok) {
                     return response.json()
                 } else {
+                    setEventError(true)
                     throw new Error("Failed to update event: " + response.status)
+
                 }
             })
             .then(data => {
                 setEvents([...events.filter(u => u.id !== event.id), deserializeDatesInIncomingEvent(data)])
             })
-            .catch(error => console.log("Failed to update event", error))
     }
 
     const deleteEvent = (event: Event) => {
@@ -74,10 +89,11 @@ export default function useEventClient(): [
             if (response.ok) {
                 setEvents(events.filter(u => u.id !== event.id))
             } else {
+                setEventError(true)
                 throw new Error("Failed to delete event: " + response.status)
             }
-        }).catch(error => console.log("Failed to delete event", error))
+        })
     }
 
-    return [events, addEvent, updateEvent, deleteEvent]
+    return [events, addEvent, updateEvent, deleteEvent, eventError]
 }

@@ -9,12 +9,17 @@ import EditIcon from '@mui/icons-material/Edit';
 import useUserClient from "../client/UserClient.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {User} from "../model/User.ts";
+import {Alert} from "@mui/material";
 
 function UsersPage() {
-    const [users, addUser, updateUser, deleteUser] = useUserClient()
+    const [users, addUser, updateUser, deleteUser, userError] = useUserClient()
     const [createUserOpen, setCreateUserOpen] = useState(false)
     const {userId} = useParams()
     const navigate = useNavigate();
+
+    if (userError) {
+        return <Alert severity="error">Failed to read Users from server</Alert>
+    }
 
     const editingUser: User | null = userId ? users.filter(user => user.id === userId)[0] : null
 
