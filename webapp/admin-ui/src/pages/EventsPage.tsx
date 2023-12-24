@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import Fab from '@mui/material/Fab';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import AddIcon from '@mui/icons-material/Add';
 import {useState} from "react";
 import {DataGrid, GridActionsCellItem, GridColDef, GridValueGetterParams} from '@mui/x-data-grid';
 import {EditEventDialogue, ModifyEventDialogue} from "../components/EditEventDialogue.tsx";
@@ -105,7 +105,7 @@ function EventsPage() {
                          bottom: '5%',
                          right: '4%'
                      }}>
-                    <PersonAddIcon/>
+                    <AddIcon/>
                 </Fab>
             </Box>
         </>

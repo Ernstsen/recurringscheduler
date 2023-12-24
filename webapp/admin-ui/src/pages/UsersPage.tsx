@@ -1,7 +1,6 @@
 import Box from '@mui/material/Box';
 import Fab from '@mui/material/Fab';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import {useState} from "react";
+import AddIcon from '@mui/icons-material/Add';import {useState} from "react";
 import {DataGrid, GridActionsCellItem, GridColDef} from '@mui/x-data-grid';
 import {EditUserDialogue, ModifyUserDialogue} from "../components/EditUserDialogue.tsx";
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -87,7 +86,7 @@ function UsersPage() {
                          bottom: '5%',
                          right: '4%'
                      }}>
-                    <PersonAddIcon/>
+                    <AddIcon/>
                 </Fab>
             </Box>
         </>
