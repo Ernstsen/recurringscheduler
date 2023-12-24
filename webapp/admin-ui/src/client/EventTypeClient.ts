@@ -12,7 +12,6 @@ export default function useEventTypeClient(): [
         fetch('/api/eventTypes').then(response => response.json())
             .then(data => {
                 setEventTypes(data)
-                console.log(data)
             })
     }, [])
 

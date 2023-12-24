@@ -1,6 +1,17 @@
 import {Event} from "../model/Event.ts";
 import {useEffect, useState} from "react";
 
+const stringToDate = (dateString: string): Date => {
+    let [year, month, day] = dateString.split("-")
+    return new Date(parseInt(year), parseInt(month) - 1, parseInt(day), 12)
+}
+const deserializeDatesInIncomingEvent = (event: any): Event => {
+    event.possibleTimes = event.possibleTimes
+        ?.map(stringToDate)
+        ?.sort((a: Date, b: Date) => a.getTime() - b.getTime())
+    event.chosenTime = event.chosenTime ? stringToDate(event.chosenTime) : null
+    return event
+}
 export default function useEventClient(): [
     events: Event[],
     addEvent: (event: Event) => void,
@@ -11,12 +22,12 @@ export default function useEventClient(): [
     useEffect(() => {
         fetch('/api/events').then(response => response.json())
             .then(data => {
-                setEvents(data)
-                console.log(data)
+                setEvents(data.map(deserializeDatesInIncomingEvent))
             })
     }, [])
 
     const addEvent = (event: Event) => {
+        console.log("Creating event", event)
         fetch('/api/events', {
             method: 'POST',
             headers: {
@@ -25,11 +36,12 @@ export default function useEventClient(): [
             body: JSON.stringify(event)
         }).then(response => response.json())
             .then(data => {
-                setEvents([...events, data])
+                setEvents([...events, deserializeDatesInIncomingEvent(data)])
             })
     }
 
     const updateEvent = (event: Event) => {
+        console.log("Updating event", event)
         fetch('/api/events/' + event.id + "/", {
             method: 'PUT',
             headers: {
@@ -45,7 +57,7 @@ export default function useEventClient(): [
                 }
             })
             .then(data => {
-                setEvents([...events.filter(u => u.id !== event.id), data])
+                setEvents([...events.filter(u => u.id !== event.id), deserializeDatesInIncomingEvent(data)])
             })
             .catch(error => console.log("Failed to update event", error))
     }

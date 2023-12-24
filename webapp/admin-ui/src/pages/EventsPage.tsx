@@ -31,8 +31,18 @@ function EventsPage() {
             width: 250,
             valueGetter: (input: GridValueGetterParams<Event>) => input.row.type.name
         },
-        {field: 'chosenDate', headerName: 'Chosen Date', width: 150},
-        {field: 'availableDates', headerName: 'Available Dates', width: 300},
+        {
+            field: 'chosenTime',
+            headerName: 'Chosen Date',
+            width: 150,
+            valueGetter: (input: GridValueGetterParams<Event>) => input.row.chosenTime?.toLocaleDateString("da")
+        },
+        {
+            field: 'possibleTimes',
+            headerName: 'Available Dates',
+            width: 300,
+            valueGetter: (input: GridValueGetterParams<Event>) => input.row.possibleTimes.map(date => date.toLocaleDateString("da")).join(", ")
+        },
         {
             field: 'actions',
             type: 'actions',

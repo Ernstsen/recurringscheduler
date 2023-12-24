@@ -13,6 +13,7 @@ import Select, {SelectChangeEvent} from "@mui/material/Select";
 import {MenuItem} from "@mui/material";
 import useEventTypeClient from "../client/EventTypeClient.ts";
 import styles from "./GenericDialogue.module.css"
+import PossibleTimesView from "./datepicking/PossibleTimesView.tsx";
 
 interface CreateEventProps {
     open: boolean,
@@ -84,7 +85,8 @@ export const GenericEventDialogue: React.FC<GenericProps> = (
     }) => {
     const [eventname, setEventname] = useState(existingEvent?.name || "")
     const [eventTypeId, setEventTypeId] = useState(existingEvent?.type.id || "")
-    const [chosenTime, setChosenTime] = useState(existingEvent?.chosenTime?.toString || "")
+    const [chosenTime, setChosenTime] = useState(existingEvent?.chosenTime)
+    const [possibleTimes, setPossibleTimes] = useState(existingEvent?.possibleTimes || [])
     const [eventTypes] = useEventTypeClient();
     const handleClose = () => {
         onClose()
@@ -103,8 +105,8 @@ export const GenericEventDialogue: React.FC<GenericProps> = (
                 existingEvent?.id || null,
                 eventname,
                 chosenEventType,
-                [],
-                null
+                possibleTimes,
+                chosenTime || null
             ))
             onClose()
         }
@@ -157,26 +159,31 @@ export const GenericEventDialogue: React.FC<GenericProps> = (
                     <DialogContentText className={styles.DialogContentText}>
                         Available Dates
                     </DialogContentText>
-                    <InputLabel id="chosenDate">Chosen Date</InputLabel>
+                    <InputLabel id="chosenDateLabel">Chosen Date</InputLabel>
                     <Select
                         margin="dense"
-                        labelId="recurrenceConfigurationSelector"
-                        name="Recurring Configuration"
+                        labelId="chosenDateLabel"
+                        name="Chosen Date"
                         fullWidth
                         variant="standard"
                         onChange={(event: SelectChangeEvent) => {
-                            setChosenTime(event.target.value)
+                            setChosenTime(new Date(event.target.value))
                         }}
-                        value={chosenTime}
+                        defaultValue={existingEvent?.chosenTime?.toISOString()}
                     >
                         {
-                            ["1/2/2023", "2/2/2023"].map((possibleDate) =>
-                                <MenuItem value={possibleDate}>
-                                    {possibleDate}
+                            possibleTimes.map((possibleDate) =>
+                                <MenuItem value={possibleDate.toISOString()} key={possibleDate.toISOString()}>
+                                    {possibleDate.toDateString()}
                                 </MenuItem>
                             )
                         }
                     </Select>
+                    <PossibleTimesView
+                        possibleTimes={possibleTimes}
+                        onPossibleTimeRemoval={(possibleTime) => setPossibleTimes(possibleTimes.filter((time) => time !== possibleTime))}
+                        onPossibleTimeAddition={(possibleTime) => setPossibleTimes([...possibleTimes, possibleTime].sort((a, b) => a.getTime() - b.getTime()))}
+                    />
                 </DialogContent>
                 <DialogActions>
                     <Button color="error" onClick={handleClose}>Cancel</Button>
