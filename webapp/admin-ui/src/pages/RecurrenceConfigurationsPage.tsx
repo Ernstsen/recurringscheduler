@@ -12,7 +12,7 @@ import {
     CreateRecurrenceConfigurationDialogue,
     ModifyRecurrenceConfigurationDialogue
 } from "../components/EditRecurrenceConfigurationDialogue.tsx";
-import {Alert} from "@mui/material";
+import {Alert, LinearProgress} from "@mui/material";
 
 function RecurrenceConfigurationsPage() {
     const [
@@ -20,7 +20,8 @@ function RecurrenceConfigurationsPage() {
         addRecurrenceConfiguration,
         updateRecurrenceConfiguration,
         deleteRecurrenceConfiguration,
-        recurrenceConfigurationError] = useRecurrenceConfigurationClient()
+        recurrenceConfigurationError,
+        recurrenceConfigurationLoading] = useRecurrenceConfigurationClient()
     const [createUserOpen, setCreateUserOpen] = useState(false)
     const {recurrenceConfigurationId} = useParams()
     const navigate = useNavigate();
@@ -72,6 +73,12 @@ function RecurrenceConfigurationsPage() {
                         pagination: {
                             paginationModel: {page: 0, pageSize: 5},
                         },
+                    }}
+                    loading={recurrenceConfigurationLoading}
+                    autoHeight={!recurrenceConfigurationLoading}
+                    slots={{
+                        loadingOverlay: () => <LinearProgress/>,
+                        noRowsOverlay: () => <Alert severity="info"> No configurations found </Alert>
                     }}
                     pageSizeOptions={[5, 10]}
                     checkboxSelection={false}

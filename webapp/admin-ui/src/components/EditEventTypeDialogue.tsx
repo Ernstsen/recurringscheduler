@@ -10,7 +10,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import {EventType} from "../model/EventType.ts";
 import useRecurrenceConfigurationClient from "../client/UseRecurrenceConfigurationClient.ts";
 import Select, {SelectChangeEvent} from "@mui/material/Select";
-import {MenuItem, Alert} from "@mui/material";
+import {MenuItem, Alert, LinearProgress} from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
 import styles from "./GenericDialogue.module.css"
 
@@ -82,7 +82,7 @@ export const GenericEventTypeDialogue: React.FC<GenericProps> = (
         title,
         existingEventType
     }) => {
-    const [recurrenceConfigurations, , , , recurrenceConfigurationError] = useRecurrenceConfigurationClient();
+    const [recurrenceConfigurations, , , , recurrenceConfigurationError, recurrenceConfigurationLoading] = useRecurrenceConfigurationClient();
     const [eventTypename, setEventTypename] = useState(existingEventType?.name || "")
     const [recurrenceConfigurationId, setRecurrenceConfigurationId] = useState(existingEventType?.recurrenceConfiguration.id || "")
     const handleClose = () => {
@@ -133,7 +133,7 @@ export const GenericEventTypeDialogue: React.FC<GenericProps> = (
                         defaultValue={existingEventType?.name}
                     />
                     <InputLabel id="eventTypeSelector">Recurrence Configuration</InputLabel>
-                    <Select
+                    {recurrenceConfigurationLoading ? (<LinearProgress/>) : (<Select
                         margin="dense"
                         labelId="eventTypeSelector"
                         name="Event Type"
@@ -152,7 +152,7 @@ export const GenericEventTypeDialogue: React.FC<GenericProps> = (
                                 </MenuItem>
                             )
                         }
-                    </Select>
+                    </Select>)}
                 </DialogContent>
                 <DialogActions>
                     <Button color="error" onClick={handleClose}>Cancel</Button>

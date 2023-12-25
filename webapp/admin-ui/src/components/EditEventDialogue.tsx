@@ -2,6 +2,7 @@ import * as React from 'react';
 import {useState} from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import LinearProgress from '@mui/material/LinearProgress';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -87,7 +88,7 @@ export const GenericEventDialogue: React.FC<GenericProps> = (
     const [eventTypeId, setEventTypeId] = useState(existingEvent?.type.id || "")
     const [chosenTime, setChosenTime] = useState(existingEvent?.chosenTime)
     const [possibleTimes, setPossibleTimes] = useState(existingEvent?.possibleTimes || [])
-    const [eventTypes, , , , eventTypeError] = useEventTypeClient();
+    const [eventTypes, , , , eventTypeError, eventTypeLoading] = useEventTypeClient();
 
     if (eventTypeError) {
         return <Alert severity="error">Failed to read EventTypes from server</Alert>
@@ -138,7 +139,7 @@ export const GenericEventDialogue: React.FC<GenericProps> = (
                         defaultValue={existingEvent?.name}
                     />
                     <InputLabel id="recurrenceConfigurationSelector">Recurrence Configuration</InputLabel>
-                    <Select
+                    {eventTypeLoading ? <LinearProgress/> :  <Select
                         margin="dense"
                         labelId="recurrenceConfigurationSelector"
                         name="Recurring Configuration"
@@ -157,7 +158,7 @@ export const GenericEventDialogue: React.FC<GenericProps> = (
                                 </MenuItem>
                             )
                         }
-                    </Select>
+                    </Select>}
                 </DialogContent>
                 <DialogContent>
                     <DialogContentText className={styles.DialogContentText}>

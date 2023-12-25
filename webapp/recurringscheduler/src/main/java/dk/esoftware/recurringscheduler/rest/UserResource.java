@@ -45,7 +45,7 @@ public class UserResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    public List<UserDTO> getRecurrenceConfigurations() {
+    public List<UserDTO> getUsers() {
         final List<UserEntity> entities = managerProvider.getUserManager().getEntities();
         return entities.stream().map(UserDTO::createUserDTO).collect(Collectors.toList());
     }

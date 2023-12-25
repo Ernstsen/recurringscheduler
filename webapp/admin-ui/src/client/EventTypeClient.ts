@@ -6,10 +6,12 @@ export default function useEventTypeClient(): [
     addEventType: (eventType: EventType) => void,
     updateEventType: (eventType: EventType) => void,
     deleteEventType: (eventType: EventType) => void,
-    eventTypeError: boolean
+    eventTypeError: boolean,
+    eventTypeLoading: boolean,
 ] {
     const [eventTypes, setEventTypes] = useState<EventType[]>([])
     const [eventTypeError, setEventTypeError] = useState(false)
+    const [eventTypeLoading, setEventTypeLoading] = useState(true)
 
     useEffect(() => {
         fetch('/api/eventTypes').then(response => {
@@ -21,6 +23,7 @@ export default function useEventTypeClient(): [
             }
         }).then(data => {
             setEventTypes(data)
+            setEventTypeLoading(false)
         })
     }, [])
 
@@ -83,5 +86,5 @@ export default function useEventTypeClient(): [
         }).catch(error => console.log("Failed to delete eventType", error))
     }
 
-    return [eventTypes, addEventType, updateEventType, deleteEventType, eventTypeError]
+    return [eventTypes, addEventType, updateEventType, deleteEventType, eventTypeError, eventTypeLoading]
 }

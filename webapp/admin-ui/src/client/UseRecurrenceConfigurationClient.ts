@@ -6,10 +6,12 @@ export default function useRecurrenceConfigurationClient(): [
     addRecurrenceConfiguration: (recurrenceConfiguration: RecurrenceConfiguration) => void,
     updateRecurrenceConfiguration: (recurrenceConfiguration: RecurrenceConfiguration) => void,
     deleteRecurrenceConfiguration: (recurrenceConfiguration: RecurrenceConfiguration) => void,
-    recurrenceConfigurationError: boolean
+    recurrenceConfigurationError: boolean,
+    recurrenceConfigurationLoading: boolean
 ] {
     const [recurrenceConfigurations, setRecurrenceConfigurations] = useState<RecurrenceConfiguration[]>([])
     const [recurrenceConfigurationError, setRecurrenceConfigurationError] = useState(false)
+    const [recurrenceConfigurationLoading, setRecurrenceConfigurationLoading] = useState(true)
 
     useEffect(() => {
         fetch('/api/recurrenceConfigurations').then(response => {
@@ -21,6 +23,7 @@ export default function useRecurrenceConfigurationClient(): [
             }
         }).then(data => {
             setRecurrenceConfigurations(data)
+            setRecurrenceConfigurationLoading(false)
         })
     }, [])
 
@@ -82,5 +85,12 @@ export default function useRecurrenceConfigurationClient(): [
         }).catch(error => console.log("Failed to delete recurrenceConfiguration", error))
     }
 
-    return [recurrenceConfigurations, addRecurrenceConfiguration, updateRecurrenceConfiguration, deleteRecurrenceConfiguration, recurrenceConfigurationError]
+    return [
+        recurrenceConfigurations,
+        addRecurrenceConfiguration,
+        updateRecurrenceConfiguration,
+        deleteRecurrenceConfiguration,
+        recurrenceConfigurationError,
+        recurrenceConfigurationLoading
+    ]
 }
