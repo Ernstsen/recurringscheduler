@@ -24,7 +24,7 @@ public record EventDTO(
                 event.getName(),
                 EventTypeDTO.createEventTypeDTO(event.getEventType()),
                 UserDTO.createUserDTO(event.getOwner()),
-                new ArrayList<>(event.getPossibleTimes()),
+                event.getPossibleTimes() != null ? new ArrayList<>(event.getPossibleTimes()) : new ArrayList<>(),
                 event.getChosenTime()
         );
     }
