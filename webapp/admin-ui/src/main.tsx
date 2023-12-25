@@ -42,7 +42,7 @@ const router = createBrowserRouter([
                 element: <EventTypesPage/>,
             },
             {
-                path: "/eventTypes/:eventTypesId",
+                path: "/eventTypes/:eventTypeId",
                 element: <EventTypesPage/>,
             },
             {
