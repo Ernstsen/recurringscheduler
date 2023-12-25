@@ -17,15 +17,18 @@ export default function useEventClient(): [
     addEvent: (event: Event) => void,
     updateEvent: (event: Event) => void,
     deleteEvent: (event: Event) => void,
-    eventError: boolean
+    eventError: boolean,
+    eventLoading: boolean,
 ] {
     const [events, setEvents] = useState<Event[]>([])
     const [eventError, setEventError] = useState(false)
+    const [eventLoading, setEventLoading] = useState(true)
 
     useEffect(() => {
         fetch('/api/events').then(response => response.json())
             .then(data => {
                 setEvents(data.map(deserializeDatesInIncomingEvent))
+                setEventLoading(false)
             }).catch(() => {
             setEventError(true)
 
@@ -95,5 +98,5 @@ export default function useEventClient(): [
         })
     }
 
-    return [events, addEvent, updateEvent, deleteEvent, eventError]
+    return [events, addEvent, updateEvent, deleteEvent, eventError, eventLoading]
 }

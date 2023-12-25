@@ -6,10 +6,12 @@ export default function useUserClient(): [
     addUser: (user: User) => void,
     updateUser: (user: User) => void,
     deleteUser: (user: User) => void,
-    userError: boolean
+    userError: boolean,
+    userLoading: boolean,
 ] {
     const [users, setUsers] = useState<User[]>([])
     const [userError, setUserError] = useState(false)
+    const [userLoading, setUserLoading] = useState(true)
 
     useEffect(() => {
         fetch('/api/users')
@@ -23,6 +25,7 @@ export default function useUserClient(): [
             })
             .then(data => {
                 setUsers(data)
+                setUserLoading(false)
             })
     }, [])
 
@@ -87,5 +90,5 @@ export default function useUserClient(): [
         }).catch(error => console.log("Failed to delete user", error))
     }
 
-    return [users, addUser, updateUser, deleteUser, userError]
+    return [users, addUser, updateUser, deleteUser, userError, userLoading]
 }

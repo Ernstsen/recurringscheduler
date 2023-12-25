@@ -9,10 +9,10 @@ import EditIcon from '@mui/icons-material/Edit';
 import useEventClient from "../client/EventClient.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {Event} from "../model/Event.ts";
-import {Alert} from "@mui/material";
+import {Alert, LinearProgress} from "@mui/material";
 
 function EventsPage() {
-    const [events, addEvent, updateEvent, deleteEvent, eventError] = useEventClient()
+    const [events, addEvent, updateEvent, deleteEvent, eventError, eventLoading] = useEventClient()
     const [createEventOpen, setCreateEventOpen] = useState(false)
     const {eventId} = useParams()
     const navigate = useNavigate();
@@ -85,6 +85,12 @@ function EventsPage() {
                     pageSizeOptions={[5, 10]}
                     checkboxSelection={false}
                     rowSelection={false}
+                    loading={eventLoading}
+                    autoHeight={!eventLoading}
+                    slots={{
+                        loadingOverlay: () => <LinearProgress/>,
+                        noRowsOverlay: () => <Alert severity="info"> No events found </Alert>
+                    }}
                 />
                 {editingEvent &&
                     <ModifyEventDialogue

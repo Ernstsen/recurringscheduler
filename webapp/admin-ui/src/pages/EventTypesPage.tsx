@@ -9,10 +9,10 @@ import EditIcon from '@mui/icons-material/Edit';
 import useEventTypeClient from "../client/EventTypeClient.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {EventType} from "../model/EventType.ts";
-import {Alert} from "@mui/material";
+import {Alert, LinearProgress} from "@mui/material";
 
 function EventTypesPage() {
-    const [eventTypes, addEventType, updateEventType, deleteEventType, eventTypeError] = useEventTypeClient()
+    const [eventTypes, addEventType, updateEventType, deleteEventType, eventTypeError, eventTypeLoading] = useEventTypeClient()
     const [createEventTypeOpen, setCreateEventTypeOpen] = useState(false)
     const {eventTypeId} = useParams()
     const navigate = useNavigate();
@@ -73,6 +73,13 @@ function EventTypesPage() {
                     pageSizeOptions={[5, 10]}
                     checkboxSelection={false}
                     rowSelection={false}
+                    loading={eventTypeLoading}
+                    autoHeight={!eventTypeLoading}
+                    slots={{
+                        loadingOverlay: () => <LinearProgress/>,
+                        noRowsOverlay: () => <Alert severity="info"> No event types found </Alert>
+                    }}
+
                 />
                 {editingEventType &&
                     <ModifyEventTypeDialogue

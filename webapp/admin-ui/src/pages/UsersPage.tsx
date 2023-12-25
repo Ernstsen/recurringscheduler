@@ -1,6 +1,7 @@
 import Box from '@mui/material/Box';
 import Fab from '@mui/material/Fab';
-import AddIcon from '@mui/icons-material/Add';import {useState} from "react";
+import AddIcon from '@mui/icons-material/Add';
+import {useState} from "react";
 import {DataGrid, GridActionsCellItem, GridColDef} from '@mui/x-data-grid';
 import {EditUserDialogue, ModifyUserDialogue} from "../components/EditUserDialogue.tsx";
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -8,10 +9,11 @@ import EditIcon from '@mui/icons-material/Edit';
 import useUserClient from "../client/UserClient.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {User} from "../model/User.ts";
-import {Alert} from "@mui/material";
+import {Alert, LinearProgress} from "@mui/material";
+
 
 function UsersPage() {
-    const [users, addUser, updateUser, deleteUser, userError] = useUserClient()
+    const [users, addUser, updateUser, deleteUser, userError, userLoading] = useUserClient()
     const [createUserOpen, setCreateUserOpen] = useState(false)
     const {userId} = useParams()
     const navigate = useNavigate();
@@ -22,7 +24,7 @@ function UsersPage() {
 
     const editingUser: User | null = userId ? users.filter(user => user.id === userId)[0] : null
 
-    if(userId && !editingUser) {
+    if (userId && !editingUser) {
         navigate('/users')
     }
 
@@ -63,6 +65,12 @@ function UsersPage() {
                         pagination: {
                             paginationModel: {page: 0, pageSize: 5},
                         },
+                    }}
+                    loading={userLoading}
+                    autoHeight={!userLoading}
+                    slots={{
+                        loadingOverlay: LinearProgress,
+                        noRowsOverlay: () => <Alert severity="info"> No users found </Alert>
                     }}
                     pageSizeOptions={[5, 10]}
                     checkboxSelection={false}
