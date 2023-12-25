@@ -10,13 +10,11 @@ import useEventTypeClient from "../client/EventTypeClient.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {EventType} from "../model/EventType.ts";
 import {Alert, CircularProgress, LinearProgress} from "@mui/material";
-import useEventClient from "../client/EventClient.ts";
-import {Event} from "../model/Event.ts";
+import {createEventFromEventType} from "../client/EventTypeClient.ts";
 import Dialog from "@mui/material/Dialog";
 
 function EventTypesPage() {
     const [eventTypes, addEventType, updateEventType, deleteEventType, eventTypeError, eventTypeLoading] = useEventTypeClient()
-    const [, addEvent, , , ,] = useEventClient()
     const [createEventTypeOpen, setCreateEventTypeOpen] = useState(false)
     const [actionLoading, setActionLoading] = useState(false)
     const {eventTypeId} = useParams()
@@ -65,7 +63,7 @@ function EventTypesPage() {
                     icon={<AddIcon/>}
                     onClick={() => {
                         setActionLoading(true)
-                        let newEventPromise = createEventFromEventType(params.row, addEvent);
+                        let newEventPromise = createEventFromEventType(params.row);
                         newEventPromise.then((newEvent) => {
                             navigate('/events/' + newEvent.id)
                             setActionLoading(false)
@@ -79,7 +77,7 @@ function EventTypesPage() {
 
     return (
         <>
-            <Dialog open={actionLoading} >
+            <Dialog open={actionLoading} sx={{overflow: "hidden"}}>
                 <CircularProgress/>
             </Dialog>
             <Box>
@@ -126,18 +124,6 @@ function EventTypesPage() {
             </Box>
         </>
     );
-}
-
-const createEventFromEventType = (eventType: EventType, addEvent: (event: Event) => Promise<Event>): Promise<Event> => {
-    let generatedEvent = new Event(
-        null,
-        "Created from: " + eventType.name,
-        eventType,
-        [],
-        null
-    );
-
-    return addEvent(generatedEvent)
 }
 
 export default EventTypesPage

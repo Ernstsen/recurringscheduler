@@ -14,7 +14,7 @@ const deserializeDatesInIncomingEvent = (event: any): Event => {
 }
 export default function useEventClient(): [
     events: Event[],
-    addEvent: (event: Event) => Promise<Event>,
+    addEvent: (event: Event) => void,
     updateEvent: (event: Event) => void,
     deleteEvent: (event: Event) => void,
     eventError: boolean,
@@ -35,8 +35,8 @@ export default function useEventClient(): [
         })
     }, [])
 
-    const addEvent = async (event: Event): Promise<Event> => {
-        return fetch('/api/events', {
+    const addEvent = (event: Event): void => {
+        fetch('/api/events', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -51,7 +51,6 @@ export default function useEventClient(): [
             }
         }).then(data => {
             setEvents([...events, deserializeDatesInIncomingEvent(data)])
-            return data
         })
     }
 
