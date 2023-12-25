@@ -35,8 +35,7 @@ export default function useEventClient(): [
         })
     }, [])
 
-    const addEvent = (event: Event) => {
-        console.log("Creating event", event)
+    const addEvent = (event: Event): void => {
         fetch('/api/events', {
             method: 'POST',
             headers: {
@@ -45,15 +44,13 @@ export default function useEventClient(): [
             body: JSON.stringify(event)
         }).then(response => {
             if (response.ok) {
-                response.json()
+                return response.json()
             } else {
                 setEventError(true)
                 throw new Error("Failed to create event: " + response.status)
             }
-        })
-            .then(data => {
-                setEvents([...events, deserializeDatesInIncomingEvent(data)])
-            }).catch(() => {
+        }).then(data => {
+            setEvents([...events, deserializeDatesInIncomingEvent(data)])
         })
     }
 

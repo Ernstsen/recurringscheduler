@@ -1,8 +1,11 @@
 package dk.esoftware.recurringscheduler.rest;
 
 import dk.esoftware.recurringscheduler.domain.ManagerProvider;
+import dk.esoftware.recurringscheduler.domain.RecurringSchedulerAdministration;
+import dk.esoftware.recurringscheduler.persistence.Event;
 import dk.esoftware.recurringscheduler.persistence.EventType;
 import dk.esoftware.recurringscheduler.persistence.RecurrenceConfiguration;
+import dk.esoftware.recurringscheduler.rest.dto.EventDTO;
 import dk.esoftware.recurringscheduler.rest.dto.EventTypeDTO;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -19,6 +22,9 @@ public class EventTypeResource {
 
     @Inject
     ManagerProvider managerProvider;
+
+    @Inject
+    RecurringSchedulerAdministration recurringSchedulerAdministration;
 
     @POST
     @Produces({MediaType.APPLICATION_JSON})
@@ -82,6 +88,22 @@ public class EventTypeResource {
     public Response deleteEventType(@PathParam("id") UUID id) {
          managerProvider.getEventTypeManager().deleteEntity(id);
         return Response.ok().build();
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{id}/createEvent")
+    @Transactional
+    public Response createEventFromType(@PathParam("id") UUID id) {
+        final EventType entity = managerProvider.getEventTypeManager().getEntity(id);
+
+        if (entity != null) {
+            final Event newEvent = recurringSchedulerAdministration.createEventFromEventType(entity);
+
+            return Response.ok().entity(EventDTO.createEventTypeDTO(newEvent)).build();
+        }
+
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
 
 }

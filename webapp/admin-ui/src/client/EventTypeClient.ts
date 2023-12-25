@@ -1,5 +1,21 @@
 import {EventType} from "../model/EventType.ts";
+import {Event} from "../model/Event.ts";
 import {useEffect, useState} from "react";
+
+export const createEventFromEventType = async (eventType: EventType): Promise<Event> => {
+    return fetch('/api/eventTypes/' + eventType.id + "/createEvent", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    }).then(response => {
+        if (response.ok) {
+            return response.json()
+        } else {
+            throw new Error("Failed to create event: " + response.status)
+        }
+    })
+}
 
 export default function useEventTypeClient(): [
     eventTypes: EventType[],

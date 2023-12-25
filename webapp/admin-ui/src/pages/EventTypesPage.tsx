@@ -9,11 +9,14 @@ import EditIcon from '@mui/icons-material/Edit';
 import useEventTypeClient from "../client/EventTypeClient.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {EventType} from "../model/EventType.ts";
-import {Alert, LinearProgress} from "@mui/material";
+import {Alert, CircularProgress, LinearProgress} from "@mui/material";
+import {createEventFromEventType} from "../client/EventTypeClient.ts";
+import Dialog from "@mui/material/Dialog";
 
 function EventTypesPage() {
     const [eventTypes, addEventType, updateEventType, deleteEventType, eventTypeError, eventTypeLoading] = useEventTypeClient()
     const [createEventTypeOpen, setCreateEventTypeOpen] = useState(false)
+    const [actionLoading, setActionLoading] = useState(false)
     const {eventTypeId} = useParams()
     const navigate = useNavigate();
 
@@ -39,7 +42,7 @@ function EventTypesPage() {
         {
             field: 'actions',
             type: 'actions',
-            width: 80,
+            minWidth: 120,
             getActions: (params) => [
                 <GridActionsCellItem
                     label="Edit"
@@ -55,12 +58,28 @@ function EventTypesPage() {
                     onClick={() => deleteEventType(params.row)}
 
                 />,
+                <GridActionsCellItem
+                    label="Create event from type"
+                    icon={<AddIcon/>}
+                    onClick={() => {
+                        setActionLoading(true)
+                        let newEventPromise = createEventFromEventType(params.row);
+                        newEventPromise.then((newEvent) => {
+                            navigate('/events/' + newEvent.id)
+                            setActionLoading(false)
+                        })
+                    }}
+                    showInMenu={true}
+                />,
             ]
         },
     ];
 
     return (
         <>
+            <Dialog open={actionLoading} sx={{overflow: "hidden"}}>
+                <CircularProgress/>
+            </Dialog>
             <Box>
                 <DataGrid
                     rows={eventTypes}
