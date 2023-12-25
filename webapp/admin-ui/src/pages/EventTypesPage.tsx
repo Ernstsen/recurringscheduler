@@ -9,11 +9,16 @@ import EditIcon from '@mui/icons-material/Edit';
 import useEventTypeClient from "../client/EventTypeClient.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {EventType} from "../model/EventType.ts";
-import {Alert, LinearProgress} from "@mui/material";
+import {Alert, CircularProgress, LinearProgress} from "@mui/material";
+import useEventClient from "../client/EventClient.ts";
+import {Event} from "../model/Event.ts";
+import Dialog from "@mui/material/Dialog";
 
 function EventTypesPage() {
     const [eventTypes, addEventType, updateEventType, deleteEventType, eventTypeError, eventTypeLoading] = useEventTypeClient()
+    const [, addEvent, , , ,] = useEventClient()
     const [createEventTypeOpen, setCreateEventTypeOpen] = useState(false)
+    const [actionLoading, setActionLoading] = useState(false)
     const {eventTypeId} = useParams()
     const navigate = useNavigate();
 
@@ -39,7 +44,7 @@ function EventTypesPage() {
         {
             field: 'actions',
             type: 'actions',
-            width: 80,
+            minWidth: 120,
             getActions: (params) => [
                 <GridActionsCellItem
                     label="Edit"
@@ -55,12 +60,28 @@ function EventTypesPage() {
                     onClick={() => deleteEventType(params.row)}
 
                 />,
+                <GridActionsCellItem
+                    label="Create event from type"
+                    icon={<AddIcon/>}
+                    onClick={() => {
+                        setActionLoading(true)
+                        let newEventPromise = createEventFromEventType(params.row, addEvent);
+                        newEventPromise.then((newEvent) => {
+                            navigate('/events/' + newEvent.id)
+                            setActionLoading(false)
+                        })
+                    }}
+                    showInMenu={true}
+                />,
             ]
         },
     ];
 
     return (
         <>
+            <Dialog open={actionLoading} >
+                <CircularProgress/>
+            </Dialog>
             <Box>
                 <DataGrid
                     rows={eventTypes}
@@ -105,6 +126,18 @@ function EventTypesPage() {
             </Box>
         </>
     );
+}
+
+const createEventFromEventType = (eventType: EventType, addEvent: (event: Event) => Promise<Event>): Promise<Event> => {
+    let generatedEvent = new Event(
+        null,
+        "Created from: " + eventType.name,
+        eventType,
+        [],
+        null
+    );
+
+    return addEvent(generatedEvent)
 }
 
 export default EventTypesPage
