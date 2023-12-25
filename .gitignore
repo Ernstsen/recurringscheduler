@@ -1,5 +1,5 @@
 # Gradle
-.gradle/
+**/.gradle/
 build/
 
 # Eclipse
@@ -37,3 +37,9 @@ nb-configuration.xml
 
 # Plugin directory
 /.quarkus/cli/plugins/
+
+# Node
+**/node_modules/
+
+# Docker Compose volumes
+apps/**

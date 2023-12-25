@@ -2,23 +2,17 @@ package dk.esoftware.recurringscheduler.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import dk.esoftware.recurringscheduler.domain.TimeUnit;
-import dk.esoftware.recurringscheduler.persistence.RecurrenceConfiguration;
 import dk.esoftware.recurringscheduler.rest.dto.Identifiable;
-import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import io.restassured.response.ValidatableResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.List;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.*;
 
 public abstract class DefaultCRUDResourceTest<T extends Identifiable> {
 

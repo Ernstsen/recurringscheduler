@@ -20,7 +20,7 @@ public class RecurrenceConfiguration {
     @Column(name = "id", nullable = false)
     private UUID id;
 
-    @OneToMany(mappedBy = "recurrenceConfiguration", orphanRemoval = true)
+    @OneToMany(mappedBy = "recurrenceConfiguration")
     private Set<EventType> usedBy = new LinkedHashSet<>();
 
     @Enumerated

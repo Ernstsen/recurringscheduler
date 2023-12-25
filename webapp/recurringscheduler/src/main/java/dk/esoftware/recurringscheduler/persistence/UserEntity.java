@@ -14,7 +14,7 @@ public class UserEntity {
     @Column(name = "id", nullable = false)
     private UUID id;
 
-    @OneToMany(mappedBy = "owner", orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "owner", orphanRemoval = true)
     private Set<EventType> eventTypes = new LinkedHashSet<>();
 
     @Column(name = "email", nullable = false, unique = true)

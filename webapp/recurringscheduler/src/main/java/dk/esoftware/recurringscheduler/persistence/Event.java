@@ -23,11 +23,11 @@ public class Event {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JoinColumn(name = "event_type")
     private EventType eventType;
 
-    @ManyToOne(cascade = {CascadeType.ALL})
+    @ManyToOne()
     @JoinColumn(name = "owner_id")
     private UserEntity owner;
 
