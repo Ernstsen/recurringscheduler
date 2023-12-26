@@ -11,6 +11,7 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -39,8 +40,8 @@ public class UserResourceTest extends DefaultCRUDResourceTest<UserDTO> {
                         });
 
         // Create entity
-        final EventTypeDTO creationTestEntity = new EventTypeDTO("eventType", null, recurrenceConfigurations.get(1));
-        final EventTypeDTO creationTestEntity2 = new EventTypeDTO("eventType2", null, recurrenceConfigurations.get(2));
+        final EventTypeDTO creationTestEntity = new EventTypeDTO("eventType", null, recurrenceConfigurations.get(1), new ArrayList<>());
+        final EventTypeDTO creationTestEntity2 = new EventTypeDTO("eventType2", null, recurrenceConfigurations.get(2), new ArrayList<>());
 
         final Response response = given().contentType(ContentType.JSON)
                 .when().body(creationTestEntity).post("/eventTypes")

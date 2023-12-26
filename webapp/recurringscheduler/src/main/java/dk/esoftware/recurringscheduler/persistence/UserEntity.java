@@ -14,7 +14,7 @@ public class UserEntity {
     @Column(name = "id", nullable = false)
     private UUID id;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "owner", orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "owner")
     private Set<EventType> eventTypes = new LinkedHashSet<>();
 
     @Column(name = "email", nullable = false, unique = true)
@@ -23,20 +23,20 @@ public class UserEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    public void setEventTypes(Set<EventType> eventTypes) {
-        this.eventTypes = eventTypes;
-    }
-
-    public Set<EventType> getEventTypes() {
-        return eventTypes;
-    }
-
     public UserEntity() {
     }
 
     public UserEntity(String email, String name) {
         this.email = email;
         this.name = name;
+    }
+
+    public Set<EventType> getEventTypes() {
+        return eventTypes;
+    }
+
+    public void setEventTypes(Set<EventType> eventTypes) {
+        this.eventTypes = eventTypes;
     }
 
     public UUID getId() {

@@ -78,6 +78,14 @@ public class EventTypeResource {
         entity.setName(payload.name());
         entity.setRecurrenceConfiguration(targetRecurrenceConfiguration);
 
+        if (payload.participatingUsers() != null) {
+            payload.participatingUsers().stream()
+                    .map(t -> managerProvider.getUserManager().getEntity(t.getId()))
+                    .forEach(t -> entity.getParticipatingUsers().add(t));
+            
+            entity.getParticipatingUsers().removeIf(t -> payload.participatingUsers().stream().noneMatch(u -> u.getId().equals(t.getId())));
+        }
+
         return Response.status(201).entity(EventTypeDTO.createEventTypeDTO(entity)).build();
     }
 
@@ -86,7 +94,7 @@ public class EventTypeResource {
     @Path("/{id}")
     @Transactional
     public Response deleteEventType(@PathParam("id") UUID id) {
-         managerProvider.getEventTypeManager().deleteEntity(id);
+        managerProvider.getEventTypeManager().deleteEntity(id);
         return Response.ok().build();
     }
 
