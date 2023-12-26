@@ -101,6 +101,7 @@ export const GenericEventTypeDialogue: React.FC<GenericProps> = (
             commitChanges(new EventType(
                 eventTypename,
                 chosenRecurrenceConfig,
+                [],
                 existingEventType?.id
             ))
             onClose()
