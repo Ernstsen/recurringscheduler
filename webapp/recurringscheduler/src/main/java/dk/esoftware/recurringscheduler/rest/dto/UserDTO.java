@@ -6,10 +6,10 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public record UserDTO(UUID id, String name, String email, Set<EventTypeDTO> eventTypes) implements Identifiable{
+public record UserDTO(UUID id, String name, String email, Set<EventTypeDTO> eventTypes) implements Identifiable {
 
     public static UserDTO createUserDTO(UserEntity userEntity) {
-        if(userEntity == null){
+        if (userEntity == null) {
             return null;
         }
 

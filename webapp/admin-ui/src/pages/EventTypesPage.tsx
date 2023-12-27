@@ -40,6 +40,12 @@ function EventTypesPage() {
             width: 300
         },
         {
+            field: 'participatingUsers',
+            headerName: 'Participating Users',
+            width: 300,
+            valueGetter: (input: GridValueGetterParams<EventType>) => input.row.participatingUsers.length + " users"
+        },
+        {
             field: 'actions',
             type: 'actions',
             minWidth: 120,

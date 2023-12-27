@@ -1,3 +1,7 @@
 .DialogContentText {
   margin-bottom: 1ch!important;
 }
+
+.InDialogButton {
+  margin-top: 1ch!important;
+}

@@ -1,9 +1,12 @@
 package dk.esoftware.recurringscheduler.persistence;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -24,13 +27,12 @@ public class EventType {
     @JoinColumn(name = "owner_id")
     private UserEntity owner;
 
-    public UserEntity getOwner() {
-        return owner;
-    }
-
-    public void setOwner(UserEntity owner) {
-        this.owner = owner;
-    }
+    @ManyToMany
+    @JoinTable(name = "EventType_userEntities",
+            joinColumns = @JoinColumn(name = "eventType_id"),
+            inverseJoinColumns = @JoinColumn(name = "userEntities_id"))
+    @Cascade(org.hibernate.annotations.CascadeType.REFRESH)
+    private Set<UserEntity> participatingUsers = new LinkedHashSet<>();
 
     public EventType() {
     }
@@ -38,6 +40,22 @@ public class EventType {
     public EventType(String name, RecurrenceConfiguration recurrenceConfiguration) {
         this.name = name;
         this.recurrenceConfiguration = recurrenceConfiguration;
+    }
+
+    public Set<UserEntity> getParticipatingUsers() {
+        return participatingUsers;
+    }
+
+    public void setParticipatingUsers(Set<UserEntity> participatingUsers) {
+        this.participatingUsers = participatingUsers;
+    }
+
+    public UserEntity getOwner() {
+        return owner;
+    }
+
+    public void setOwner(UserEntity owner) {
+        this.owner = owner;
     }
 
     public RecurrenceConfiguration getRecurrenceConfiguration() {

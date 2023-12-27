@@ -10,9 +10,10 @@ import DialogTitle from '@mui/material/DialogTitle';
 import {EventType} from "../model/EventType.ts";
 import useRecurrenceConfigurationClient from "../client/UseRecurrenceConfigurationClient.ts";
 import Select, {SelectChangeEvent} from "@mui/material/Select";
-import {MenuItem, Alert, LinearProgress} from "@mui/material";
+import {Alert, LinearProgress, MenuItem} from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
 import styles from "./GenericDialogue.module.css"
+import UserSelectionDialogue from "./userselection/UserSelectionDialogue.tsx";
 
 interface CreateEventTypeProps {
     open: boolean,
@@ -85,6 +86,8 @@ export const GenericEventTypeDialogue: React.FC<GenericProps> = (
     const [recurrenceConfigurations, , , , recurrenceConfigurationError, recurrenceConfigurationLoading] = useRecurrenceConfigurationClient();
     const [eventTypename, setEventTypename] = useState(existingEventType?.name || "")
     const [recurrenceConfigurationId, setRecurrenceConfigurationId] = useState(existingEventType?.recurrenceConfiguration.id || "")
+    const [participatingUsersDialogueOpen, setParticipatingUsersDialogueOpen] = useState(false)
+    const [participatingUsers, setParticipatingUsers] = useState(existingEventType?.participatingUsers || [])
     const handleClose = () => {
         onClose()
     };
@@ -101,6 +104,7 @@ export const GenericEventTypeDialogue: React.FC<GenericProps> = (
             commitChanges(new EventType(
                 eventTypename,
                 chosenRecurrenceConfig,
+                participatingUsers,
                 existingEventType?.id
             ))
             onClose()
@@ -153,6 +157,15 @@ export const GenericEventTypeDialogue: React.FC<GenericProps> = (
                             )
                         }
                     </Select>)}
+                    <UserSelectionDialogue
+                        onClose={() => setParticipatingUsersDialogueOpen(false)}
+                        open={participatingUsersDialogueOpen}
+                        setUsers={setParticipatingUsers}
+                        users={participatingUsers}
+                    />
+                    <Button color="primary" className={styles.InDialogButton} onClick={() => setParticipatingUsersDialogueOpen(true)}>
+                        {participatingUsers ? participatingUsers.length : "No"} users currently participating.
+                    </Button>
                 </DialogContent>
                 <DialogActions>
                     <Button color="error" onClick={handleClose}>Cancel</Button>

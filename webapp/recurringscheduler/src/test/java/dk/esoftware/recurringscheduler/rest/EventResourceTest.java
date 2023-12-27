@@ -12,10 +12,12 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
@@ -23,9 +25,9 @@ import static org.hamcrest.CoreMatchers.is;
 @QuarkusTest
 public class EventResourceTest extends DefaultCRUDResourceTest<EventDTO> {
 
+    private static final Random rand = new Random();
     private List<EventTypeDTO> eventTypes;
     private List<UserDTO> users;
-    private static final Random rand = new Random();
 
     public EventResourceTest() {
         super("events");
@@ -47,8 +49,8 @@ public class EventResourceTest extends DefaultCRUDResourceTest<EventDTO> {
                         });
 
         // Create entity
-        final EventTypeDTO creationTestEntity = new EventTypeDTO("eventType", null, recurrenceConfigurations.get(1));
-        final EventTypeDTO creationTestEntity2 = new EventTypeDTO("eventType2", null, recurrenceConfigurations.get(2));
+        final EventTypeDTO creationTestEntity = new EventTypeDTO("eventType", null, recurrenceConfigurations.get(1), new ArrayList<>());
+        final EventTypeDTO creationTestEntity2 = new EventTypeDTO("eventType2", null, recurrenceConfigurations.get(2), new ArrayList<>());
 
         final Response response = given().contentType(ContentType.JSON)
                 .when().body(creationTestEntity).post("/eventTypes")
