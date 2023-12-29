@@ -28,7 +28,7 @@ public class PersistenceManagerProvider implements ManagerProvider {
     }
 
     @Override
-    public DomainEntityManager<UserEntity> getUserManager() {
-        return new DefaultEntityManager<>(entityManager, UserEntity.class);
+    public UserEntityManager getUserManager() {
+        return new UserEntityManager(entityManager);
     }
 }

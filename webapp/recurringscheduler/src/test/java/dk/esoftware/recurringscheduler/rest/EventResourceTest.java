@@ -35,12 +35,6 @@ public class EventResourceTest extends DefaultCRUDResourceTest<EventDTO> {
 
     @BeforeEach
     void setUp() throws IOException {
-        given()
-                .when().post("/admin/init")
-                .then().statusCode(200)
-                .body(is("Ensured proper initialization"));
-
-
         final byte[] byteArray = given().when().get("/recurrenceConfigurations").getBody().asByteArray();
         List<RecurrenceConfigurationDTO> recurrenceConfigurations = new ObjectMapper()
                 .readValue(

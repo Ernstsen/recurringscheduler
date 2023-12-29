@@ -17,7 +17,26 @@ public class DefaultInitializationUtility {
     private static final Map<String, Supplier<RecurrenceConfiguration>> defaults = getDefaults();
 
     @Transactional
-    public static void InitializeStorageWithDefaults(EntityManager entityManager) {
+    public static void InitializeStorageWithDefaults(EntityManager entityManager, UserEntity adminUser) {
+        initializeDefaultRecurrenceConfigurations(entityManager);
+        createAdminUser(entityManager, adminUser);
+    }
+
+    private static void createAdminUser(EntityManager entityManager, UserEntity adminUser) {
+        final UserEntityManager userManager = new UserEntityManager(entityManager);
+
+        final UserEntity existingAdmin = userManager.getUserByEmail(adminUser.getEmail());
+
+        if (existingAdmin != null) {
+            logger.info("Admin user already exists in DB - skipping creation, but updating values");
+            existingAdmin.setName(adminUser.getName());
+        } else {
+            logger.info("Did not find admin user in DB - creating it");
+            userManager.createEntity(adminUser);
+        }
+    }
+
+    private static void initializeDefaultRecurrenceConfigurations(EntityManager entityManager) {
         for (String name : defaults.keySet()) {
 
             final List defaultConfig = entityManager.createQuery("select rc from RecurrenceConfiguration rc where rc.name = :defaultName")

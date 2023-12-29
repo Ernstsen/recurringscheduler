@@ -13,11 +13,6 @@ public class AdminResourceTest {
     @Test
     void testOverviewEndpointPostInitialization() {
         given()
-                .when().post("/admin/init")
-                .then().statusCode(200)
-                .body(is("Ensured proper initialization"));
-
-        given()
                 .when().get("/admin/overview")
                 .then()
                 .body(

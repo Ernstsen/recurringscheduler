@@ -34,11 +34,6 @@ public class RecurrenceConfigurationResourceTest extends DefaultCRUDResourceTest
     @Test
     void testOverviewEndpointPostInitialization() {
         given()
-                .when().post("/admin/init")
-                .then().statusCode(200)
-                .body(is("Ensured proper initialization"));
-
-        given()
                 .when().get("/recurrenceConfigurations")
                 .then()
                 .body(
@@ -46,5 +41,14 @@ public class RecurrenceConfigurationResourceTest extends DefaultCRUDResourceTest
                         containsString("Once a month"),
                         containsString("Twice a year")
                 );
+
+        given()
+                .when().get("/users")
+                .then()
+                .body(
+                        containsString("admin@localhost"),
+                        containsString("admin")
+                );
+
     }
 }

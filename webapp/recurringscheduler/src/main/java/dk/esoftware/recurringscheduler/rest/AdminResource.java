@@ -21,17 +21,6 @@ public class AdminResource {
     @Inject
     EntityManager entityManager;
 
-    @POST
-    @Produces(MediaType.TEXT_PLAIN)
-    @Transactional
-    @Path("/init")
-    @Consumes
-    public String initialize() {
-        DefaultInitializationUtility.InitializeStorageWithDefaults(entityManager);
-
-        return "Ensured proper initialization";
-    }
-
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
