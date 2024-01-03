@@ -1,42 +1,44 @@
 import {Context, createContext, FC, ReactNode, useContext, useMemo} from "react";
-import {useNavigate} from "react-router-dom";
 import {useLocalStorage} from "../utilities/useLocalStorage.ts";
-import {User} from "../model/User.ts";
+import useAuthenticationClient from "../client/AuthenticationClient.ts";
+import {AuthenticationResponse} from "../model/AuthenticationResponse.ts";
 
 // @ts-ignore
 const AuthContext: Context<AuthControl> = createContext();
 
 export interface AuthControl {
-    user: User | null,
-    login: (data: User) => void,
+    authentication: AuthenticationResponse | undefined,
+    login: (email: string, password: string) => Promise<AuthenticationResponse>,
     logout: () => void
 }
-
-// https://blog.logrocket.com/complete-guide-authentication-with-react-router-v6/
 
 interface AuthProviderProps {
     children?: ReactNode
 }
 
-export const AuthProvider : FC<AuthProviderProps> = ({children}) => {
-    const [user, setUser] = useLocalStorage("user", null);
-    const navigate = useNavigate();
+export const AuthProvider: FC<AuthProviderProps> = ({children}) => {
+    const [user, setUser] = useLocalStorage("user", new AuthenticationResponse(undefined, undefined));
+    const [doLogin] = useAuthenticationClient()
 
     // call this function when you want to authenticate the user
-    const login = async (data: any) => {
-        setUser(data);
-        navigate("/");
+    const login = async (email: string, password: string): Promise<AuthenticationResponse> => {
+        return doLogin(email, password)
+            .then((loggedInResponse) => {
+                console.log("User logged in", loggedInResponse);
+                setUser(loggedInResponse);
+                return loggedInResponse;
+            }, (error) => {
+                return Promise.reject(error);
+            })
     };
 
-    // call this function to sign out logged in user
     const logout = () => {
-        setUser(null);
-        navigate("/Login", {replace: true});
+        setUser(undefined);
     };
 
-    const value : AuthControl = useMemo(
+    const value: AuthControl = useMemo(
         () => ({
-            user,
+            authentication: user,
             login,
             logout
         }),

@@ -10,17 +10,16 @@ import EventTypesPage from "./pages/EventTypesPage.tsx";
 import EventsPage from "./pages/EventsPage.tsx";
 import RecurrenceConfigurationsPage from "./pages/RecurrenceConfigurationsPage.tsx";
 import {AuthControl, AuthProvider, useAuth} from "./authentication/UseAuthentication.tsx";
-import {User} from "./model/User.ts";
 import LoginPage from "./authentication/LoginPage.tsx";
 
 
 export const ProtectedRoute: FC<{ children?: ReactNode }> = ({children}) => {
     const authMemory: AuthControl = useAuth();
     const navigate = useNavigate();
-    let authUser: User | null = authMemory.user;
+    let authUser = authMemory.authentication;
 
-    if (!authUser) {
-        console.log("This is a protected route - No user is logged in");
+    if (!authUser?.token) {
+        console.log("This is a protected route - No user is logged in", authUser);
         useEffect(() => navigate("/Login", {replace: true}), [authUser]);
     }
 
@@ -31,11 +30,11 @@ export const ProtectedRoute: FC<{ children?: ReactNode }> = ({children}) => {
 const router = createBrowserRouter([
     {
         path: "/Login",
-        element: <AuthProvider> <LoginPage/> </AuthProvider>,
+        element:  <LoginPage/>,
     },
     {
         path: "/",
-        element: <AuthProvider> <ProtectedRoute> <Frame/> </ProtectedRoute> </AuthProvider>,
+        element: <ProtectedRoute> <Frame/> </ProtectedRoute>,
         errorElement: <ErrorPage/>,
         children: [
             {
@@ -82,6 +81,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-        <RouterProvider router={router}/>
+        <AuthProvider>
+            <RouterProvider router={router}/>
+        </AuthProvider>
     </React.StrictMode>,
 )

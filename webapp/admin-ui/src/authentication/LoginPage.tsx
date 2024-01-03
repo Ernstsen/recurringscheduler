@@ -1,11 +1,14 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Button, Grid, Paper, TextField, Typography} from '@mui/material';
 import {AuthControl, useAuth} from "./UseAuthentication.tsx";
 import useStyles from './LoginPage.module.css';
-import {User} from "../model/User.ts";
+import {useNavigate} from "react-router-dom";
 
 const LoginPage: React.FC = () => {
     const authMemory: AuthControl = useAuth();
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+    let navigate = useNavigate();
 
     return (
         <Grid container className={useStyles.container} justifyContent="center" alignItems="center">
@@ -18,11 +21,14 @@ const LoginPage: React.FC = () => {
                         variant="outlined"
                         margin="normal"
                         fullWidth
-                        id="username"
-                        label="Username"
-                        name="username"
-                        autoComplete="username"
+                        id="email"
+                        label="Email Address"
+                        type="email"
+                        name="email"
+                        autoComplete="email"
                         autoFocus
+                        onChange={(event) => setEmail(event.target.value)}
+                        value={email}
                     />
                     <TextField
                         variant="outlined"
@@ -33,6 +39,8 @@ const LoginPage: React.FC = () => {
                         type="password"
                         id="password"
                         autoComplete="current-password"
+                        onChange={(event) => setPassword(event.target.value)}
+                        value={password}
                     />
                     <Button
                         type="submit"
@@ -42,7 +50,10 @@ const LoginPage: React.FC = () => {
                         className={useStyles.submitButton}
                         onClick={() => {
                             console.log("Logging in!")
-                            authMemory.login(new User(null, "test", "test"))
+                            authMemory.login(email, password).then((authResponse) => {
+                                console.log("Logged in!", authResponse)
+                                navigate("/");
+                            })
                         }}
                     >
                         Login

@@ -2,6 +2,7 @@ package dk.esoftware.recurringscheduler.rest;
 
 import dk.esoftware.recurringscheduler.domain.ManagerProvider;
 import dk.esoftware.recurringscheduler.persistence.UserEntity;
+import dk.esoftware.recurringscheduler.rest.dto.AuthenticationResponse;
 import dk.esoftware.recurringscheduler.rest.dto.LoginRequest;
 import dk.esoftware.recurringscheduler.rest.dto.UserDTO;
 import jakarta.inject.Inject;
@@ -33,7 +34,7 @@ public class AuthenticationResource {
 
         final UserEntity userEntity = managerProvider.getUserManager().getUserByEmail(loginRequest.email());
 
-        return Response.status(201).entity(UserDTO.createUserDTO(userEntity)).build();
+        return Response.status(201).entity(new AuthenticationResponse("token", UserDTO.createUserDTO(userEntity))).build();
     }
 
 
