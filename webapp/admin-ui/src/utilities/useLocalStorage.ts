@@ -1,5 +1,3 @@
-import {useState} from "react";
-
 export function useLocalStorage<T>(keyName: string, defaultValue: T | undefined):
     [T | undefined, (newValue: T | undefined) => void] {
 
@@ -12,7 +10,7 @@ export function useLocalStorage<T>(keyName: string, defaultValue: T | undefined)
                 return parse as T;
             } else {
                 console.log("No value found for key " + keyName + " in local storage, using default value");
-                // window.localStorage.setItem(keyName, JSON.stringify(defaultValue));
+                window.localStorage.setItem(keyName, JSON.stringify(defaultValue));
                 return defaultValue;
             }
         } catch (err) {
@@ -21,16 +19,14 @@ export function useLocalStorage<T>(keyName: string, defaultValue: T | undefined)
     }
 
     let stateFromWindow: T | undefined = readFromWindow();
-    const [storedValue, setStoredValue] = useState<T | undefined>(stateFromWindow);
 
     const setValue = (newValue: T | undefined) => {
         try {
             console.log("Setting new value: ", newValue)
             window.localStorage.setItem(keyName, JSON.stringify(newValue));
-            setStoredValue(defaultValue);
         } catch (err) {
             throw new Error("Failed to store value in local storage: " + err);
         }
     };
-    return [storedValue, setValue];
+    return [stateFromWindow, setValue];
 }
