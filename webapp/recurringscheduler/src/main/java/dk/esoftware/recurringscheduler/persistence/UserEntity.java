@@ -23,6 +23,17 @@ public class UserEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<UserCredential> userCredentials = new LinkedHashSet<>();
+
+    public Set<UserCredential> getUserCredentialses() {
+        return userCredentials;
+    }
+
+    public void setUserCredentialses(Set<UserCredential> userCredentials) {
+        this.userCredentials = userCredentials;
+    }
+
     public UserEntity() {
     }
 
