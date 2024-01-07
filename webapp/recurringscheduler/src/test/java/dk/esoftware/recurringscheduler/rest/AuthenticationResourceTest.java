@@ -53,5 +53,27 @@ public class AuthenticationResourceTest {
         response.then().body(containsString("Wrong username or password"));
     }
 
+    @Test
+    void testLoginGivesErrorDescriptionIfNoPasswordGiven() {
+        final Response response = given()
+                .when().contentType(ContentType.JSON).body(new LoginRequest(DEFAULT_ADMIN_EMAIL, null))
+                .post("/authentication/login")
+                .thenReturn();
+
+        assertEquals(400, response.statusCode());
+        response.then().body(containsString("Must supply both email and password to sign in"));
+    }
+
+    @Test
+    void testLoginGivesErrorDescriptionIfNoEmailGiven() {
+        final Response response = given()
+                .when().contentType(ContentType.JSON).body(new LoginRequest(null, DEFAULT_ADMIN_PASSWORD + DEFAULT_ADMIN_PASSWORD))
+                .post("/authentication/login")
+                .thenReturn();
+
+        assertEquals(400, response.statusCode());
+        response.then().body(containsString("Must supply both email and password to sign in"));
+    }
+
 
 }
