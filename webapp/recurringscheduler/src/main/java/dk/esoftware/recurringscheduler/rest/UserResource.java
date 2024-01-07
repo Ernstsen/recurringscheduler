@@ -95,7 +95,7 @@ public class UserResource {
                     .forEach(evenType -> entity.getEventTypes().add(evenType));
         }
 
-        return Response.status(201).entity(entity).build();
+        return Response.status(201).entity(UserDTO.createUserDTO(entity)).build();
     }
 
     @DELETE

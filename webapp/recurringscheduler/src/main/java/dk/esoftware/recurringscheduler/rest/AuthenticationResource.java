@@ -29,10 +29,21 @@ public class AuthenticationResource {
 
         if (loginRequest.email() == null || loginRequest.email().isBlank()
                 || loginRequest.password() == null || loginRequest.password().isBlank()) {
-            return Response.status(400).build();
+            return Response.status(400).entity("Must supply both email and password to sign in").build();
         }
 
         final UserEntity userEntity = managerProvider.getUserManager().getUserByEmail(loginRequest.email());
+
+        if(userEntity == null) {
+            return Response.status(401).entity("Wrong username or password").build();
+        }
+
+        final boolean passwordMatches = userEntity.getUserCredentialses().stream()
+                .anyMatch(userCredentialsEntity -> userCredentialsEntity.getValue().equals(loginRequest.password()));
+
+        if(!passwordMatches) {
+            return Response.status(401).entity("Wrong username or password").build();
+        }
 
         return Response.status(201).entity(new AuthenticationResponse("token", UserDTO.createUserDTO(userEntity))).build();
     }

@@ -17,12 +17,12 @@ public class DefaultInitializationUtility {
     private static final Map<String, Supplier<RecurrenceConfiguration>> defaults = getDefaults();
 
     @Transactional
-    public static void InitializeStorageWithDefaults(EntityManager entityManager, UserEntity adminUser) {
+    public static void initializeStorageWithDefaults(EntityManager entityManager, UserEntity adminUser, String adminPassword) {
         initializeDefaultRecurrenceConfigurations(entityManager);
-        createAdminUser(entityManager, adminUser);
+        createAdminUser(entityManager, adminUser, adminPassword);
     }
 
-    private static void createAdminUser(EntityManager entityManager, UserEntity adminUser) {
+    private static void createAdminUser(EntityManager entityManager, UserEntity adminUser, String adminPassword) {
         final UserEntityManager userManager = new UserEntityManager(entityManager);
 
         final UserEntity existingAdmin = userManager.getUserByEmail(adminUser.getEmail());
@@ -33,6 +33,7 @@ public class DefaultInitializationUtility {
         } else {
             logger.info("Did not find admin user in DB - creating it");
             userManager.createEntity(adminUser);
+            adminUser.getUserCredentialses().add(new UserCredential(adminUser,  adminPassword, null));
         }
     }
 

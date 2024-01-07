@@ -15,8 +15,10 @@ public class DefaultInitializer {
     public DefaultInitializer(
             EntityManager em,
             @ConfigProperty(name = "ADMIN_ACCOUNT_EMAIL", defaultValue = "admin@localhost") String adminEmail,
-            @ConfigProperty(name = "ADMIN_ACCOUNT_NAME", defaultValue = "admin") String adminName) {
-        DefaultInitializationUtility.InitializeStorageWithDefaults(em, new UserEntity(adminEmail, adminName));
+            @ConfigProperty(name = "ADMIN_ACCOUNT_NAME", defaultValue = "admin") String adminName,
+            @ConfigProperty(name = "ADMIN_ACCOUNT_PASSWORD", defaultValue = "superSecretPassword123") String adminPassword
+            ) {
+        DefaultInitializationUtility.initializeStorageWithDefaults(em, new UserEntity(adminEmail, adminName), adminPassword);
         logger.info("Successfully initialized DB with default values");
     }
 
