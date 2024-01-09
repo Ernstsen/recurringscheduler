@@ -7,7 +7,7 @@ public interface ManagerProvider {
     DomainEntityManager<EventType> getEventTypeManager();
     DomainEntityManager<Event> getEventManager();
 
-    DomainEntityManager<RecurrenceConfiguration> getRecurranceConfigurationManager();
+    DomainEntityManager<RecurrenceConfiguration> getRecurrenceConfigurationManager();
 
     UserEntityManager getUserManager();
 }

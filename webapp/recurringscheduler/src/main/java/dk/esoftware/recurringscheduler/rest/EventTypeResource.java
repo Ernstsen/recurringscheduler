@@ -31,7 +31,7 @@ public class EventTypeResource {
     @Consumes({MediaType.APPLICATION_JSON})
     @Transactional
     public Response createEventType(EventTypeDTO configurationDTO) {
-        final RecurrenceConfiguration recurrenceConfiguration = managerProvider.getRecurranceConfigurationManager().getEntity(configurationDTO.recurrenceConfiguration().id());
+        final RecurrenceConfiguration recurrenceConfiguration = managerProvider.getRecurrenceConfigurationManager().getEntity(configurationDTO.recurrenceConfiguration().id());
 
         final EventType eventType = new EventType(configurationDTO.name(), recurrenceConfiguration);
         managerProvider.getEventTypeManager().createEntity(eventType);
@@ -72,7 +72,7 @@ public class EventTypeResource {
             return Response.status(400).entity("Id from path and payload must match").build();
         }
 
-        final RecurrenceConfiguration targetRecurrenceConfiguration = managerProvider.getRecurranceConfigurationManager().getEntity(payload.recurrenceConfiguration().id());
+        final RecurrenceConfiguration targetRecurrenceConfiguration = managerProvider.getRecurrenceConfigurationManager().getEntity(payload.recurrenceConfiguration().id());
 
         final EventType entity = managerProvider.getEventTypeManager().getEntity(id);
         entity.setName(payload.name());
@@ -82,7 +82,7 @@ public class EventTypeResource {
             payload.participatingUsers().stream()
                     .map(t -> managerProvider.getUserManager().getEntity(t.getId()))
                     .forEach(t -> entity.getParticipatingUsers().add(t));
-            
+
             entity.getParticipatingUsers().removeIf(t -> payload.participatingUsers().stream().noneMatch(u -> u.getId().equals(t.getId())));
         }
 

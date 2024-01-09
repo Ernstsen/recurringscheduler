@@ -25,7 +25,7 @@ public class RecurrenceConfigurationResource {
     @Transactional
     public Response createRecurrenceConfiguration(RecurrenceConfigurationDTO configurationDTO) {
         final RecurrenceConfiguration newConfiguration = new RecurrenceConfiguration(configurationDTO.name(), configurationDTO.timeUnit(), configurationDTO.occurrencesPerTimePeriod());
-        managerProvider.getRecurranceConfigurationManager().createEntity(newConfiguration);
+        managerProvider.getRecurrenceConfigurationManager().createEntity(newConfiguration);
 
         return Response.status(201).entity(RecurrenceConfigurationDTO.createRecurrenceConfigurationDTO(newConfiguration)).build();
     }
@@ -34,7 +34,7 @@ public class RecurrenceConfigurationResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public List<RecurrenceConfigurationDTO> getRecurrenceConfigurations() {
-        final List<RecurrenceConfiguration> entities = managerProvider.getRecurranceConfigurationManager().getEntities();
+        final List<RecurrenceConfiguration> entities = managerProvider.getRecurrenceConfigurationManager().getEntities();
         return entities.stream().map(RecurrenceConfigurationDTO::createRecurrenceConfigurationDTO).collect(Collectors.toList());
     }
 
@@ -43,7 +43,7 @@ public class RecurrenceConfigurationResource {
     @Path("/{id}")
     @Transactional
     public Response getRecurrenceConfiguration(@PathParam("id") UUID id) {
-        final RecurrenceConfiguration entity = managerProvider.getRecurranceConfigurationManager().getEntity(id);
+        final RecurrenceConfiguration entity = managerProvider.getRecurrenceConfigurationManager().getEntity(id);
 
         if(entity != null){
             return Response.ok().entity(RecurrenceConfigurationDTO.createRecurrenceConfigurationDTO(entity)).build();
@@ -63,7 +63,7 @@ public class RecurrenceConfigurationResource {
             return Response.status(400).entity("Id from path and payload must match").build();
         }
 
-        final RecurrenceConfiguration entity = managerProvider.getRecurranceConfigurationManager().getEntity(id);
+        final RecurrenceConfiguration entity = managerProvider.getRecurrenceConfigurationManager().getEntity(id);
         entity.setName(payload.name());
         entity.setOccurrencesPerTimePeriod(payload.occurrencesPerTimePeriod());
         entity.setTimeUnit(payload.timeUnit());
@@ -76,7 +76,7 @@ public class RecurrenceConfigurationResource {
     @Path("/{id}")
     @Transactional
     public Response deleteRecurrenceConfiguration(@PathParam("id") UUID id) {
-        managerProvider.getRecurranceConfigurationManager().deleteEntity(id);
+        managerProvider.getRecurrenceConfigurationManager().deleteEntity(id);
         return Response.ok().build();
     }
 
