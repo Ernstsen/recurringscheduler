@@ -9,5 +9,7 @@ public interface ManagerProvider {
 
     DomainEntityManager<RecurrenceConfiguration> getRecurrenceConfigurationManager();
 
+    DomainEntityManager<AuthenticatedSession> getAuthenticatedSessionManager();
+
     UserEntityManager getUserManager();
 }

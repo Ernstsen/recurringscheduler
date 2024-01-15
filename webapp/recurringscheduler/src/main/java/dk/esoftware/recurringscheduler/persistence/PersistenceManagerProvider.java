@@ -28,6 +28,11 @@ public class PersistenceManagerProvider implements ManagerProvider {
     }
 
     @Override
+    public DomainEntityManager<AuthenticatedSession> getAuthenticatedSessionManager() {
+        return new DefaultEntityManager<>(entityManager, AuthenticatedSession.class);
+    }
+
+    @Override
     public UserEntityManager getUserManager() {
         return new UserEntityManager(entityManager);
     }

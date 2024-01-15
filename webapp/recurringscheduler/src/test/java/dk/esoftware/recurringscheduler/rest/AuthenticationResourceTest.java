@@ -12,6 +12,7 @@ import java.io.IOException;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -75,5 +76,34 @@ public class AuthenticationResourceTest {
         response.then().body(containsString("Must supply both email and password to sign in"));
     }
 
+    @Test
+    void isAuthenticatedReturnsFalseIfNoTokenIsGiven() {
+        final Response response = given()
+                .when().contentType(ContentType.JSON)
+                .get("/authentication/isAuthenticated")
+                .thenReturn();
 
+        assertEquals(401, response.statusCode());
+        response.then().body(is("false"));
+    }
+
+    @Test
+    void isAuthenticatedIsTrueIfTokenIsGiven() throws IOException {
+        final Response loginResponse = given()
+                .when().contentType(ContentType.JSON).body(new LoginRequest(DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD))
+                .post("/authentication/login")
+                .thenReturn();
+
+        assertEquals(201, loginResponse.statusCode());
+
+        final AuthenticationResponse authenticationResponse = mapper.readValue(loginResponse.asByteArray(), AuthenticationResponse.class);
+
+        final Response response = given()
+                .when().contentType(ContentType.JSON).header("Authorization", "Bearer " + authenticationResponse.token())
+                .get("/authentication/isAuthenticated")
+                .thenReturn();
+
+        assertEquals(200, response.statusCode());
+        response.then().body(is("true"));
+    }
 }
