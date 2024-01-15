@@ -54,6 +54,7 @@ public class AuthenticationResource {
 
     @GET
     @Path("/isAuthenticated")
+    @Produces({MediaType.APPLICATION_JSON})
     public Response isAuthenticated(@Context HttpHeaders headers) {
         final String authorizationHeader = headers.getHeaderString(HttpHeaders.AUTHORIZATION);
 
