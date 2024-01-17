@@ -27,11 +27,25 @@ public class UserCredential {
     @JdbcTypeCode(SqlTypes.NVARCHAR)
     private String metadata;
 
+    @Enumerated
+    @Column(name = "credential_type", nullable = false)
+    @JdbcTypeCode(SqlTypes.NVARCHAR)
+    private CredentialType credentialType;
+
+    public CredentialType getCredentialType() {
+        return credentialType;
+    }
+
+    public void setCredentialType(CredentialType credentialType) {
+        this.credentialType = credentialType;
+    }
+
     public UserCredential() {
     }
 
-    public UserCredential(UserEntity user, String value, String metadata) {
+    public UserCredential(UserEntity user, CredentialType credentialType, String value, String metadata) {
         this.user = user;
+        this.credentialType = credentialType;
         this.value = value;
         this.metadata = metadata;
     }
@@ -51,6 +65,8 @@ public class UserCredential {
     public void setValue(String value) {
         this.value = value;
     }
+
+
 ////    TODO: Type
 //
 
@@ -63,4 +79,8 @@ public class UserCredential {
     }
 
 
+    public static enum CredentialType {
+        PASSWORD,
+        COLLECT_TOKEN
+    }
 }

@@ -45,11 +45,11 @@ public class UserEntity {
         this.authenticatedSessions = authenticatedSessions;
     }
 
-    public Set<UserCredential> getUserCredentialses() {
+    public Set<UserCredential> getUserCredentials() {
         return userCredentials;
     }
 
-    public void setUserCredentialses(Set<UserCredential> userCredentials) {
+    public void setUserCredentials(Set<UserCredential> userCredentials) {
         this.userCredentials = userCredentials;
     }
 

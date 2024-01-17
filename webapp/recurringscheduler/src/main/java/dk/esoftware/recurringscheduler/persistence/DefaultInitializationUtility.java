@@ -1,5 +1,6 @@
 package dk.esoftware.recurringscheduler.persistence;
 
+import dk.esoftware.recurringscheduler.domain.AuthenticationManager;
 import dk.esoftware.recurringscheduler.domain.TimeUnit;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
@@ -33,7 +34,7 @@ public class DefaultInitializationUtility {
         } else {
             logger.info("Did not find admin user in DB - creating it");
             userManager.createEntity(adminUser);
-            adminUser.getUserCredentialses().add(new UserCredential(adminUser,  adminPassword, null));
+            new AuthenticationManager().setPassword(adminUser, adminPassword);
         }
     }
 

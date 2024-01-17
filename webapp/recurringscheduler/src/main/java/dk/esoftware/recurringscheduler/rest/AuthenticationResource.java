@@ -1,11 +1,11 @@
 package dk.esoftware.recurringscheduler.rest;
 
 import dk.esoftware.recurringscheduler.domain.ManagerProvider;
+import dk.esoftware.recurringscheduler.domain.RecurringSchedulerAdministration;
 import dk.esoftware.recurringscheduler.persistence.AuthenticatedSession;
 import dk.esoftware.recurringscheduler.persistence.UserEntity;
 import dk.esoftware.recurringscheduler.rest.dto.AuthenticationResponse;
 import dk.esoftware.recurringscheduler.rest.dto.LoginRequest;
-import dk.esoftware.recurringscheduler.rest.dto.UserDTO;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
@@ -21,6 +21,9 @@ public class AuthenticationResource {
 
     @Inject
     ManagerProvider managerProvider;
+
+    @Inject
+    RecurringSchedulerAdministration recurringSchedulerAdministration;
 
     @POST
     @Path("/login")
@@ -39,17 +42,13 @@ public class AuthenticationResource {
             return Response.status(401).entity("Wrong username or password").build();
         }
 
-        final boolean passwordMatches = userEntity.getUserCredentialses().stream()//TODO: THIS IS HORRIBLE
-                .anyMatch(userCredentialsEntity -> userCredentialsEntity.getValue().equals(loginRequest.password()));
+        final AuthenticationResponse authResponse = recurringSchedulerAdministration.authenticate(loginRequest.email(), loginRequest.password());
 
-        if (!passwordMatches) {
+        if (authResponse == null) {
             return Response.status(401).entity("Wrong username or password").build();
         }
 
-        final AuthenticatedSession entity = new AuthenticatedSession(userEntity);
-        managerProvider.getAuthenticatedSessionManager().createEntity(entity);
-
-        return Response.status(201).entity(new AuthenticationResponse(entity.getId().toString(), UserDTO.createUserDTO(userEntity))).build();
+        return Response.status(201).entity(authResponse).build();
     }
 
     @GET
