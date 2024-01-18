@@ -29,7 +29,7 @@ public class UserCredential {
 
     @Enumerated
     @Column(name = "credential_type", nullable = false)
-    @JdbcTypeCode(SqlTypes.NVARCHAR)
+    @JdbcTypeCode(SqlTypes.INTEGER)
     private CredentialType credentialType;
 
     public CredentialType getCredentialType() {
@@ -50,6 +50,10 @@ public class UserCredential {
         this.metadata = metadata;
     }
 
+    public UUID getId() {
+        return id;
+    }
+
     public String getMetadata() {
         return metadata;
     }
@@ -66,10 +70,6 @@ public class UserCredential {
         this.value = value;
     }
 
-
-////    TODO: Type
-//
-
     public UserEntity getUser() {
         return user;
     }
@@ -79,7 +79,7 @@ public class UserCredential {
     }
 
 
-    public static enum CredentialType {
+    public enum CredentialType {
         PASSWORD,
         COLLECT_TOKEN
     }

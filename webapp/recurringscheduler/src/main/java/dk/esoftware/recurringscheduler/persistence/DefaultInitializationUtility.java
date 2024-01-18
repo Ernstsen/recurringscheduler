@@ -34,7 +34,7 @@ public class DefaultInitializationUtility {
         } else {
             logger.info("Did not find admin user in DB - creating it");
             userManager.createEntity(adminUser);
-            new AuthenticationManager().setPassword(adminUser, adminPassword);
+            new AuthenticationManager(entityManager).setPassword(adminUser, adminPassword);
         }
     }
 
