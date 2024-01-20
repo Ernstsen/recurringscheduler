@@ -9,6 +9,8 @@ import dk.esoftware.recurringscheduler.rest.dto.UserDTO;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
+import java.util.UUID;
+
 @Singleton
 public class RecurringSchedulerAdministration {
 
@@ -47,5 +49,13 @@ public class RecurringSchedulerAdministration {
         return new AuthenticationResponse(session.getId().toString(), UserDTO.createUserDTO(user));
     }
 
+    public boolean isUserAuthenticated(String token) {
+        if (token == null) {
+            return false;
+        }
 
+        final AuthenticatedSession session = managerProvider.getAuthenticatedSessionManager().getEntity(UUID.fromString(token));
+
+        return session != null;
+    }
 }

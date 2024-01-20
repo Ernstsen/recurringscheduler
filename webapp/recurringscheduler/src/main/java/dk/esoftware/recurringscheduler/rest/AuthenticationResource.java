@@ -55,20 +55,13 @@ public class AuthenticationResource {
     @Path("/isAuthenticated")
     @Produces({MediaType.APPLICATION_JSON})
     public Response isAuthenticated(@Context HttpHeaders headers) {
-        final String authorizationHeader = headers.getHeaderString(HttpHeaders.AUTHORIZATION);
+        final String token = HeaderUtilities.getAuthorizationHeader(headers);
+        final boolean isAuthenticated = recurringSchedulerAdministration.isUserAuthenticated(token);
 
-        if (authorizationHeader == null || authorizationHeader.isBlank()) {
-            return Response.status(401).entity(false).build();
-        }
-
-        final String token = authorizationHeader.replace("Bearer ", "");
-
-        final AuthenticatedSession sessions = managerProvider.getAuthenticatedSessionManager().getEntity(UUID.fromString(token));
-
-        if(sessions == null) {
-            return Response.status(401).entity(false).build();
-        } else {
+        if (isAuthenticated) {
             return Response.status(200).entity(true).build();
+        } else {
+            return Response.status(401).entity(false).build();
         }
     }
 }

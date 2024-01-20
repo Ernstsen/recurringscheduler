@@ -189,6 +189,7 @@ public abstract class DefaultCRUDResourceTest<T extends Identifiable> {
         final T creationTestEntity = createNewEntity();
 
         final Response response = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login().token())
                 .when().body(creationTestEntity).post(endpoint)
                 .thenReturn();
 
@@ -197,17 +198,21 @@ public abstract class DefaultCRUDResourceTest<T extends Identifiable> {
         compareFieldExceptId(creationTestEntity, createdEntity);
 
         given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login().token())
+
                 .when().delete(endpoint + "/" + createdEntity.getId().toString())
                 .then().statusCode(200);
 
         given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login().token())
+
                 .when().get(endpoint + "/" + createdEntity.getId().toString())
                 .then().statusCode(404);
 
     }
 
     @Test
-    void testCreateAndAunauthorizedDelete() throws IOException {
+    void testCreateAndUnauthorizedDelete() throws IOException {
         // Create entity
         final T creationTestEntity = createNewEntity();
 
@@ -225,6 +230,7 @@ public abstract class DefaultCRUDResourceTest<T extends Identifiable> {
                 .then().statusCode(401);
 
         given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login().token())
                 .when().get(endpoint + "/" + createdEntity.getId().toString())
                 .then().statusCode(200);
 

@@ -7,15 +7,19 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.persistence.EntityManager;
 
+import java.util.UUID;
+
 @Singleton
 public class AuthenticationManager {
 
+    private final DefaultEntityManager<UserCredential> credentialManager;
+    private final DefaultEntityManager<UserCredential> sessionManager;
+
     @Inject
     public AuthenticationManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
+        credentialManager = new DefaultEntityManager<>(entityManager, UserCredential.class);
+        sessionManager = new DefaultEntityManager<>(entityManager, UserCredential.class);
     }
-
-    EntityManager entityManager;
 
     boolean verifyPassword(UserEntity user, String password) {
         if (user == null) {
@@ -29,7 +33,6 @@ public class AuthenticationManager {
     }
 
     public void setPassword(UserEntity user, String password) {
-        final DefaultEntityManager<UserCredential> credentialManager = new DefaultEntityManager<>(entityManager, UserCredential.class);
 
         user.getUserCredentials().removeIf(userCredential -> userCredential.getCredentialType() == UserCredential.CredentialType.PASSWORD);
 
@@ -40,6 +43,17 @@ public class AuthenticationManager {
 
     private static boolean passwordsMatch(String password, UserCredential userCredential) {
         return password.equals(userCredential.getValue());
+    }
+
+    public boolean isUserAuthenticated(String token) {
+        if(token == null) {
+            return false;
+        }
+
+        final UserCredential credential = credentialManager.getEntity(UUID.fromString(token));
+
+
+        return credential != null;
     }
 
 }
