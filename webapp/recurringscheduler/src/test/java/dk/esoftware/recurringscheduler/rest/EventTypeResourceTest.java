@@ -34,7 +34,9 @@ public class EventTypeResourceTest extends DefaultCRUDResourceTest<EventTypeDTO>
     @BeforeEach
     void setUp() throws IOException {
         login = login();
-        final byte[] byteArray = given().when().get("/recurrenceConfigurations").getBody().asByteArray();
+        final byte[] byteArray = given().when()
+                .header("Authorization", "Bearer " + login.token())
+                .get("/recurrenceConfigurations").getBody().asByteArray();
         recurrenceConfigurations = new ObjectMapper()
                 .readValue(
                         byteArray,
@@ -42,6 +44,7 @@ public class EventTypeResourceTest extends DefaultCRUDResourceTest<EventTypeDTO>
                         });
 
         final Response getUser = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login.token())
                 .when().get("users")
                 .thenReturn();
 
@@ -54,6 +57,7 @@ public class EventTypeResourceTest extends DefaultCRUDResourceTest<EventTypeDTO>
             final UserDTO userDTO = new UserDTO(null, "testUserForEventType", "test@EventTypeResourceTest.java", new HashSet<>());
 
             final Response createUserResponse = given().contentType(ContentType.JSON)
+                    .header("Authorization", "Bearer " + login.token())
                     .when().body(userDTO).post("users")
                     .thenReturn();
 
