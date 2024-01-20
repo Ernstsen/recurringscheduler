@@ -2,6 +2,7 @@ package dk.esoftware.recurringscheduler.rest;
 
 import dk.esoftware.recurringscheduler.domain.DomainEntityManager;
 import dk.esoftware.recurringscheduler.domain.ManagerProvider;
+import dk.esoftware.recurringscheduler.domain.RecurringSchedulerAdministration;
 import dk.esoftware.recurringscheduler.persistence.EventType;
 import dk.esoftware.recurringscheduler.persistence.UserEntity;
 import dk.esoftware.recurringscheduler.rest.dto.EventTypeDTO;
@@ -9,6 +10,8 @@ import dk.esoftware.recurringscheduler.rest.dto.UserDTO;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -21,16 +24,26 @@ import java.util.stream.Collectors;
 public class UserResource {
 
     @Inject
+    RecurringSchedulerAdministration recurringSchedulerAdministration;
+
+    @Inject
     ManagerProvider managerProvider;
 
     @POST
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
     @Transactional
-    public Response createUser(UserDTO userDTO) {
+    public Response createUser(@Context HttpHeaders headers, UserDTO userDTO) {
+        final String token = HeaderUtilities.getAuthorizationHeader(headers);
+        final boolean isAuthenticated = recurringSchedulerAdministration.isUserAuthenticated(token);
+
+        if (!isAuthenticated) {
+            return Response.status(401).entity("Must be authenticated to create a user").build();
+        }
+
         final UserEntity newUser = new UserEntity(userDTO.email(), userDTO.name());
 
-        if(userDTO.eventTypes() != null){
+        if (userDTO.eventTypes() != null) {
             final DomainEntityManager<EventType> eventTypeManager = managerProvider.getEventTypeManager();
             userDTO.eventTypes().stream()
                     .map(t -> eventTypeManager.getEntity(t.getId()))
@@ -45,19 +58,33 @@ public class UserResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    public List<UserDTO> getUsers() {
+    public Response getUsers(@Context HttpHeaders headers) {
+        final String token = HeaderUtilities.getAuthorizationHeader(headers);
+        final boolean isAuthenticated = recurringSchedulerAdministration.isUserAuthenticated(token);
+
+        if (!isAuthenticated) {
+            return Response.status(401).entity("Must be authenticated to get users").build();
+        }
+
         final List<UserEntity> entities = managerProvider.getUserManager().getEntities();
-        return entities.stream().map(UserDTO::createUserDTO).collect(Collectors.toList());
+        return Response.status(200).entity(entities.stream().map(UserDTO::createUserDTO).collect(Collectors.toList())).build();
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
     @Transactional
-    public Response getUser(@PathParam("id") UUID id) {
+    public Response getUser(@Context HttpHeaders headers, @PathParam("id") UUID id) {
+        final String token = HeaderUtilities.getAuthorizationHeader(headers);
+        final boolean isAuthenticated = recurringSchedulerAdministration.isUserAuthenticated(token);
+
+        if (!isAuthenticated) {
+            return Response.status(401).entity("Must be authenticated to get user").build();
+        }
+
         final UserEntity entity = managerProvider.getUserManager().getEntity(id);
 
-        if(entity != null){
+        if (entity != null) {
             return Response.ok().entity(UserDTO.createUserDTO(entity)).build();
         }
 
@@ -70,7 +97,14 @@ public class UserResource {
     @Consumes({MediaType.APPLICATION_JSON})
     @Path("/{id}")
     @Transactional
-    public Response updateUser(@PathParam("id") UUID id, UserDTO payload) {
+    public Response updateUser(@Context HttpHeaders headers, @PathParam("id") UUID id, UserDTO payload) {
+        final String token = HeaderUtilities.getAuthorizationHeader(headers);
+        final boolean isAuthenticated = recurringSchedulerAdministration.isUserAuthenticated(token);
+
+        if (!isAuthenticated) {
+            return Response.status(401).entity("Must be authenticated to update user").build();
+        }
+
         if (!id.equals(payload.id())) {
             return Response.status(400).entity("Id from path and payload must match").build();
         }
@@ -79,7 +113,7 @@ public class UserResource {
         entity.setName(payload.name());
         entity.setEmail(payload.email());
 
-        if(payload.eventTypes() != null){
+        if (payload.eventTypes() != null) {
             final DomainEntityManager<EventType> eventTypeManager = managerProvider.getEventTypeManager();
 
             final Set<EventTypeDTO> newEventSet = payload.eventTypes();
@@ -102,7 +136,14 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
     @Transactional
-    public Response deleteUser(@PathParam("id") UUID id) {
+    public Response deleteUser(@Context HttpHeaders headers, @PathParam("id") UUID id) {
+        final String token = HeaderUtilities.getAuthorizationHeader(headers);
+        final boolean isAuthenticated = recurringSchedulerAdministration.isUserAuthenticated(token);
+
+        if (!isAuthenticated) {
+            return Response.status(401).entity("Must be authenticated to delete user").build();
+        }
+
         managerProvider.getUserManager().deleteEntity(id);
         return Response.ok().build();
     }
