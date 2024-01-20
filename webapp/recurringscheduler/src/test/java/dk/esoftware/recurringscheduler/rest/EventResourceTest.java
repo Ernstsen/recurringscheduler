@@ -24,7 +24,6 @@ public class EventResourceTest extends DefaultCRUDResourceTest<EventDTO> {
     private static final Random rand = new Random();
     private List<EventTypeDTO> eventTypes;
     private List<UserDTO> users;
-    private AuthenticationResponse auth;
 
     public EventResourceTest() {
         super("events");
@@ -32,7 +31,9 @@ public class EventResourceTest extends DefaultCRUDResourceTest<EventDTO> {
 
     @BeforeEach
     void setUp() throws IOException {
-        final byte[] byteArray = given().when().get("/recurrenceConfigurations").getBody().asByteArray();
+        final AuthenticationResponse login = login();
+        final byte[] byteArray = given().when().header("Authorization", "Bearer " + login.token())
+                .get("/recurrenceConfigurations").getBody().asByteArray();
         List<RecurrenceConfigurationDTO> recurrenceConfigurations = new ObjectMapper()
                 .readValue(
                         byteArray,
@@ -44,10 +45,12 @@ public class EventResourceTest extends DefaultCRUDResourceTest<EventDTO> {
         final EventTypeDTO creationTestEntity2 = new EventTypeDTO("eventType2", null, recurrenceConfigurations.get(2), new ArrayList<>());
 
         final Response response = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login.token())
                 .when().body(creationTestEntity).post("/eventTypes")
                 .thenReturn();
 
         final Response response2 = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login.token())
                 .when().body(creationTestEntity2).post("/eventTypes")
                 .thenReturn();
 
@@ -60,9 +63,11 @@ public class EventResourceTest extends DefaultCRUDResourceTest<EventDTO> {
         UserDTO createUser2 = new UserDTO(null, "User2" + rand.nextInt(), "EventTestUser2" + rand.nextInt() + "@mail.com", null);
 
         final Response userResponse1 = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login.token())
                 .when().body(createUser1).post("/users")
                 .thenReturn();
         final Response userResponse2 = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login.token())
                 .when().body(createUser2).post("/users")
                 .thenReturn();
         users = new ArrayList<>();
