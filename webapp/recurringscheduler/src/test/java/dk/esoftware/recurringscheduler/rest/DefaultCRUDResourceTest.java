@@ -2,7 +2,9 @@ package dk.esoftware.recurringscheduler.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import dk.esoftware.recurringscheduler.rest.dto.AuthenticationResponse;
 import dk.esoftware.recurringscheduler.rest.dto.Identifiable;
+import dk.esoftware.recurringscheduler.rest.dto.LoginRequest;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Assertions;
@@ -17,6 +19,8 @@ import static io.restassured.RestAssured.given;
 public abstract class DefaultCRUDResourceTest<T extends Identifiable> {
 
     public static final ObjectMapper mapper = new ObjectMapper();
+    private static final String email = "admin@localhost";
+    private static final String password = "superSecretPassword123";
     private final String endpoint;
 
     public DefaultCRUDResourceTest(String endpoint) {
@@ -43,6 +47,7 @@ public abstract class DefaultCRUDResourceTest<T extends Identifiable> {
         final T creationTestEntity = createNewEntity();
 
         final Response response = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login().token())
                 .when().body(creationTestEntity).post(endpoint)
                 .thenReturn();
 
@@ -52,11 +57,23 @@ public abstract class DefaultCRUDResourceTest<T extends Identifiable> {
     }
 
     @Test
+    void testCreateEndpointUnauthorized() throws IOException {
+        // Create entity
+        final T creationTestEntity = createNewEntity();
+
+        given().contentType(ContentType.JSON)
+                .when().body(creationTestEntity).post(endpoint)
+                .then()
+                .statusCode(401);
+    }
+
+    @Test
     void testFetchAfterCreateEndpoint() throws IOException {
         // Create entity
         final T creationTestEntity = createNewEntity();
 
         final Response response = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login().token())
                 .when().body(creationTestEntity).post(endpoint)
                 .thenReturn();
 
@@ -64,6 +81,7 @@ public abstract class DefaultCRUDResourceTest<T extends Identifiable> {
 
         // Get the created entity
         final Response getResponse = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login().token())
                 .when().body(creationTestEntity).get(endpoint + "/" + createdConf.getId().toString())
                 .thenReturn();
 
@@ -76,11 +94,30 @@ public abstract class DefaultCRUDResourceTest<T extends Identifiable> {
     }
 
     @Test
+    void testUnauthorizedFetchAfterCreateEndpoint() throws IOException {
+        // Create entity
+        final T creationTestEntity = createNewEntity();
+
+        final Response response = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login().token())
+                .when().body(creationTestEntity).post(endpoint)
+                .thenReturn();
+
+        final T createdConf = mapper.readValue(response.asByteArray(), getEntityClass());
+
+        // Get the created entity
+        given().contentType(ContentType.JSON)
+                .when().body(creationTestEntity).get(endpoint + "/" + createdConf.getId().toString())
+                .then().statusCode(401);
+    }
+
+    @Test
     void testModifyAfterCreateEndpoint() throws IOException {
         // Create new entity
         final T creationTestEntity = createNewEntity();
 
         final Response response = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login().token())
                 .when().body(creationTestEntity).post(endpoint)
                 .thenReturn();
 
@@ -89,6 +126,7 @@ public abstract class DefaultCRUDResourceTest<T extends Identifiable> {
         T modifiedEntity = modifyEntity(createdEntity);
 
         final Response modifyResponse = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login().token())
                 .when().body(modifiedEntity).put(endpoint + "/" + modifiedEntity.getId())
                 .thenReturn();
 
@@ -100,6 +138,7 @@ public abstract class DefaultCRUDResourceTest<T extends Identifiable> {
 
         // Fetch the modified entity
         final Response getResponse = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login().token())
                 .when().body(creationTestEntity).get(endpoint + "/" + modifiedEntity.getId().toString())
                 .thenReturn();
 
@@ -109,6 +148,25 @@ public abstract class DefaultCRUDResourceTest<T extends Identifiable> {
         // Assert that it matches the expected values
         final T getResponseEntity = mapper.readValue(getResponse.asByteArray(), getEntityClass());
         Assertions.assertEquals(receivedModified, getResponseEntity);
+    }
+
+    @Test
+    void testUnauthorizedModifyAfterCreateEndpoint() throws IOException {
+        // Create new entity
+        final T creationTestEntity = createNewEntity();
+
+        final Response response = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login().token())
+                .when().body(creationTestEntity).post(endpoint)
+                .thenReturn();
+
+        // Modify the entity
+        final T createdEntity = mapper.readValue(response.asByteArray(), getEntityClass());
+        T modifiedEntity = modifyEntity(createdEntity);
+
+        given().contentType(ContentType.JSON)
+                .when().body(modifiedEntity).put(endpoint + "/" + modifiedEntity.getId())
+                .then().statusCode(401);
     }
 
     private void compareFieldExceptId(T expected, T actual) {
@@ -148,5 +206,39 @@ public abstract class DefaultCRUDResourceTest<T extends Identifiable> {
 
     }
 
+    @Test
+    void testCreateAndAunauthorizedDelete() throws IOException {
+        // Create entity
+        final T creationTestEntity = createNewEntity();
+
+        final Response response = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login().token())
+                .when().body(creationTestEntity).post(endpoint)
+                .thenReturn();
+
+        // Assert created matches requested
+        final T createdEntity = mapper.readValue(response.asByteArray(), getEntityClass());
+        compareFieldExceptId(creationTestEntity, createdEntity);
+
+        given().contentType(ContentType.JSON)
+                .when().delete(endpoint + "/" + createdEntity.getId().toString())
+                .then().statusCode(401);
+
+        given().contentType(ContentType.JSON)
+                .when().get(endpoint + "/" + createdEntity.getId().toString())
+                .then().statusCode(200);
+
+    }
+
+    protected AuthenticationResponse login() throws IOException {
+        final Response response = given()
+                .when().contentType(ContentType.JSON).body(new LoginRequest(email, password))
+                .post("/authentication/login")
+                .thenReturn();
+
+        Assertions.assertEquals(201, response.statusCode());
+
+        return mapper.readValue(response.asByteArray(), AuthenticationResponse.class);
+    }
 
 }

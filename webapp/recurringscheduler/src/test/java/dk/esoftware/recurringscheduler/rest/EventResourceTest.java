@@ -2,10 +2,7 @@ package dk.esoftware.recurringscheduler.rest;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dk.esoftware.recurringscheduler.rest.dto.EventDTO;
-import dk.esoftware.recurringscheduler.rest.dto.EventTypeDTO;
-import dk.esoftware.recurringscheduler.rest.dto.RecurrenceConfigurationDTO;
-import dk.esoftware.recurringscheduler.rest.dto.UserDTO;
+import dk.esoftware.recurringscheduler.rest.dto.*;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -20,7 +17,6 @@ import java.util.List;
 import java.util.Random;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
 public class EventResourceTest extends DefaultCRUDResourceTest<EventDTO> {
@@ -28,6 +24,7 @@ public class EventResourceTest extends DefaultCRUDResourceTest<EventDTO> {
     private static final Random rand = new Random();
     private List<EventTypeDTO> eventTypes;
     private List<UserDTO> users;
+    private AuthenticationResponse auth;
 
     public EventResourceTest() {
         super("events");
@@ -71,8 +68,6 @@ public class EventResourceTest extends DefaultCRUDResourceTest<EventDTO> {
         users = new ArrayList<>();
         users.add(mapper.readValue(userResponse1.asByteArray(), UserDTO.class));
         users.add(mapper.readValue(userResponse2.asByteArray(), UserDTO.class));
-
-
     }
 
     @Override
