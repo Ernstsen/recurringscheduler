@@ -3,6 +3,8 @@ import {Button, Grid, Paper, TextField, Typography} from '@mui/material';
 import {AuthControl, useAuth} from "./UseAuthentication.tsx";
 import useStyles from './LoginPage.module.css';
 import {useNavigate} from "react-router-dom";
+import Box from "@mui/material/Box";
+import imgUrl from './logo_transparent.png';
 
 const LoginPage: React.FC = () => {
     const authMemory: AuthControl = useAuth();
@@ -14,6 +16,10 @@ const LoginPage: React.FC = () => {
         <Grid container className={useStyles.container} justifyContent="center" alignItems="center">
             <Grid item xs={12} sm={8} md={6}>
                 <Paper className={useStyles.paper} elevation={3}>
+                    <Box sx={{width: 200, height: 200, margin: "auto"}}
+                         component={"img"}
+                         src={imgUrl}
+                    />
                     <Typography variant="h4" gutterBottom>
                         Login
                     </Typography>
