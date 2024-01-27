@@ -1,9 +1,9 @@
-import {AuthenticationResponse} from "../model/AuthenticationResponse.ts";
+import {AuthenticationInformation} from "../model/AuthenticationInformation.ts";
 
 export default function useAuthenticationClient(): [
-    doLogin: (email: string, password: string) => Promise<AuthenticationResponse>,
+    doLogin: (email: string, password: string) => Promise<AuthenticationInformation>,
 ] {
-    const doLogin = async (email: string, password: string): Promise<AuthenticationResponse> => {
+    const doLogin = async (email: string, password: string): Promise<AuthenticationInformation> => {
         return fetch('/api/authentication/login', {
             method: 'POST',
             headers: {

@@ -1,6 +1,6 @@
 import {User} from "./User";
 
-export class AuthenticationResponse {
+export class AuthenticationInformation {
     user?: User
     token?: string;
 

@@ -1,6 +1,7 @@
 import {EventType} from "../model/EventType.ts";
 import {Event} from "../model/Event.ts";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
+import {AuthContext} from "../authentication/UseAuthentication.tsx";
 
 export const createEventFromEventType = async (eventType: EventType): Promise<Event> => {
     return fetch('/api/eventTypes/' + eventType.id + "/createEvent", {
@@ -25,12 +26,23 @@ export default function useEventTypeClient(): [
     eventTypeError: boolean,
     eventTypeLoading: boolean,
 ] {
+    const {authentication} = useContext(AuthContext);
     const [eventTypes, setEventTypes] = useState<EventType[]>([])
     const [eventTypeError, setEventTypeError] = useState(false)
     const [eventTypeLoading, setEventTypeLoading] = useState(true)
 
+    if (!authentication) {
+        console.log("No authentication found, returning empty eventType list")
+        return [eventTypes, () => {
+        }, () => {
+        }, () => {
+        }, true, false]
+    }
+
+    const authenticationToken = authentication.token
+
     useEffect(() => {
-        fetch('/api/eventTypes').then(response => {
+        fetch('/api/eventTypes', {headers: {'Authorization': 'Bearer ' + authenticationToken}}).then(response => {
             if (response.ok) {
                 return response.json()
             } else {
@@ -47,7 +59,8 @@ export default function useEventTypeClient(): [
         fetch('/api/eventTypes', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + authenticationToken
             },
             body: JSON.stringify(eventType)
         }).then(response => {
@@ -66,7 +79,8 @@ export default function useEventTypeClient(): [
         fetch('/api/eventTypes/' + eventType.id + "/", {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + authenticationToken
             },
             body: JSON.stringify(eventType)
         })
@@ -89,7 +103,8 @@ export default function useEventTypeClient(): [
         fetch('/api/eventTypes/' + eventType.id + "/", {
             method: 'DELETE',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + authenticationToken
             },
             body: JSON.stringify(eventType)
         }).then(response => {

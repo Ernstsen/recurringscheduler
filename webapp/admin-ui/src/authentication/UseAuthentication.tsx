@@ -1,14 +1,14 @@
 import {Context, createContext, FC, ReactNode, useContext, useMemo} from "react";
 import {useLocalStorage} from "../utilities/useLocalStorage.ts";
 import useAuthenticationClient from "../client/AuthenticationClient.ts";
-import {AuthenticationResponse} from "../model/AuthenticationResponse.ts";
+import {AuthenticationInformation} from "../model/AuthenticationInformation.ts";
 
 // @ts-ignore
-const AuthContext: Context<AuthControl> = createContext();
+export const AuthContext: Context<AuthControl> = createContext();
 
 export interface AuthControl {
-    authentication: AuthenticationResponse | undefined,
-    login: (email: string, password: string) => Promise<AuthenticationResponse>,
+    authentication: AuthenticationInformation | undefined,
+    login: (email: string, password: string) => Promise<AuthenticationInformation>,
     logout: () => void
 }
 
@@ -17,11 +17,11 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: FC<AuthProviderProps> = ({children}) => {
-    const [user, setUser] = useLocalStorage("user", new AuthenticationResponse(undefined, undefined));
+    const [user, setUser] = useLocalStorage("user", new AuthenticationInformation(undefined, undefined));
     const [doLogin] = useAuthenticationClient()
 
     // call this function when you want to authenticate the user
-    const login = async (email: string, password: string): Promise<AuthenticationResponse> => {
+    const login = async (email: string, password: string): Promise<AuthenticationInformation> => {
         return doLogin(email, password)
             .then((loggedInResponse) => {
                 console.log("User logged in", loggedInResponse);

@@ -1,5 +1,6 @@
 import {User} from "../model/User.ts";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
+import {AuthContext} from "../authentication/UseAuthentication.tsx";
 
 export default function useUserClient(): [
     users: User[],
@@ -9,12 +10,23 @@ export default function useUserClient(): [
     userError: boolean,
     userLoading: boolean,
 ] {
+    const {authentication} = useContext(AuthContext);
     const [users, setUsers] = useState<User[]>([])
     const [userError, setUserError] = useState(false)
     const [userLoading, setUserLoading] = useState(true)
 
+    if (!authentication) {
+        console.log("No authentication found, returning empty user list")
+        return [users, () => {
+        }, () => {
+        }, () => {
+        }, true, false]
+    }
+
+    const authenticationToken = authentication.token
+
     useEffect(() => {
-        fetch('/api/users')
+        fetch('/api/users', {headers: {'Authorization': 'Bearer ' + authenticationToken}})
             .then(response => {
                 if (response.ok) {
                     return response.json()
@@ -33,7 +45,8 @@ export default function useUserClient(): [
         fetch('/api/users', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + authenticationToken
             },
             body: JSON.stringify(user)
         })
@@ -54,7 +67,8 @@ export default function useUserClient(): [
         fetch('/api/users/' + user.id + "/", {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + authenticationToken
             },
             body: JSON.stringify(user)
         })
@@ -77,7 +91,8 @@ export default function useUserClient(): [
         fetch('/api/users/' + user.id + "/", {
             method: 'DELETE',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + authenticationToken
             },
             body: JSON.stringify(user)
         }).then(response => {
