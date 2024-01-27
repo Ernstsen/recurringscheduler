@@ -22,6 +22,10 @@ public class UserCredential {
     @JdbcTypeCode(SqlTypes.NVARCHAR)
     private String value;
 
+    @Column(name = "algorithm")
+    @JdbcTypeCode(SqlTypes.NVARCHAR)
+    private String algorithm;
+
     @Lob
     @Column(name = "metadata")
     @JdbcTypeCode(SqlTypes.NVARCHAR)
@@ -43,10 +47,11 @@ public class UserCredential {
     public UserCredential() {
     }
 
-    public UserCredential(UserEntity user, CredentialType credentialType, String value, String metadata) {
+    public UserCredential(UserEntity user, CredentialType credentialType, String algorithm, String value, String metadata) {
         this.user = user;
         this.credentialType = credentialType;
         this.value = value;
+        this.algorithm = algorithm;
         this.metadata = metadata;
     }
 
@@ -68,6 +73,14 @@ public class UserCredential {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public String getAlgorithm() {
+        return algorithm;
+    }
+
+    public void setAlgorithm(String algorithm) {
+        this.algorithm = algorithm;
     }
 
     public UserEntity getUser() {

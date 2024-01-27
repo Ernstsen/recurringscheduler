@@ -1,5 +1,7 @@
 package dk.esoftware.recurringscheduler.domain;
 
+import dk.esoftware.recurringscheduler.crypto.HashType;
+import dk.esoftware.recurringscheduler.crypto.HashingStrategy;
 import dk.esoftware.recurringscheduler.persistence.UserCredential;
 import dk.esoftware.recurringscheduler.persistence.UserEntity;
 import io.quarkus.test.junit.QuarkusTest;
@@ -21,7 +23,8 @@ class AuthenticationManagerTest {
     void verifyPassword() {
         AuthenticationManager authenticationManager = new AuthenticationManager(entityManager);
         UserEntity userEntity = new UserEntity();
-        userEntity.getUserCredentials().add(new UserCredential(userEntity, UserCredential.CredentialType.PASSWORD, "password", "password"));
+        final HashingStrategy.HashingResult hashResult = HashType.ARGON2.getStrategy().hash("password");
+        userEntity.getUserCredentials().add(new UserCredential(userEntity, UserCredential.CredentialType.PASSWORD, HashType.ARGON2.name(), hashResult.hash(), hashResult.metadata()));
         assertTrue(authenticationManager.verifyPassword(userEntity, "password"));
         assertFalse(authenticationManager.verifyPassword(userEntity, "wrongpassword"));
         assertFalse(authenticationManager.verifyPassword(null, "password"));

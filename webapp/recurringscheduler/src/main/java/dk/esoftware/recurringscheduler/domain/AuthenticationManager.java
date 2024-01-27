@@ -1,5 +1,7 @@
 package dk.esoftware.recurringscheduler.domain;
 
+import dk.esoftware.recurringscheduler.crypto.HashType;
+import dk.esoftware.recurringscheduler.crypto.HashingStrategy;
 import dk.esoftware.recurringscheduler.persistence.DefaultEntityManager;
 import dk.esoftware.recurringscheduler.persistence.UserCredential;
 import dk.esoftware.recurringscheduler.persistence.UserEntity;
@@ -7,23 +9,20 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.persistence.EntityManager;
 
-import java.util.UUID;
-
 @Singleton
 public class AuthenticationManager {
 
     private final DefaultEntityManager<UserCredential> credentialManager;
-    private final DefaultEntityManager<UserCredential> sessionManager;
 
     @Inject
     public AuthenticationManager(EntityManager entityManager) {
         credentialManager = new DefaultEntityManager<>(entityManager, UserCredential.class);
-        sessionManager = new DefaultEntityManager<>(entityManager, UserCredential.class);
     }
 
     boolean verifyPassword(UserEntity user, String password) {
         if (user == null) {
-            passwordsMatch("password", new UserCredential(null, UserCredential.CredentialType.PASSWORD, "password", null));
+            final HashingStrategy.HashingResult hashResult = HashType.ARGON2.getStrategy().hash("password");
+            passwordsMatch("password", new UserCredential(null, UserCredential.CredentialType.PASSWORD, HashType.ARGON2.name(), hashResult.hash(), hashResult.metadata()));
             return false;
         }
 
@@ -36,24 +35,15 @@ public class AuthenticationManager {
 
         user.getUserCredentials().removeIf(userCredential -> userCredential.getCredentialType() == UserCredential.CredentialType.PASSWORD);
 
-        final UserCredential credential = new UserCredential(user, UserCredential.CredentialType.PASSWORD, password, null);
+        final HashingStrategy.HashingResult hashingResults = HashType.ARGON2.getStrategy().hash(password);
+
+        final UserCredential credential = new UserCredential(user, UserCredential.CredentialType.PASSWORD, HashType.ARGON2.name(), hashingResults.hash(), hashingResults.metadata());
         credentialManager.createEntity(credential);
         user.getUserCredentials().add(credential);
     }
 
     private static boolean passwordsMatch(String password, UserCredential userCredential) {
-        return password.equals(userCredential.getValue());
+        final HashingStrategy hashingStrategy = HashType.valueOf(userCredential.getAlgorithm()).getStrategy();
+        return hashingStrategy.verify(password, new HashingStrategy.HashingResult(userCredential.getValue(), userCredential.getMetadata()));
     }
-
-    public boolean isUserAuthenticated(String token) {
-        if(token == null) {
-            return false;
-        }
-
-        final UserCredential credential = credentialManager.getEntity(UUID.fromString(token));
-
-
-        return credential != null;
-    }
-
 }
