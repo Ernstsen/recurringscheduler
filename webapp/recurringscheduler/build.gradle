@@ -24,6 +24,9 @@ dependencies {
     implementation("io.quarkus:quarkus-jdbc-h2")
     implementation("io.quarkus:quarkus-jdbc-postgresql")
 
+    // Crypto
+    implementation group: 'org.bouncycastle', name: 'bcpkix-jdk18on', version: '1.77'
+
 //    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.16.0'
 
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
