@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Button, Grid, Paper, TextField, Typography} from '@mui/material';
+import {Alert, Button, Grid, Paper, TextField, Typography} from '@mui/material';
 import {AuthControl, useAuth} from "./UseAuthentication.tsx";
 import useStyles from './LoginPage.module.css';
 import {useNavigate} from "react-router-dom";
@@ -10,6 +10,7 @@ const LoginPage: React.FC = () => {
     const authMemory: AuthControl = useAuth();
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [error, setError] = useState("")
     let navigate = useNavigate();
 
     return (
@@ -55,15 +56,17 @@ const LoginPage: React.FC = () => {
                         color="primary"
                         className={useStyles.submitButton}
                         onClick={() => {
-                            console.log("Logging in!")
-                            authMemory.login(email, password).then((authResponse) => {
-                                console.log("Logged in!", authResponse)
-                                navigate("/");
-                            })
+                            authMemory.login(email, password)
+                                .then(() => {
+                                    navigate("/");
+                                }, (error) => {
+                                    setError(error)
+                                })
                         }}
                     >
                         Login
                     </Button>
+                    {error && <Alert severity="error" sx={{margin: "1lh"}}>{error}</Alert>}
                 </Paper>
             </Grid>
         </Grid>

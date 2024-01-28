@@ -8,7 +8,7 @@ export const AuthContext: Context<AuthControl> = createContext();
 
 export interface AuthControl {
     authentication: AuthenticationInformation | undefined,
-    login: (email: string, password: string) => Promise<AuthenticationInformation>,
+    login: (email: string, password: string) => Promise<void>,
     logout: () => void
 }
 
@@ -21,12 +21,11 @@ export const AuthProvider: FC<AuthProviderProps> = ({children}) => {
     const [doLogin] = useAuthenticationClient()
 
     // call this function when you want to authenticate the user
-    const login = async (email: string, password: string): Promise<AuthenticationInformation> => {
+    const login = async (email: string, password: string): Promise<void> => {
         return doLogin(email, password)
             .then((loggedInResponse) => {
-                console.log("User logged in", loggedInResponse);
                 setUser(loggedInResponse);
-                return loggedInResponse;
+                return Promise.resolve();
             }, (error) => {
                 return Promise.reject(error);
             })
