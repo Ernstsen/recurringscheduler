@@ -2,6 +2,7 @@ package dk.esoftware.recurringscheduler.rest;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dk.esoftware.recurringscheduler.rest.dto.AuthenticationResponse;
 import dk.esoftware.recurringscheduler.rest.dto.EventTypeDTO;
 import dk.esoftware.recurringscheduler.rest.dto.RecurrenceConfigurationDTO;
 import dk.esoftware.recurringscheduler.rest.dto.UserDTO;
@@ -26,13 +27,10 @@ public class UserResourceTest extends DefaultCRUDResourceTest<UserDTO> {
 
     @BeforeEach
     void setUp() throws IOException {
-        given()
-                .when().post("/admin/init")
-                .then().statusCode(200)
-                .body(is("Ensured proper initialization"));
+        final AuthenticationResponse login = login();
 
-
-        final byte[] byteArray = given().when().get("/recurrenceConfigurations").getBody().asByteArray();
+        final byte[] byteArray = given().when().header("Authorization", "Bearer " + login.token())
+                .get("/recurrenceConfigurations").getBody().asByteArray();
         List<RecurrenceConfigurationDTO> recurrenceConfigurations = new ObjectMapper()
                 .readValue(
                         byteArray,
@@ -44,10 +42,12 @@ public class UserResourceTest extends DefaultCRUDResourceTest<UserDTO> {
         final EventTypeDTO creationTestEntity2 = new EventTypeDTO("eventType2", null, recurrenceConfigurations.get(2), new ArrayList<>());
 
         final Response response = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login.token())
                 .when().body(creationTestEntity).post("/eventTypes")
                 .thenReturn();
 
         final Response response2 = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login.token())
                 .when().body(creationTestEntity2).post("/eventTypes")
                 .thenReturn();
 

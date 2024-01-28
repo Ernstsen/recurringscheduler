@@ -23,12 +23,34 @@ public class UserEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<UserCredential> userCredentials = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "userEntity", orphanRemoval = true)
+    private Set<AuthenticatedSession> authenticatedSessions = new LinkedHashSet<>();
+
     public UserEntity() {
     }
 
     public UserEntity(String email, String name) {
         this.email = email;
         this.name = name;
+    }
+
+    public Set<AuthenticatedSession> getAuthenticatedSessionses() {
+        return authenticatedSessions;
+    }
+
+    public void setAuthenticatedSessionses(Set<AuthenticatedSession> authenticatedSessions) {
+        this.authenticatedSessions = authenticatedSessions;
+    }
+
+    public Set<UserCredential> getUserCredentials() {
+        return userCredentials;
+    }
+
+    public void setUserCredentials(Set<UserCredential> userCredentials) {
+        this.userCredentials = userCredentials;
     }
 
     public Set<EventType> getEventTypes() {

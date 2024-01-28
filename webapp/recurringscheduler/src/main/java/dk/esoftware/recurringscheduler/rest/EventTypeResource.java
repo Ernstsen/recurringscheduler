@@ -10,6 +10,8 @@ import dk.esoftware.recurringscheduler.rest.dto.EventTypeDTO;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -30,8 +32,15 @@ public class EventTypeResource {
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
     @Transactional
-    public Response createEventType(EventTypeDTO configurationDTO) {
-        final RecurrenceConfiguration recurrenceConfiguration = managerProvider.getRecurranceConfigurationManager().getEntity(configurationDTO.recurrenceConfiguration().id());
+    public Response createEventType(@Context HttpHeaders headers, EventTypeDTO configurationDTO) {
+        final String token = HeaderUtilities.getAuthorizationHeader(headers);
+        final boolean isAuthenticated = recurringSchedulerAdministration.isUserAuthenticated(token);
+
+        if (!isAuthenticated) {
+            return Response.status(401).entity("Must be authenticated to create an event type").build();
+        }
+
+        final RecurrenceConfiguration recurrenceConfiguration = managerProvider.getRecurrenceConfigurationManager().getEntity(configurationDTO.recurrenceConfiguration().id());
 
         final EventType eventType = new EventType(configurationDTO.name(), recurrenceConfiguration);
         managerProvider.getEventTypeManager().createEntity(eventType);
@@ -42,16 +51,30 @@ public class EventTypeResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    public List<EventTypeDTO> getEventTypes() {
+    public Response getEventTypes(@Context HttpHeaders headers) {
+        final String token = HeaderUtilities.getAuthorizationHeader(headers);
+        final boolean isAuthenticated = recurringSchedulerAdministration.isUserAuthenticated(token);
+
+        if (!isAuthenticated) {
+            return Response.status(401).entity("Must be authenticated to get event types").build();
+        }
+
         final List<EventType> entities = managerProvider.getEventTypeManager().getEntities();
-        return entities.stream().map(EventTypeDTO::createEventTypeDTO).collect(Collectors.toList());
+        return Response.status(200).entity(entities.stream().map(EventTypeDTO::createEventTypeDTO).collect(Collectors.toList())).build();
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
     @Transactional
-    public Response getEventType(@PathParam("id") UUID id) {
+    public Response getEventType(@Context HttpHeaders headers, @PathParam("id") UUID id) {
+        final String token = HeaderUtilities.getAuthorizationHeader(headers);
+        final boolean isAuthenticated = recurringSchedulerAdministration.isUserAuthenticated(token);
+
+        if (!isAuthenticated) {
+            return Response.status(401).entity("Must be authenticated to get event type").build();
+        }
+
         final EventType entity = managerProvider.getEventTypeManager().getEntity(id);
 
         if (entity != null) {
@@ -67,12 +90,19 @@ public class EventTypeResource {
     @Consumes({MediaType.APPLICATION_JSON})
     @Path("/{id}")
     @Transactional
-    public Response updateEventType(@PathParam("id") UUID id, EventTypeDTO payload) {
+    public Response updateEventType(@Context HttpHeaders headers, @PathParam("id") UUID id, EventTypeDTO payload) {
+        final String token = HeaderUtilities.getAuthorizationHeader(headers);
+        final boolean isAuthenticated = recurringSchedulerAdministration.isUserAuthenticated(token);
+
+        if (!isAuthenticated) {
+            return Response.status(401).entity("Must be authenticated to update event type").build();
+        }
+
         if (!id.equals(payload.id())) {
             return Response.status(400).entity("Id from path and payload must match").build();
         }
 
-        final RecurrenceConfiguration targetRecurrenceConfiguration = managerProvider.getRecurranceConfigurationManager().getEntity(payload.recurrenceConfiguration().id());
+        final RecurrenceConfiguration targetRecurrenceConfiguration = managerProvider.getRecurrenceConfigurationManager().getEntity(payload.recurrenceConfiguration().id());
 
         final EventType entity = managerProvider.getEventTypeManager().getEntity(id);
         entity.setName(payload.name());
@@ -82,7 +112,7 @@ public class EventTypeResource {
             payload.participatingUsers().stream()
                     .map(t -> managerProvider.getUserManager().getEntity(t.getId()))
                     .forEach(t -> entity.getParticipatingUsers().add(t));
-            
+
             entity.getParticipatingUsers().removeIf(t -> payload.participatingUsers().stream().noneMatch(u -> u.getId().equals(t.getId())));
         }
 
@@ -93,16 +123,31 @@ public class EventTypeResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
     @Transactional
-    public Response deleteEventType(@PathParam("id") UUID id) {
+    public Response deleteEventType(@Context HttpHeaders headers, @PathParam("id") UUID id) {
+        final String token = HeaderUtilities.getAuthorizationHeader(headers);
+        final boolean isAuthenticated = recurringSchedulerAdministration.isUserAuthenticated(token);
+
+        if (!isAuthenticated) {
+            return Response.status(401).entity("Must be authenticated to delete event type").build();
+        }
+
         managerProvider.getEventTypeManager().deleteEntity(id);
         return Response.ok().build();
     }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.WILDCARD)
     @Path("/{id}/createEvent")
     @Transactional
-    public Response createEventFromType(@PathParam("id") UUID id) {
+    public Response createEventFromType(@Context HttpHeaders headers, @PathParam("id") UUID id) {
+        final String token = HeaderUtilities.getAuthorizationHeader(headers);
+        final boolean isAuthenticated = recurringSchedulerAdministration.isUserAuthenticated(token);
+
+        if (!isAuthenticated) {
+            return Response.status(401).entity("Must be authenticated to create event from type").build();
+        }
+
         final EventType entity = managerProvider.getEventTypeManager().getEntity(id);
 
         if (entity != null) {

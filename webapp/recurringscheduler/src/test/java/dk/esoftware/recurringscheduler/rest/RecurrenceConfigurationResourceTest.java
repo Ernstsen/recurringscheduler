@@ -1,9 +1,13 @@
 package dk.esoftware.recurringscheduler.rest;
 
 import dk.esoftware.recurringscheduler.domain.TimeUnit;
+import dk.esoftware.recurringscheduler.rest.dto.AuthenticationResponse;
 import dk.esoftware.recurringscheduler.rest.dto.RecurrenceConfigurationDTO;
 import io.quarkus.test.junit.QuarkusTest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.*;
@@ -11,6 +15,12 @@ import static org.hamcrest.CoreMatchers.*;
 @QuarkusTest
 public class RecurrenceConfigurationResourceTest extends DefaultCRUDResourceTest<RecurrenceConfigurationDTO> {
 
+    private AuthenticationResponse login;
+
+    @BeforeEach
+    void setUp() throws IOException {
+        login = login();
+    }
 
     public RecurrenceConfigurationResourceTest() {
         super("/recurrenceConfigurations");
@@ -34,11 +44,7 @@ public class RecurrenceConfigurationResourceTest extends DefaultCRUDResourceTest
     @Test
     void testOverviewEndpointPostInitialization() {
         given()
-                .when().post("/admin/init")
-                .then().statusCode(200)
-                .body(is("Ensured proper initialization"));
-
-        given()
+                .header("Authorization", "Bearer " + login.token())
                 .when().get("/recurrenceConfigurations")
                 .then()
                 .body(
@@ -46,5 +52,15 @@ public class RecurrenceConfigurationResourceTest extends DefaultCRUDResourceTest
                         containsString("Once a month"),
                         containsString("Twice a year")
                 );
+
+        given()
+                .header("Authorization", "Bearer " + login.token())
+                .when().get("/users")
+                .then()
+                .body(
+                        containsString("admin@localhost"),
+                        containsString("admin")
+                );
+
     }
 }

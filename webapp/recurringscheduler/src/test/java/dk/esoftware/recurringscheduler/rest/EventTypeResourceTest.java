@@ -2,10 +2,7 @@ package dk.esoftware.recurringscheduler.rest;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dk.esoftware.recurringscheduler.rest.dto.EventDTO;
-import dk.esoftware.recurringscheduler.rest.dto.EventTypeDTO;
-import dk.esoftware.recurringscheduler.rest.dto.RecurrenceConfigurationDTO;
-import dk.esoftware.recurringscheduler.rest.dto.UserDTO;
+import dk.esoftware.recurringscheduler.rest.dto.*;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -28,6 +25,7 @@ public class EventTypeResourceTest extends DefaultCRUDResourceTest<EventTypeDTO>
 
     private List<RecurrenceConfigurationDTO> recurrenceConfigurations;
     private UserDTO userDTO;
+    private AuthenticationResponse login;
 
     public EventTypeResourceTest() {
         super("eventTypes");
@@ -35,13 +33,10 @@ public class EventTypeResourceTest extends DefaultCRUDResourceTest<EventTypeDTO>
 
     @BeforeEach
     void setUp() throws IOException {
-        given()
-                .when().post("/admin/init")
-                .then().statusCode(200)
-                .body(is("Ensured proper initialization"));
-
-
-        final byte[] byteArray = given().when().get("/recurrenceConfigurations").getBody().asByteArray();
+        login = login();
+        final byte[] byteArray = given().when()
+                .header("Authorization", "Bearer " + login.token())
+                .get("/recurrenceConfigurations").getBody().asByteArray();
         recurrenceConfigurations = new ObjectMapper()
                 .readValue(
                         byteArray,
@@ -49,6 +44,7 @@ public class EventTypeResourceTest extends DefaultCRUDResourceTest<EventTypeDTO>
                         });
 
         final Response getUser = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login.token())
                 .when().get("users")
                 .thenReturn();
 
@@ -61,6 +57,7 @@ public class EventTypeResourceTest extends DefaultCRUDResourceTest<EventTypeDTO>
             final UserDTO userDTO = new UserDTO(null, "testUserForEventType", "test@EventTypeResourceTest.java", new HashSet<>());
 
             final Response createUserResponse = given().contentType(ContentType.JSON)
+                    .header("Authorization", "Bearer " + login.token())
                     .when().body(userDTO).post("users")
                     .thenReturn();
 
@@ -85,6 +82,7 @@ public class EventTypeResourceTest extends DefaultCRUDResourceTest<EventTypeDTO>
         final EventTypeDTO creationTestEntity = createNewEntity();
 
         final Response response = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login.token())
                 .when().body(creationTestEntity).post("eventTypes")
                 .thenReturn();
 
@@ -92,6 +90,7 @@ public class EventTypeResourceTest extends DefaultCRUDResourceTest<EventTypeDTO>
 
         // Create event from type
         final Response creationResponse = given()
+                .header("Authorization", "Bearer " + login.token())
                 .when().post("eventTypes/" + createdEventType.getId() + "/createEvent")
                 .thenReturn();
 

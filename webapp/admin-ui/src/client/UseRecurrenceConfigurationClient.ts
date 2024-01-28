@@ -1,5 +1,6 @@
 import {RecurrenceConfiguration} from "../model/RecurrenceConfiguration.ts";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
+import {AuthContext} from "../authentication/UseAuthentication.tsx";
 
 export default function useRecurrenceConfigurationClient(): [
     recurrenceConfigurations: RecurrenceConfiguration[],
@@ -9,19 +10,31 @@ export default function useRecurrenceConfigurationClient(): [
     recurrenceConfigurationError: boolean,
     recurrenceConfigurationLoading: boolean
 ] {
+    const {authentication} = useContext(AuthContext);
     const [recurrenceConfigurations, setRecurrenceConfigurations] = useState<RecurrenceConfiguration[]>([])
     const [recurrenceConfigurationError, setRecurrenceConfigurationError] = useState(false)
     const [recurrenceConfigurationLoading, setRecurrenceConfigurationLoading] = useState(true)
 
+    if (!authentication) {
+        console.log("No authentication found, returning empty recurrenceConfiguration list")
+        return [recurrenceConfigurations, () => {
+        }, () => {
+        }, () => {
+        }, true, false]
+    }
+
+    const authenticationToken = authentication.token
+
     useEffect(() => {
-        fetch('/api/recurrenceConfigurations').then(response => {
-            if (response.ok) {
-                return response.json()
-            } else {
-                setRecurrenceConfigurationError(true)
-                throw new Error("Failed to fetch recurrenceConfigurations: " + response.status)
-            }
-        }).then(data => {
+        fetch('/api/recurrenceConfigurations', {headers: {'Authorization': 'Bearer ' + authenticationToken}})
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    setRecurrenceConfigurationError(true)
+                    throw new Error("Failed to fetch recurrenceConfigurations: " + response.status)
+                }
+            }).then(data => {
             setRecurrenceConfigurations(data)
             setRecurrenceConfigurationLoading(false)
         })
@@ -31,7 +44,8 @@ export default function useRecurrenceConfigurationClient(): [
         fetch('/api/recurrenceConfigurations', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + authenticationToken
             },
             body: JSON.stringify(recurrenceConfiguration)
         }).then(response => {
@@ -50,7 +64,8 @@ export default function useRecurrenceConfigurationClient(): [
         fetch('/api/recurrenceConfigurations/' + recurrenceConfiguration.id + "/", {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + authenticationToken
             },
             body: JSON.stringify(recurrenceConfiguration)
         })
@@ -72,7 +87,8 @@ export default function useRecurrenceConfigurationClient(): [
         fetch('/api/recurrenceConfigurations/' + recurrenceConfiguration.id + "/", {
             method: 'DELETE',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + authenticationToken
             },
             body: JSON.stringify(recurrenceConfiguration)
         }).then(response => {

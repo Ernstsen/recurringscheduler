@@ -1,5 +1,6 @@
 package dk.esoftware.recurringscheduler.persistence;
 
+import dk.esoftware.recurringscheduler.domain.AuthenticationManager;
 import dk.esoftware.recurringscheduler.domain.TimeUnit;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
@@ -17,7 +18,27 @@ public class DefaultInitializationUtility {
     private static final Map<String, Supplier<RecurrenceConfiguration>> defaults = getDefaults();
 
     @Transactional
-    public static void InitializeStorageWithDefaults(EntityManager entityManager) {
+    public static void initializeStorageWithDefaults(EntityManager entityManager, UserEntity adminUser, String adminPassword) {
+        initializeDefaultRecurrenceConfigurations(entityManager);
+        createAdminUser(entityManager, adminUser, adminPassword);
+    }
+
+    private static void createAdminUser(EntityManager entityManager, UserEntity adminUser, String adminPassword) {
+        final UserEntityManager userManager = new UserEntityManager(entityManager);
+
+        final UserEntity existingAdmin = userManager.getUserByEmail(adminUser.getEmail());
+
+        if (existingAdmin != null) {
+            logger.info("Admin user already exists in DB - skipping creation, but updating values");
+            existingAdmin.setName(adminUser.getName());
+        } else {
+            logger.info("Did not find admin user in DB - creating it");
+            userManager.createEntity(adminUser);
+            new AuthenticationManager(entityManager).setPassword(adminUser, adminPassword);
+        }
+    }
+
+    private static void initializeDefaultRecurrenceConfigurations(EntityManager entityManager) {
         for (String name : defaults.keySet()) {
 
             final List defaultConfig = entityManager.createQuery("select rc from RecurrenceConfiguration rc where rc.name = :defaultName")

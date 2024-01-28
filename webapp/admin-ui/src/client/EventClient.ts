@@ -1,5 +1,6 @@
 import {Event} from "../model/Event.ts";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
+import {AuthContext} from "../authentication/UseAuthentication.tsx";
 
 const stringToDate = (dateString: string): Date => {
     let [year, month, day] = dateString.split("-")
@@ -20,12 +21,23 @@ export default function useEventClient(): [
     eventError: boolean,
     eventLoading: boolean,
 ] {
+    const {authentication} = useContext(AuthContext);
     const [events, setEvents] = useState<Event[]>([])
     const [eventError, setEventError] = useState(false)
     const [eventLoading, setEventLoading] = useState(true)
 
+    if (!authentication) {
+        console.log("No authentication found, returning empty event list")
+        return [events, () => {
+        }, () => {
+        }, () => {
+        }, true, false]
+    }
+    const authenticationToken = authentication.token
+
     useEffect(() => {
-        fetch('/api/events').then(response => response.json())
+        fetch('/api/events', {headers: {'Authorization': 'Bearer ' + authenticationToken}})
+            .then(response => response.json())
             .then(data => {
                 setEvents(data.map(deserializeDatesInIncomingEvent))
                 setEventLoading(false)
@@ -39,7 +51,8 @@ export default function useEventClient(): [
         fetch('/api/events', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + authenticationToken
             },
             body: JSON.stringify(event)
         }).then(response => {
@@ -59,7 +72,8 @@ export default function useEventClient(): [
         fetch('/api/events/' + event.id + "/", {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + authenticationToken
             },
             body: JSON.stringify(event)
         })
@@ -82,7 +96,8 @@ export default function useEventClient(): [
         fetch('/api/events/' + event.id + "/", {
             method: 'DELETE',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + authenticationToken
             },
             body: JSON.stringify(event)
         }).then(response => {

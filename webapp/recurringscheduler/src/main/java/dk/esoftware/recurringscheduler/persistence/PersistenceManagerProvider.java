@@ -23,12 +23,17 @@ public class PersistenceManagerProvider implements ManagerProvider {
     }
 
     @Override
-    public DomainEntityManager<RecurrenceConfiguration> getRecurranceConfigurationManager() {
+    public DomainEntityManager<RecurrenceConfiguration> getRecurrenceConfigurationManager() {
         return new DefaultEntityManager<>(entityManager, RecurrenceConfiguration.class);
     }
 
     @Override
-    public DomainEntityManager<UserEntity> getUserManager() {
-        return new DefaultEntityManager<>(entityManager, UserEntity.class);
+    public DomainEntityManager<AuthenticatedSession> getAuthenticatedSessionManager() {
+        return new DefaultEntityManager<>(entityManager, AuthenticatedSession.class);
+    }
+
+    @Override
+    public UserEntityManager getUserManager() {
+        return new UserEntityManager(entityManager);
     }
 }
