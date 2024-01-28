@@ -9,7 +9,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import useEventTypeClient from "../client/EventTypeClient.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {EventType} from "../model/EventType.ts";
-import {Alert, CircularProgress, LinearProgress} from "@mui/material";
+import {Alert, Backdrop, CircularProgress, LinearProgress} from "@mui/material";
 import {createEventFromEventType} from "../client/EventTypeClient.ts";
 import Dialog from "@mui/material/Dialog";
 
@@ -83,9 +83,12 @@ function EventTypesPage() {
 
     return (
         <>
-            <Dialog open={actionLoading} sx={{overflow: "hidden"}}>
-                <CircularProgress/>
-            </Dialog>
+            <Backdrop
+                sx={{color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1}}
+                open={actionLoading}
+            >
+                <CircularProgress color="inherit"/>
+            </Backdrop>
             <Box>
                 <DataGrid
                     rows={eventTypes}
