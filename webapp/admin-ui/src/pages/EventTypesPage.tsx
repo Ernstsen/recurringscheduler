@@ -3,7 +3,7 @@ import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import {useState} from "react";
 import {DataGrid, GridActionsCellItem, GridColDef, GridValueGetterParams} from '@mui/x-data-grid';
-import {EditEventTypeDialogue, ModifyEventTypeDialogue} from "../components/EditEventTypeDialogue.tsx";
+import {CreateEventTypeDialogue, ModifyEventTypeDialogue} from "../components/CreateEventTypeDialogue.tsx";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import useEventTypeClient from "../client/EventTypeClient.ts";
@@ -114,8 +114,12 @@ function EventTypesPage() {
                         existingEventType={editingEventType}
                     />
                 }
-                <EditEventTypeDialogue open={createEventTypeOpen} onClose={() => setCreateEventTypeOpen(false)}
-                                       addEventType={addEventType}/>
+                {createEventTypeOpen &&
+                    <CreateEventTypeDialogue
+                        onClose={() => setCreateEventTypeOpen(false)}
+                        addEventType={addEventType}
+                    />
+                }
                 <Fab size="large"
                      color="primary"
                      onClick={() => setCreateEventTypeOpen(true)}

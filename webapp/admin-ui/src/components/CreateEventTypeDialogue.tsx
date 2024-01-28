@@ -16,16 +16,15 @@ import styles from "./GenericDialogue.module.css"
 import UserSelectionDialogue from "./userselection/UserSelectionDialogue.tsx";
 
 interface CreateEventTypeProps {
-    open: boolean,
     onClose: () => void,
     addEventType: (eventType: EventType) => void
 }
 
-export const EditEventTypeDialogue: React.FC<CreateEventTypeProps> = ({open, onClose, addEventType}) => {
+export const CreateEventTypeDialogue: React.FC<CreateEventTypeProps> = ({onClose, addEventType}) => {
     return (
         <React.Fragment>
             <GenericEventTypeDialogue
-                open={open}
+                open={true}
                 onClose={onClose}
                 commitChanges={addEventType}
                 commitButtonText="Create"

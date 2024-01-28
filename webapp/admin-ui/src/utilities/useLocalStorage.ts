@@ -6,10 +6,8 @@ export function useLocalStorage<T>(keyName: string, defaultValue: T | undefined)
             const value = window.localStorage.getItem(keyName);
             if (value) {
                 let parse = JSON.parse(value);
-                console.log("Found value for key " + keyName + " in local storage: " + value);
                 return parse as T;
             } else {
-                console.log("No value found for key " + keyName + " in local storage, using default value");
                 window.localStorage.setItem(keyName, JSON.stringify(defaultValue));
                 return defaultValue;
             }
