@@ -3,19 +3,29 @@ import {Event} from "../model/Event.ts";
 import {useContext, useEffect, useState} from "react";
 import {AuthContext} from "../authentication/UseAuthentication.tsx";
 
-export const createEventFromEventType = async (eventType: EventType): Promise<Event> => {
-    return fetch('/api/eventTypes/' + eventType.id + "/createEvent", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-    }).then(response => {
-        if (response.ok) {
-            return response.json()
-        } else {
-            throw new Error("Failed to create event: " + response.status)
-        }
-    })
+export const useCreateEventFromEventType = (): (eventType: EventType) => Promise<Event> => {
+    const {authentication} = useContext(AuthContext);
+
+    if (!authentication) {
+        throw new Error("No authentication found")
+    }
+
+    return (eventType: EventType): Promise<Event> => {
+        return fetch('/api/eventTypes/' + eventType.id + "/createEvent", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + authentication.token
+            },
+        }).then(response => {
+            if (response.ok) {
+                return response.json()
+            } else {
+                throw new Error("Failed to create event: " + response.status)
+            }
+        })
+
+    }
 }
 
 export default function useEventTypeClient(): [

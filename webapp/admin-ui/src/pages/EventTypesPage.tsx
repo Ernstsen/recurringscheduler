@@ -10,8 +10,7 @@ import useEventTypeClient from "../client/EventTypeClient.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {EventType} from "../model/EventType.ts";
 import {Alert, Backdrop, CircularProgress, LinearProgress} from "@mui/material";
-import {createEventFromEventType} from "../client/EventTypeClient.ts";
-import Dialog from "@mui/material/Dialog";
+import {useCreateEventFromEventType} from "../client/EventTypeClient.ts";
 
 function EventTypesPage() {
     const [eventTypes, addEventType, updateEventType, deleteEventType, eventTypeError, eventTypeLoading] = useEventTypeClient()
@@ -19,6 +18,7 @@ function EventTypesPage() {
     const [actionLoading, setActionLoading] = useState(false)
     const {eventTypeId} = useParams()
     const navigate = useNavigate();
+    const createEventFromEventType = useCreateEventFromEventType()
 
     if (eventTypeError) {
         return <Alert severity="error">Failed to read EventTypes from server</Alert>
