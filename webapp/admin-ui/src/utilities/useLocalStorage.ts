@@ -1,3 +1,5 @@
+import {useState} from "react";
+
 export function useLocalStorage<T>(keyName: string, defaultValue: T | undefined):
     [T | undefined, (newValue: T | undefined) => void] {
 
@@ -18,13 +20,16 @@ export function useLocalStorage<T>(keyName: string, defaultValue: T | undefined)
 
     let stateFromWindow: T | undefined = readFromWindow();
 
+    const [currentValue, setCurrentValue] = useState<T | undefined>(stateFromWindow || defaultValue);
+
     const setValue = (newValue: T | undefined) => {
         try {
             console.log("Setting new value: ", newValue)
             window.localStorage.setItem(keyName, JSON.stringify(newValue));
+            setCurrentValue(newValue);
         } catch (err) {
             throw new Error("Failed to store value in local storage: " + err);
         }
     };
-    return [stateFromWindow, setValue];
+    return [currentValue, setValue];
 }

@@ -1,10 +1,10 @@
 import {EventType} from "../model/EventType.ts";
 import {Event} from "../model/Event.ts";
-import {useContext, useEffect, useState} from "react";
-import {AuthContext} from "../authentication/UseAuthentication.tsx";
+import {useEffect, useState} from "react";
+import {useAuth} from "../authentication/UseAuthentication.tsx";
 
 export const useCreateEventFromEventType = (): (eventType: EventType) => Promise<Event> => {
-    const {authentication} = useContext(AuthContext);
+    const {authentication} = useAuth();
 
     if (!authentication) {
         throw new Error("No authentication found")
@@ -36,7 +36,7 @@ export default function useEventTypeClient(): [
     eventTypeError: boolean,
     eventTypeLoading: boolean,
 ] {
-    const {authentication} = useContext(AuthContext);
+    const {authentication} = useAuth();
     const [eventTypes, setEventTypes] = useState<EventType[]>([])
     const [eventTypeError, setEventTypeError] = useState(false)
     const [eventTypeLoading, setEventTypeLoading] = useState(true)

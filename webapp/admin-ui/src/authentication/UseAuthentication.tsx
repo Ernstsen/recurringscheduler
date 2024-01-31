@@ -17,7 +17,7 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: FC<AuthProviderProps> = ({children}) => {
-    const [user, setUser] = useLocalStorage("user", new AuthenticationInformation(undefined, undefined));
+    const [user, setUser] = useLocalStorage<AuthenticationInformation>("user", undefined);
     const [doLogin] = useAuthenticationClient()
 
     // call this function when you want to authenticate the user
@@ -43,6 +43,8 @@ export const AuthProvider: FC<AuthProviderProps> = ({children}) => {
         }),
         [user]
     );
+
+    console.log("AuthProvider", value);
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

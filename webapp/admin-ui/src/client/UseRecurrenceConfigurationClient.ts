@@ -1,6 +1,6 @@
 import {RecurrenceConfiguration} from "../model/RecurrenceConfiguration.ts";
-import {useContext, useEffect, useState} from "react";
-import {AuthContext} from "../authentication/UseAuthentication.tsx";
+import {useEffect, useState} from "react";
+import {useAuth} from "../authentication/UseAuthentication.tsx";
 
 export default function useRecurrenceConfigurationClient(): [
     recurrenceConfigurations: RecurrenceConfiguration[],
@@ -10,7 +10,7 @@ export default function useRecurrenceConfigurationClient(): [
     recurrenceConfigurationError: boolean,
     recurrenceConfigurationLoading: boolean
 ] {
-    const {authentication} = useContext(AuthContext);
+    const {authentication} = useAuth();
     const [recurrenceConfigurations, setRecurrenceConfigurations] = useState<RecurrenceConfiguration[]>([])
     const [recurrenceConfigurationError, setRecurrenceConfigurationError] = useState(false)
     const [recurrenceConfigurationLoading, setRecurrenceConfigurationLoading] = useState(true)

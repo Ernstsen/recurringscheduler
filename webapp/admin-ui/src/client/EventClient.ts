@@ -1,6 +1,6 @@
 import {Event} from "../model/Event.ts";
-import {useContext, useEffect, useState} from "react";
-import {AuthContext} from "../authentication/UseAuthentication.tsx";
+import {useEffect, useState} from "react";
+import { useAuth} from "../authentication/UseAuthentication.tsx";
 
 const stringToDate = (dateString: string): Date => {
     let [year, month, day] = dateString.split("-")
@@ -21,7 +21,7 @@ export default function useEventClient(): [
     eventError: boolean,
     eventLoading: boolean,
 ] {
-    const {authentication} = useContext(AuthContext);
+    const {authentication} = useAuth();
     const [events, setEvents] = useState<Event[]>([])
     const [eventError, setEventError] = useState(false)
     const [eventLoading, setEventLoading] = useState(true)
