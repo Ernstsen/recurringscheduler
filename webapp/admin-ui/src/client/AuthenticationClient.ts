@@ -10,11 +10,12 @@ export default function useAuthenticationClient(): [
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({email: email, password: password})
-        }).then(response => {
+        }).then(async response => {
             if (response.ok) {
                 return response.json()
             } else {
-                return Promise.reject("Failed to login: " + response.statusText)
+                let text = await response.text();
+                throw "Failed to login: " + text;
             }
         })
     }

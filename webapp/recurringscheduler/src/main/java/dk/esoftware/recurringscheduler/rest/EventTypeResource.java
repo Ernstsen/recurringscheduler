@@ -32,7 +32,7 @@ public class EventTypeResource {
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
     @Transactional
-    public Response createEventType(@Context HttpHeaders headers, EventTypeDTO configurationDTO) {
+    public Response createEventType(@Context HttpHeaders headers, EventTypeDTO eventTypeDTO) {
         final String token = HeaderUtilities.getAuthorizationHeader(headers);
         final boolean isAuthenticated = recurringSchedulerAdministration.isUserAuthenticated(token);
 
@@ -40,10 +40,12 @@ public class EventTypeResource {
             return Response.status(401).entity("Must be authenticated to create an event type").build();
         }
 
-        final RecurrenceConfiguration recurrenceConfiguration = managerProvider.getRecurrenceConfigurationManager().getEntity(configurationDTO.recurrenceConfiguration().id());
+        final RecurrenceConfiguration recurrenceConfiguration = managerProvider.getRecurrenceConfigurationManager().getEntity(eventTypeDTO.recurrenceConfiguration().id());
 
-        final EventType eventType = new EventType(configurationDTO.name(), recurrenceConfiguration);
+        final EventType eventType = new EventType(eventTypeDTO.name(), recurrenceConfiguration);
         managerProvider.getEventTypeManager().createEntity(eventType);
+
+        addUsersToEventType(eventTypeDTO, eventType);
 
         return Response.status(201).entity(EventTypeDTO.createEventTypeDTO(eventType)).build();
     }
@@ -108,6 +110,12 @@ public class EventTypeResource {
         entity.setName(payload.name());
         entity.setRecurrenceConfiguration(targetRecurrenceConfiguration);
 
+        addUsersToEventType(payload, entity);
+
+        return Response.status(201).entity(EventTypeDTO.createEventTypeDTO(entity)).build();
+    }
+
+    private void addUsersToEventType(EventTypeDTO payload, EventType entity) {
         if (payload.participatingUsers() != null) {
             payload.participatingUsers().stream()
                     .map(t -> managerProvider.getUserManager().getEntity(t.getId()))
@@ -115,8 +123,6 @@ public class EventTypeResource {
 
             entity.getParticipatingUsers().removeIf(t -> payload.participatingUsers().stream().noneMatch(u -> u.getId().equals(t.getId())));
         }
-
-        return Response.status(201).entity(EventTypeDTO.createEventTypeDTO(entity)).build();
     }
 
     @DELETE

@@ -1,6 +1,6 @@
 import {User} from "../model/User.ts";
-import {useContext, useEffect, useState} from "react";
-import {AuthContext} from "../authentication/UseAuthentication.tsx";
+import {useEffect, useState} from "react";
+import {useAuth} from "../authentication/UseAuthentication.tsx";
 
 export default function useUserClient(): [
     users: User[],
@@ -10,7 +10,7 @@ export default function useUserClient(): [
     userError: boolean,
     userLoading: boolean,
 ] {
-    const {authentication} = useContext(AuthContext);
+    const {authentication} = useAuth();
     const [users, setUsers] = useState<User[]>([])
     const [userError, setUserError] = useState(false)
     const [userLoading, setUserLoading] = useState(true)

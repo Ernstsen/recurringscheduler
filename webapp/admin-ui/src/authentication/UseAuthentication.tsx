@@ -8,7 +8,7 @@ export const AuthContext: Context<AuthControl> = createContext();
 
 export interface AuthControl {
     authentication: AuthenticationInformation | undefined,
-    login: (email: string, password: string) => Promise<AuthenticationInformation>,
+    login: (email: string, password: string) => Promise<void>,
     logout: () => void
 }
 
@@ -17,16 +17,15 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: FC<AuthProviderProps> = ({children}) => {
-    const [user, setUser] = useLocalStorage("user", new AuthenticationInformation(undefined, undefined));
+    const [user, setUser] = useLocalStorage<AuthenticationInformation>("user", undefined);
     const [doLogin] = useAuthenticationClient()
 
     // call this function when you want to authenticate the user
-    const login = async (email: string, password: string): Promise<AuthenticationInformation> => {
+    const login = async (email: string, password: string): Promise<void> => {
         return doLogin(email, password)
             .then((loggedInResponse) => {
-                console.log("User logged in", loggedInResponse);
                 setUser(loggedInResponse);
-                return loggedInResponse;
+                return Promise.resolve();
             }, (error) => {
                 return Promise.reject(error);
             })
@@ -44,6 +43,8 @@ export const AuthProvider: FC<AuthProviderProps> = ({children}) => {
         }),
         [user]
     );
+
+    console.log("AuthProvider", value);
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

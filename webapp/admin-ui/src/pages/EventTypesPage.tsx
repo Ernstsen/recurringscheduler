@@ -3,15 +3,14 @@ import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import {useState} from "react";
 import {DataGrid, GridActionsCellItem, GridColDef, GridValueGetterParams} from '@mui/x-data-grid';
-import {EditEventTypeDialogue, ModifyEventTypeDialogue} from "../components/EditEventTypeDialogue.tsx";
+import {CreateEventTypeDialogue, ModifyEventTypeDialogue} from "../components/CreateEventTypeDialogue.tsx";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import useEventTypeClient from "../client/EventTypeClient.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {EventType} from "../model/EventType.ts";
-import {Alert, CircularProgress, LinearProgress} from "@mui/material";
-import {createEventFromEventType} from "../client/EventTypeClient.ts";
-import Dialog from "@mui/material/Dialog";
+import {Alert, Backdrop, CircularProgress, LinearProgress} from "@mui/material";
+import {useCreateEventFromEventType} from "../client/EventTypeClient.ts";
 
 function EventTypesPage() {
     const [eventTypes, addEventType, updateEventType, deleteEventType, eventTypeError, eventTypeLoading] = useEventTypeClient()
@@ -19,6 +18,7 @@ function EventTypesPage() {
     const [actionLoading, setActionLoading] = useState(false)
     const {eventTypeId} = useParams()
     const navigate = useNavigate();
+    const createEventFromEventType = useCreateEventFromEventType()
 
     if (eventTypeError) {
         return <Alert severity="error">Failed to read EventTypes from server</Alert>
@@ -83,9 +83,12 @@ function EventTypesPage() {
 
     return (
         <>
-            <Dialog open={actionLoading} sx={{overflow: "hidden"}}>
-                <CircularProgress/>
-            </Dialog>
+            <Backdrop
+                sx={{color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1}}
+                open={actionLoading}
+            >
+                <CircularProgress color="inherit"/>
+            </Backdrop>
             <Box>
                 <DataGrid
                     rows={eventTypes}
@@ -114,8 +117,12 @@ function EventTypesPage() {
                         existingEventType={editingEventType}
                     />
                 }
-                <EditEventTypeDialogue open={createEventTypeOpen} onClose={() => setCreateEventTypeOpen(false)}
-                                       addEventType={addEventType}/>
+                {createEventTypeOpen &&
+                    <CreateEventTypeDialogue
+                        onClose={() => setCreateEventTypeOpen(false)}
+                        addEventType={addEventType}
+                    />
+                }
                 <Fab size="large"
                      color="primary"
                      onClick={() => setCreateEventTypeOpen(true)}
