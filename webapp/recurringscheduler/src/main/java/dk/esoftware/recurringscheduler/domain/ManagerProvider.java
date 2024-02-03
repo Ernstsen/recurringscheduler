@@ -5,6 +5,7 @@ import dk.esoftware.recurringscheduler.persistence.*;
 public interface ManagerProvider {
 
     DomainEntityManager<EventType> getEventTypeManager();
+
     DomainEntityManager<Event> getEventManager();
 
     DomainEntityManager<RecurrenceConfiguration> getRecurrenceConfigurationManager();
@@ -12,4 +13,6 @@ public interface ManagerProvider {
     DomainEntityManager<AuthenticatedSession> getAuthenticatedSessionManager();
 
     UserEntityManager getUserManager();
+
+    DomainEntityManager<UserResponse> getUserResponseManager();
 }
