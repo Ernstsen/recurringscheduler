@@ -19,7 +19,6 @@ import static io.restassured.RestAssured.given;
 public class UserResponseResourceTest extends DefaultCRUDResourceTest<UserResponseDTO> {
 
     private static final Random rand = new Random();
-    private List<EventTypeDTO> eventTypes;
     private UserDTO user;
     private EventDTO event;
 
@@ -47,7 +46,7 @@ public class UserResponseResourceTest extends DefaultCRUDResourceTest<UserRespon
                 .thenReturn();
 
 
-        eventTypes = new ArrayList<>();
+        List<EventTypeDTO> eventTypes = new ArrayList<>();
         eventTypes.add(mapper.readValue(response.asByteArray(), EventTypeDTO.class));
 
         // Create User
@@ -74,18 +73,22 @@ public class UserResponseResourceTest extends DefaultCRUDResourceTest<UserRespon
 
     @Override
     protected UserResponseDTO createNewEntity() {
-        return new UserResponseDTO(null, event.id(), user.id(), new HashSet<>(event.possibleTimes()));
+        return new UserResponseDTO(null,
+                event.id(), user.id(),
+                event.possibleTimes()
+        );
     }
 
     @Override
     protected UserResponseDTO modifyEntity(UserResponseDTO entity) {
-        final List<LocalDate> newPossibleTimes = new ArrayList<>(entity.chosenDates());
+//        final List<LocalDate> newPossibleTimes = new ArrayList<>(entity.chosenDates());
 
         return new UserResponseDTO(
                 entity.id(),
                 entity.eventId(),
                 entity.userEntityId(),
-                new HashSet<>(newPossibleTimes.subList(0, newPossibleTimes.size() - 1))
+//                newPossibleTimes.subList(0, newPossibleTimes.size() - 1)
+                new ArrayList<>()
         );
     }
 }

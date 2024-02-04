@@ -3,9 +3,7 @@ package dk.esoftware.recurringscheduler.persistence;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 public class UserResponse {
@@ -24,25 +22,24 @@ public class UserResponse {
     private UserEntity userEntity;
 
     @ElementCollection
-    @Column(name = "chosen_dates")
+    @Column(name = "chosen_date")
     @CollectionTable(name = "UserResponse_chosenDates", joinColumns = @JoinColumn(name = "owner_id"))
-    private Set<LocalDate> chosenDates = new LinkedHashSet<>();
+    private List<LocalDate> chosenDates = new ArrayList<>();
 
     public UserResponse() {
     }
 
-    public UserResponse(UUID id, Event event, UserEntity user, Set<LocalDate> chosenDates) {
-        this.id = id;
+    public UserResponse(Event event, UserEntity user, List<LocalDate> chosenDates) {
         this.event = event;
         this.userEntity = user;
         this.chosenDates = chosenDates;
     }
 
-    public Set<LocalDate> getChosenDates() {
+    public List<LocalDate> getChosenDates() {
         return chosenDates;
     }
 
-    public void setChosenDates(Set<LocalDate> chosenDates) {
+    public void setChosenDates(List<LocalDate> chosenDates) {
         this.chosenDates = chosenDates;
     }
 
