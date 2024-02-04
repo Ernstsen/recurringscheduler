@@ -7,10 +7,7 @@ import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 public class Event {
@@ -39,6 +36,17 @@ public class Event {
     @Column(name = "chosen_time")
     @JdbcTypeCode(SqlTypes.DATE)
     private LocalDate chosenTime;
+
+    @OneToMany(mappedBy = "event")
+    private Set<UserResponse> userResponses = new LinkedHashSet<>();
+
+    public Set<UserResponse> getUserResponses() {
+        return userResponses;
+    }
+
+    public void setUserResponses(Set<UserResponse> userResponses) {
+        this.userResponses = userResponses;
+    }
 
     public LocalDate getChosenTime() {
         return chosenTime;

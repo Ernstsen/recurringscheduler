@@ -29,6 +29,17 @@ public class UserEntity {
     @OneToMany(mappedBy = "userEntity", orphanRemoval = true)
     private Set<AuthenticatedSession> authenticatedSessions = new LinkedHashSet<>();
 
+    @OneToMany(mappedBy = "userEntity", orphanRemoval = true)
+    private Set<UserResponse> userResponses = new LinkedHashSet<>();
+
+    public Set<UserResponse> getUserResponses() {
+        return userResponses;
+    }
+
+    public void setUserResponses(Set<UserResponse> userResponses) {
+        this.userResponses = userResponses;
+    }
+
     public UserEntity() {
     }
 
