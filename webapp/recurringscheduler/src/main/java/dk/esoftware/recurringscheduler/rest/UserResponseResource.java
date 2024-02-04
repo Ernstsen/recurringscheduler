@@ -54,22 +54,22 @@ public class UserResponseResource {
         return Response.status(201).entity(UserResponseDTO.createUserResponseDTO(userResponseEntity)).build();
     }
 
-//    @GET
-//    @Produces(MediaType.APPLICATION_JSON)
-//    @Transactional
-//    @Path("/{eventId}")
-//    public Response getUserResponsesFromEvent(@Context HttpHeaders headers, @PathParam("eventId") UUID eventId) {
-//        final String token = HeaderUtilities.getAuthorizationHeader(headers);
-//        final boolean isAuthenticated = recurringSchedulerAdministration.isUserAuthenticated(token);
-//
-//        if (!isAuthenticated) {
-//            return Response.status(401).entity("Must be authenticated to get events").build();
-//        }
-//
-//        final Event event = managerProvider.getEventManager().getEntity(eventId);
-//
-//        return Response.status(201).entity(event.getUserResponses().stream().map(UserResponseDTO::createUserResponseDTO).collect(Collectors.toList())).build();
-//    }
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
+    @Path("/events/{eventId}")
+    public Response getUserResponsesFromEvent(@Context HttpHeaders headers, @PathParam("eventId") UUID eventId) {
+        final String token = HeaderUtilities.getAuthorizationHeader(headers);
+        final boolean isAuthenticated = recurringSchedulerAdministration.isUserAuthenticated(token);
+
+        if (!isAuthenticated) {
+            return Response.status(401).entity("Must be authenticated to get events").build();
+        }
+
+        final Event event = managerProvider.getEventManager().getEntity(eventId);
+
+        return Response.status(201).entity(event.getUserResponses().stream().map(UserResponseDTO::createUserResponseDTO).collect(Collectors.toList())).build();
+    }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)

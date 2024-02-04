@@ -7,6 +7,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -14,6 +15,8 @@ import java.time.Month;
 import java.util.*;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @QuarkusTest
 public class UserResponseResourceTest extends DefaultCRUDResourceTest<UserResponseDTO> {
@@ -71,6 +74,29 @@ public class UserResponseResourceTest extends DefaultCRUDResourceTest<UserRespon
         event = mapper.readValue(responseEvent.asByteArray(), EventDTO.class);
     }
 
+    @Test
+    void testGetFromEvent() throws IOException {
+        final UserResponseDTO newEntity = createNewEntity();
+
+        final Response response = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login().token())
+                .when().body(newEntity).post("/userResponse")
+                .thenReturn();
+
+        final UserResponseDTO createdEntity = mapper.readValue(response.asByteArray(), UserResponseDTO.class);
+
+        final Response getFromEvent = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login().token())
+                .when().get("/userResponse/events/" + event.id())
+                .thenReturn();
+
+        final List<UserResponseDTO> userResponses = mapper.readValue(getFromEvent.asByteArray(), new TypeReference<>() {
+        });
+
+        assertEquals(1, userResponses.size());
+        assertTrue(userResponses.contains(createdEntity));
+    }
+
     @Override
     protected UserResponseDTO createNewEntity() {
         return new UserResponseDTO(null,
@@ -81,14 +107,14 @@ public class UserResponseResourceTest extends DefaultCRUDResourceTest<UserRespon
 
     @Override
     protected UserResponseDTO modifyEntity(UserResponseDTO entity) {
-//        final List<LocalDate> newPossibleTimes = new ArrayList<>(entity.chosenDates());
+        final List<LocalDate> newPossibleTimes = new ArrayList<>(entity.chosenDates());
 
         return new UserResponseDTO(
                 entity.id(),
                 entity.eventId(),
                 entity.userEntityId(),
-//                newPossibleTimes.subList(0, newPossibleTimes.size() - 1)
-                new ArrayList<>()
+                newPossibleTimes.subList(0, newPossibleTimes.size() - 1)
+//                new ArrayList<>()
         );
     }
 }
