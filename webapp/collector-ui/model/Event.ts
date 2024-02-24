@@ -1,14 +1,12 @@
-import {EventType} from "./EventType.ts";
-
 export class Event {
     readonly id: String | null;
     name: string;
-    type: EventType;
+    type: { name: string };
     possibleTimes: Date[];
     chosenTime: Date | null;
 
 
-    constructor(id: String | null, name: string, eventType: EventType, possibleTimes: Date[], chosenTime: Date | null) {
+    constructor(id: String | null, name: string, eventType: { name: string }, possibleTimes: Date[], chosenTime: Date | null) {
         this.id = id;
         this.name = name;
         this.type = eventType;

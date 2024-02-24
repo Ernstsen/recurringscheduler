@@ -1,19 +1,13 @@
-import React, {useState} from 'react'
-import {Paper} from "@mui/material";
-import styles from "./App.module.css";
+import React from 'react'
 import {useParams} from "react-router-dom";
+import {CollectView} from "./CollectView.tsx";
 
 function App() {
     let {collectId} = useParams();
 
     return (
         <React.Fragment>
-            <Paper className={styles.Paper} elevation={10} variant={"elevation"}>
-                <h1>Collector</h1>
-                <p>
-                    Collecting data for {collectId}
-                </p>
-            </Paper>
+            {collectId ? <CollectView collectId={collectId}/> : <h1>Must supply collect ID</h1>  }
         </React.Fragment>
     )
 }
