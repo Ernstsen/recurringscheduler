@@ -4,10 +4,7 @@ package dk.esoftware.recurringscheduler.rest;
 import dk.esoftware.recurringscheduler.domain.ManagerProvider;
 import dk.esoftware.recurringscheduler.domain.RecurringSchedulerAdministration;
 import dk.esoftware.recurringscheduler.persistence.Event;
-import dk.esoftware.recurringscheduler.persistence.EventType;
-import dk.esoftware.recurringscheduler.persistence.UserEntity;
 import dk.esoftware.recurringscheduler.persistence.UserResponse;
-import dk.esoftware.recurringscheduler.rest.dto.EventDTO;
 import dk.esoftware.recurringscheduler.rest.dto.UserResponseDTO;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -16,9 +13,7 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -75,14 +70,7 @@ public class UserResponseResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
     @Transactional
-    public Response getUserResponse(@Context HttpHeaders headers, @PathParam("id") UUID id) {
-        final String token = HeaderUtilities.getAuthorizationHeader(headers);
-        final boolean isAuthenticated = recurringSchedulerAdministration.isUserAuthenticated(token);
-
-        if (!isAuthenticated) {
-            return Response.status(401).entity("Must be authenticated to get event").build();
-        }
-
+    public Response getUserResponse(@PathParam("id") UUID id) {
         final UserResponse entity = managerProvider.getUserResponseManager().getEntity(id);
 
         if (entity != null) {
@@ -99,13 +87,7 @@ public class UserResponseResource {
     @Consumes({MediaType.APPLICATION_JSON})
     @Path("/{id}")
     @Transactional
-    public Response updateUserResponse(@Context HttpHeaders headers, @PathParam("id") UUID id, UserResponseDTO payload) {
-        final String token = HeaderUtilities.getAuthorizationHeader(headers);
-        final boolean isAuthenticated = recurringSchedulerAdministration.isUserAuthenticated(token);
-
-        if (!isAuthenticated) {
-            return Response.status(401).entity("Must be authenticated to update event").build();
-        }
+    public Response updateUserResponse(@PathParam("id") UUID id, UserResponseDTO payload) {
 
         if (!id.equals(payload.id())) {
             return Response.status(400).entity("Id from path and payload must match").build();
