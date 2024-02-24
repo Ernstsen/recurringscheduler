@@ -16,7 +16,7 @@ const LoginPage: React.FC = () => {
     return (
         <Grid container className={useStyles.container} justifyContent="center" alignItems="center">
             <Grid item xs={12} sm={8} md={6}>
-                <Paper className={useStyles.paper} elevation={3}>
+                <Paper className={useStyles.paper} elevation={3} sx={{padding: "2vw"}}>
                     <Box sx={{width: 200, height: 200, margin: "auto"}}
                          component={"img"}
                          src={imgUrl}
