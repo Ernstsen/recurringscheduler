@@ -13,12 +13,15 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Path("/userResponse")
 public class UserResponseResource {
+    private static final Logger logger = LoggerFactory.getLogger(UserResponseResource.class);
 
     @Inject
     RecurringSchedulerAdministration recurringSchedulerAdministration;
@@ -64,6 +67,37 @@ public class UserResponseResource {
         final Event event = managerProvider.getEventManager().getEntity(eventId);
 
         return Response.status(201).entity(event.getUserResponses().stream().map(UserResponseDTO::createUserResponseDTO).collect(Collectors.toList())).build();
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
+    @Path("/events/{eventId}")
+    public Response createUserResponsesFromEvent(@Context HttpHeaders headers, @PathParam("eventId") UUID eventId) {
+        final String token = HeaderUtilities.getAuthorizationHeader(headers);
+        final boolean isAuthenticated = recurringSchedulerAdministration.isUserAuthenticated(token);
+
+        if (!isAuthenticated) {
+            return Response.status(401).entity("Must be authenticated to get events").build();
+        }
+
+        final Event event = managerProvider.getEventManager().getEntity(eventId);
+
+        try {
+            event.getEventType().getParticipatingUsers().forEach(user -> {
+                final UserResponse userResponseEntity = new UserResponse(
+                        event,
+                        user,
+                        event.getPossibleTimes()
+                );
+                managerProvider.getUserResponseManager().createEntity(userResponseEntity);
+            });
+        } catch (Exception e) {
+            logger.error("Failed to create user responses", e);
+            return Response.status(500).entity("Failed to create user responses").build();
+        }
+
+        return Response.status(201).build();
     }
 
     @GET
