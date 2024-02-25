@@ -1,11 +1,8 @@
 import {Event} from "../model/Event.ts";
 import {useEffect, useState} from "react";
-import { useAuth} from "../authentication/UseAuthentication.tsx";
+import {useAuth} from "../authentication/UseAuthentication.tsx";
+import {stringToDate} from "./DateUtils.ts";
 
-const stringToDate = (dateString: string): Date => {
-    let [year, month, day] = dateString.split("-")
-    return new Date(parseInt(year), parseInt(month) - 1, parseInt(day), 12)
-}
 const deserializeDatesInIncomingEvent = (event: any): Event => {
     event.possibleTimes = event.possibleTimes
         ?.map(stringToDate)
@@ -13,6 +10,7 @@ const deserializeDatesInIncomingEvent = (event: any): Event => {
     event.chosenTime = event.chosenTime ? stringToDate(event.chosenTime) : null
     return event
 }
+
 export default function useEventClient(): [
     events: Event[],
     addEvent: (event: Event) => void,
@@ -20,6 +18,7 @@ export default function useEventClient(): [
     deleteEvent: (event: Event) => void,
     eventError: boolean,
     eventLoading: boolean,
+    createResponses: (event: Event) => void
 ] {
     const {authentication} = useAuth();
     const [events, setEvents] = useState<Event[]>([])
@@ -28,10 +27,17 @@ export default function useEventClient(): [
 
     if (!authentication) {
         console.log("No authentication found, returning empty event list")
-        return [events, () => {
-        }, () => {
-        }, () => {
-        }, true, false]
+        return [events,
+            () => {
+            },
+            () => {
+            },
+            () => {
+            },
+            true, false,
+            () => {
+            }
+        ]
     }
     const authenticationToken = authentication.token
 
@@ -110,5 +116,22 @@ export default function useEventClient(): [
         })
     }
 
-    return [events, addEvent, updateEvent, deleteEvent, eventError, eventLoading]
+    const createResponses = (event: Event): void => {
+        fetch('/api/userResponse/events/' + event.id, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + authenticationToken
+            },
+            body: JSON.stringify(event)
+        }).then(response => {
+            if (response.ok) {
+                return response.json()
+            } else {
+                throw new Error("Failed to create user responses for event: " + response.status)
+            }
+        })
+    }
+
+    return [events, addEvent, updateEvent, deleteEvent, eventError, eventLoading, createResponses]
 }
