@@ -7,12 +7,16 @@ import dk.esoftware.recurringscheduler.rest.dto.Identifiable;
 import dk.esoftware.recurringscheduler.rest.dto.LoginRequest;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import io.restassured.response.ValidatableResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 
@@ -23,9 +27,23 @@ public abstract class DefaultCRUDResourceTest<T extends Identifiable> {
     private static final String password = "superSecretPassword123";
     private final String endpoint;
 
+    private final Map<String, String> unauthorizedEndpoints = new HashMap<>();
+
     public DefaultCRUDResourceTest(String endpoint) {
         this.endpoint = endpoint;
     }
+
+    /**
+     * Constructor for unauthorized endpoints support
+     *
+     * @param endpoint              the root endpoint
+     * @param unauthorizedEndpoints mapping from endpoint to methods supporting unauthorized access, methods are ; seperated
+     */
+    public DefaultCRUDResourceTest(String endpoint, Map<String, String> unauthorizedEndpoints) {
+        this.endpoint = endpoint;
+        this.unauthorizedEndpoints.putAll(unauthorizedEndpoints);
+    }
+
 
     protected abstract T createNewEntity();
 
@@ -61,10 +79,15 @@ public abstract class DefaultCRUDResourceTest<T extends Identifiable> {
         // Create entity
         final T creationTestEntity = createNewEntity();
 
-        given().contentType(ContentType.JSON)
+        final ValidatableResponse validatableResponse = given().contentType(ContentType.JSON)
                 .when().body(creationTestEntity).post(endpoint)
-                .then()
-                .statusCode(401);
+                .then();
+
+        if (unauthorizedEndpoints.getOrDefault(endpoint, "").contains("POST")) {
+            validatableResponse.statusCode(200);
+        } else {
+            validatableResponse.statusCode(401);
+        }
     }
 
     @Test
@@ -106,9 +129,15 @@ public abstract class DefaultCRUDResourceTest<T extends Identifiable> {
         final T createdConf = mapper.readValue(response.asByteArray(), getEntityClass());
 
         // Get the created entity
-        given().contentType(ContentType.JSON)
+        final ValidatableResponse validatableResponse = given().contentType(ContentType.JSON)
                 .when().body(creationTestEntity).get(endpoint + "/" + createdConf.getId().toString())
-                .then().statusCode(401);
+                .then();
+
+        if (unauthorizedEndpoints.getOrDefault(endpoint, "").contains("GET")) {
+            validatableResponse.statusCode(200);
+        } else {
+            validatableResponse.statusCode(401);
+        }
     }
 
     @Test
@@ -164,9 +193,15 @@ public abstract class DefaultCRUDResourceTest<T extends Identifiable> {
         final T createdEntity = mapper.readValue(response.asByteArray(), getEntityClass());
         T modifiedEntity = modifyEntity(createdEntity);
 
-        given().contentType(ContentType.JSON)
+        final ValidatableResponse validatableResponse = given().contentType(ContentType.JSON)
                 .when().body(modifiedEntity).put(endpoint + "/" + modifiedEntity.getId())
-                .then().statusCode(401);
+                .then();
+
+        if (unauthorizedEndpoints.getOrDefault(endpoint, "").contains("PUT")) {
+            validatableResponse.statusCode(201);
+        } else {
+            validatableResponse.statusCode(401);
+        }
     }
 
     private void compareFieldExceptId(T expected, T actual) {
@@ -225,14 +260,19 @@ public abstract class DefaultCRUDResourceTest<T extends Identifiable> {
         final T createdEntity = mapper.readValue(response.asByteArray(), getEntityClass());
         compareFieldExceptId(creationTestEntity, createdEntity);
 
-        given().contentType(ContentType.JSON)
+        final ValidatableResponse validatableResponse = given().contentType(ContentType.JSON)
                 .when().delete(endpoint + "/" + createdEntity.getId().toString())
-                .then().statusCode(401);
+                .then();
 
-        given().contentType(ContentType.JSON)
-                .header("Authorization", "Bearer " + login().token())
-                .when().get(endpoint + "/" + createdEntity.getId().toString())
-                .then().statusCode(200);
+        if (unauthorizedEndpoints.getOrDefault(endpoint, "").contains("DELETE")) {
+            validatableResponse.statusCode(200);
+        } else {
+            validatableResponse.statusCode(401);
+            given().contentType(ContentType.JSON)
+                    .header("Authorization", "Bearer " + login().token())
+                    .when().get(endpoint + "/" + createdEntity.getId().toString())
+                    .then().statusCode(200);
+        }
 
     }
 

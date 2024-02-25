@@ -26,7 +26,10 @@ public class UserResponseResourceTest extends DefaultCRUDResourceTest<UserRespon
     private EventDTO event;
 
     public UserResponseResourceTest() {
-        super("userResponse");
+        super(
+                "userResponse",
+                Map.of("userResponse", "GET;PUT")
+        );
     }
 
     @BeforeEach
