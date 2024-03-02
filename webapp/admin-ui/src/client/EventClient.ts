@@ -125,9 +125,7 @@ export default function useEventClient(): [
             },
             body: JSON.stringify(event)
         }).then(response => {
-            if (response.ok) {
-                return response.json()
-            } else {
+            if (!response.ok) {
                 throw new Error("Failed to create user responses for event: " + response.status)
             }
         })

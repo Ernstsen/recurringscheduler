@@ -6,13 +6,15 @@ import {DataGrid, GridActionsCellItem, GridColDef, GridValueGetterParams} from '
 import {EditEventDialogue, ModifyEventDialogue} from "../components/EditEventDialogue.tsx";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import SendIcon from '@mui/icons-material/Send';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import useEventClient from "../client/EventClient.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {Event} from "../model/Event.ts";
 import {Alert, LinearProgress} from "@mui/material";
 
 function EventsPage() {
-    const [events, addEvent, updateEvent, deleteEvent, eventError, eventLoading] = useEventClient()
+    const [events, addEvent, updateEvent, deleteEvent, eventError, eventLoading, createResponses] = useEventClient()
     const [createEventOpen, setCreateEventOpen] = useState(false)
     const {eventId} = useParams()
     const navigate = useNavigate();
@@ -51,7 +53,7 @@ function EventsPage() {
         {
             field: 'actions',
             type: 'actions',
-            width: 80,
+            width: 160,
             getActions: (params) => [
                 <GridActionsCellItem
                     label="Edit"
@@ -67,6 +69,16 @@ function EventsPage() {
                     onClick={() => deleteEvent(params.row)}
 
                 />,
+                <GridActionsCellItem
+                    label={"Collect"}
+                    icon={<SendIcon/>}
+                    onClick={() => createResponses(params.row)}
+                />,
+                <GridActionsCellItem
+                    label={"See collect links"}
+                    icon={<VisibilityIcon/>}
+                    onClick={() => console.log("Should display collect links for :" + JSON.stringify(params.row))}
+                />
             ]
         },
     ];
