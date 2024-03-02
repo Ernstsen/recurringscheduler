@@ -12,10 +12,12 @@ import useEventClient from "../client/EventClient.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {Event} from "../model/Event.ts";
 import {Alert, LinearProgress} from "@mui/material";
+import DisplayCollectLinks from "../components/DisplayCollectLinks.tsx";
 
 function EventsPage() {
     const [events, addEvent, updateEvent, deleteEvent, eventError, eventLoading, createResponses] = useEventClient()
     const [createEventOpen, setCreateEventOpen] = useState(false)
+    const [displayCollectLinksForEvent, setDisplayCollectLinksForEvent] = useState<string | undefined>(undefined)
     const {eventId} = useParams()
     const navigate = useNavigate();
 
@@ -77,7 +79,7 @@ function EventsPage() {
                 <GridActionsCellItem
                     label={"See collect links"}
                     icon={<VisibilityIcon/>}
-                    onClick={() => console.log("Should display collect links for :" + JSON.stringify(params.row))}
+                    onClick={() => setDisplayCollectLinksForEvent(params.row.id)}
                 />
             ]
         },
@@ -126,6 +128,11 @@ function EventsPage() {
                     <AddIcon/>
                 </Fab>
             </Box>
+            {displayCollectLinksForEvent &&
+                <DisplayCollectLinks
+                    eventId={displayCollectLinksForEvent}
+                    onClose={() => setDisplayCollectLinksForEvent(undefined)}/>
+            }
         </>
     );
 }

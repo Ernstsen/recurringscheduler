@@ -12,7 +12,7 @@ const deserializeDatesInIncomingEvent = (userRespoonse: any): UserResponse => {
 
 export default function useUserResponseClient(eventId: string): [
     userResponses: UserResponse[],
-    deleteUserResponse: (userResponse: UserResponse) => void,
+    deleteUserResponse: (userResponse: string) => void,
     userResponseError: boolean,
     userResponseLoading: boolean,
 ] {
@@ -29,7 +29,7 @@ export default function useUserResponseClient(eventId: string): [
     const authenticationToken = authentication.token
 
     useEffect(() => {
-        fetch('/api/userResponse', {headers: {'Authorization': 'Bearer ' + authenticationToken}})
+        fetch('/api/userResponse/events/' + eventId, {headers: {'Authorization': 'Bearer ' + authenticationToken}})
             .then(response => response.json())
             .then(data => {
                 setUserResponses(data.map(deserializeDatesInIncomingEvent))
@@ -40,18 +40,16 @@ export default function useUserResponseClient(eventId: string): [
         })
     }, [eventId])
 
-    const deleteUserResponse = (userResponse: UserResponse) => {
-        console.log("Deleting userResponse: ", userResponse)
-        fetch('/api/userResponse/' + userResponse.id + "/", {
+    const deleteUserResponse = (userResponseId: string) => {
+        fetch('/api/userResponse/' + userResponseId + "/", {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + authenticationToken
             },
-            body: JSON.stringify(userResponse)
         }).then(response => {
             if (response.ok) {
-                setUserResponses(userResponses.filter(u => u.id !== userResponse.id))
+                setUserResponses(userResponses.filter(u => u.id !== userResponseId))
             } else {
                 setUserResponseError(true)
                 throw new Error("Failed to delete userResponse: " + response.status)
