@@ -44,29 +44,30 @@ const DisplayCollectLinks: React.FC<DisplayCollectLinksProps> = ({eventId, onClo
     return (
         <Dialog open={true} onClose={onClose} fullWidth maxWidth={"md"}>
             <DialogTitle>Choose users to include</DialogTitle>
-            <DialogContent>
-                <DialogContentText>
-                    Choose users to include in the event
-                </DialogContentText>
-                <DataGrid
-                    disableRowSelectionOnClick
-                    rows={userResponses}
-                    columns={columns}
-                    initialState={{
-                        pagination: {
-                            paginationModel: {page: 0, pageSize: 5},
-                        },
-                    }}
-                    loading={userResponseLoading}
-                    autoHeight={!userResponseLoading}
+            {userResponseError ? (<Alert severity="error">Failed to read CollectLinks from server</Alert>)
+                : (<DialogContent>
+                    <DialogContentText>
+                        Choose users to include in the event
+                    </DialogContentText>
+                    <DataGrid
+                        disableRowSelectionOnClick
+                        rows={userResponses}
+                        columns={columns}
+                        initialState={{
+                            pagination: {
+                                paginationModel: {page: 0, pageSize: 5},
+                            },
+                        }}
+                        loading={userResponseLoading}
+                        autoHeight={!userResponseLoading}
 
-                    slots={{
-                        loadingOverlay: LinearProgress,
-                        noRowsOverlay: () => <Alert severity="info"> No UserResponses found for event! </Alert>
-                    }}
-                    pageSizeOptions={[5, 10]}
-                />
-            </DialogContent>
+                        slots={{
+                            loadingOverlay: LinearProgress,
+                            noRowsOverlay: () => <Alert severity="info"> No UserResponses found for event! </Alert>
+                        }}
+                        pageSizeOptions={[5, 10]}
+                    />
+                </DialogContent>)}
             <DialogActions>
                 <Button color="primary" onClick={() => {
                     onClose();
