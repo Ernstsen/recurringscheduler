@@ -4,6 +4,7 @@ package dk.esoftware.recurringscheduler.rest;
 import dk.esoftware.recurringscheduler.domain.ManagerProvider;
 import dk.esoftware.recurringscheduler.domain.RecurringSchedulerAdministration;
 import dk.esoftware.recurringscheduler.persistence.Event;
+import dk.esoftware.recurringscheduler.persistence.UserEntity;
 import dk.esoftware.recurringscheduler.persistence.UserResponse;
 import dk.esoftware.recurringscheduler.rest.dto.UserResponseDTO;
 import jakarta.inject.Inject;
@@ -16,6 +17,7 @@ import jakarta.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -71,6 +73,7 @@ public class UserResponseResource {
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
+    @Consumes("*/*")
     @Transactional
     @Path("/events/{eventId}")
     public Response createUserResponsesFromEvent(@Context HttpHeaders headers, @PathParam("eventId") UUID eventId) {
@@ -84,14 +87,19 @@ public class UserResponseResource {
         final Event event = managerProvider.getEventManager().getEntity(eventId);
 
         try {
-            event.getEventType().getParticipatingUsers().forEach(user -> {
-                final UserResponse userResponseEntity = new UserResponse(
-                        event,
-                        user,
-                        event.getPossibleTimes()
-                );
-                managerProvider.getUserResponseManager().createEntity(userResponseEntity);
-            });
+            final List<UserEntity> usersWithCollects = event.getUserResponses().stream()
+                    .map(UserResponse::getUserEntity).toList();
+
+            event.getEventType().getParticipatingUsers()
+                    .stream().filter(user -> !usersWithCollects.contains(user))
+                    .forEach(user -> {
+                        final UserResponse userResponseEntity = new UserResponse(
+                                event,
+                                user,
+                                event.getPossibleTimes()
+                        );
+                        managerProvider.getUserResponseManager().createEntity(userResponseEntity);
+                    });
         } catch (Exception e) {
             logger.error("Failed to create user responses", e);
             return Response.status(500).entity("Failed to create user responses").build();

@@ -99,6 +99,33 @@ public class UserResponseResourceTest extends DefaultCRUDResourceTest<UserRespon
     }
 
     @Test
+    void testCreateFromTypeIdempotent() throws IOException {
+        final Response response = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login().token())
+                .when().post("/userResponse/events/" + event.id())
+                .thenReturn();
+
+        assertEquals(201, response.getStatusCode());
+
+        final Response response2 = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login().token())
+                .when().post("/userResponse/events/" + event.id())
+                .thenReturn();
+
+        assertEquals(201, response2.getStatusCode());
+
+        final Response getFromEvent = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login().token())
+                .when().get("/userResponse/events/" + event.id())
+                .thenReturn();
+
+        final List<UserResponseDTO> userResponses = mapper.readValue(getFromEvent.asByteArray(), new TypeReference<>() {
+        });
+
+        assertEquals(1, userResponses.size());
+    }
+
+    @Test
     void testGetFromEvent() throws IOException {
         final UserResponseDTO newEntity = createNewEntity();
 
