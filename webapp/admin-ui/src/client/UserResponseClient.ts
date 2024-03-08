@@ -7,6 +7,8 @@ const deserializeDatesInIncomingEvent = (userRespoonse: any): UserResponse => {
     userRespoonse.chosenDates = userRespoonse.chosenDates
         ?.map(stringToDate)
         ?.sort((a: Date, b: Date) => a.getTime() - b.getTime())
+    console.log("Deserialized userResponse", userRespoonse)
+    userRespoonse.userEntityId = userRespoonse.event.id
     return userRespoonse
 }
 

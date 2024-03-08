@@ -45,7 +45,7 @@ public class UserResponseResource {
 
 
         final UserResponse userResponseEntity = new UserResponse(
-                managerProvider.getEventManager().getEntity(newResponse.eventId()),
+                managerProvider.getEventManager().getEntity(newResponse.event().getId()),
                 managerProvider.getUserManager().getEntity(newResponse.userEntityId()),
                 newResponse.chosenDates()
         );
@@ -142,7 +142,7 @@ public class UserResponseResource {
         }
 
         entity.setUserEntity(managerProvider.getUserManager().getEntity(payload.userEntityId()));
-        entity.setEvent(managerProvider.getEventManager().getEntity(payload.eventId()));
+        entity.setEvent(managerProvider.getEventManager().getEntity(payload.event().id()));
         entity.setChosenDates(payload.chosenDates());
 
         return Response.status(201).entity(UserResponseDTO.createUserResponseDTO(entity)).build();

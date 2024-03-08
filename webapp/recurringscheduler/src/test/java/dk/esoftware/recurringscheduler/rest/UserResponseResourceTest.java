@@ -151,7 +151,7 @@ public class UserResponseResourceTest extends DefaultCRUDResourceTest<UserRespon
     @Override
     protected UserResponseDTO createNewEntity() {
         return new UserResponseDTO(null,
-                event.id(), user.id(),
+                event, user.id(),
                 event.possibleTimes()
         );
     }
@@ -162,10 +162,9 @@ public class UserResponseResourceTest extends DefaultCRUDResourceTest<UserRespon
 
         return new UserResponseDTO(
                 entity.id(),
-                entity.eventId(),
+                entity.event(),
                 entity.userEntityId(),
                 newPossibleTimes.subList(0, newPossibleTimes.size() - 1)
-//                new ArrayList<>()
         );
     }
 }
