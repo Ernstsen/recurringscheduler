@@ -31,13 +31,20 @@ export const ErrorView = () => {
     )
 }
 
-function CollectViewContent(props: {
+function CollectViewContent({userResponse, updateResponse}: {
     userResponse: UserResponse,
     updateResponse: (userResponse: UserResponse) => void
 }) {
+
+    let possibleDatesRendered = userResponse.event.possibleTimes.map(date => date.toLocaleDateString("da")).join(", ");
+
     return (
         <Paper className={styles.Paper} elevation={10} variant={"elevation"}>
-            <h1>Choose dates available for {props.userResponse.event.name}</h1>
+            <h1>Choose dates available {userResponse.event.name}</h1>
+            <h2>{userResponse.event.name}</h2>
+
+            <p>Possible dates: {possibleDatesRendered}</p>
+
         </Paper>
     )
 }

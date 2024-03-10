@@ -25,15 +25,26 @@ export default function useUserResponseClient(responseKey: string): [
 
 
     useEffect(() => {
-        fetch('/api/userResponse/' + responseKey)
-            .then(response => response.json())
-            .then(data => {
-                setUserResponse(data)
-                data.event = deserializeDatesInIncomingEvent(data.event)
-                setLoading(false)
-            }, () => setError(true))
+            fetch('/api/userResponse/' + responseKey)
+                .then(response => {
+                    if (!response.ok) {
+                        setLoading(false)
+                        setError(true)
+                    } else {
+                        return response.json()
+                    }
+                })
+                .then(data => {
+                    setUserResponse(data)
+                    data.event = deserializeDatesInIncomingEvent(data.event)
+                    setLoading(false)
+                }, () => {
+                    setError(true)
+                    setLoading(false)
+                })
+                .catch(() => setError(true))
         }
-    , [responseKey])
+        , [responseKey])
 
     const updateResponse = (userResponse: UserResponse) => {
         console.log("Updating user response", userResponse)
