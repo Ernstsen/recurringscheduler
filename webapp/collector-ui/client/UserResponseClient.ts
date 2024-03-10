@@ -15,13 +15,11 @@ const deserializeDatesInIncomingEvent = (event: any): Event => {
 }
 export default function useUserResponseClient(responseKey: string): [
     userResponse: UserResponse | undefined,
-    event: Event | undefined,
     updateResponse: (userResponse: UserResponse) => void,
     error: boolean,
     loading: boolean,
 ] {
     const [userResponse, setUserResponse] = useState<UserResponse | undefined>(undefined)
-    const [event, setEvent] = useState<Event | undefined>(undefined)
     const [error, setError] = useState(false)
     const [loading, setLoading] = useState(true)
 
@@ -31,25 +29,14 @@ export default function useUserResponseClient(responseKey: string): [
             .then(response => response.json())
             .then(data => {
                 setUserResponse(data)
-                return data.eventId
-            }).then(eventId => {
-            fetch('/api/events/' + eventId)
-                .then(response => response.json())
-                .then(data => {
-                    setEvent(deserializeDatesInIncomingEvent(data))
-                    setLoading(false)
-                }).catch(() => {
-                setError(true)
-            })
-        }).catch(() => {
-            setError(true)
-        })
-
-
-    }, [responseKey])
+                data.event = deserializeDatesInIncomingEvent(data.event)
+                setLoading(false)
+            }, () => setError(true))
+        }
+    , [responseKey])
 
     const updateResponse = (userResponse: UserResponse) => {
-        console.log("Updating event", event)
+        console.log("Updating user response", userResponse)
         fetch('/api/userResponse/' + userResponse.id + "/", {
             method: 'PUT',
             headers: {
@@ -71,5 +58,5 @@ export default function useUserResponseClient(responseKey: string): [
             })
     }
 
-    return [userResponse, event, updateResponse, error, loading]
+    return [userResponse, updateResponse, error, loading]
 }

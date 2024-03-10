@@ -1,14 +1,15 @@
+import {Event} from "./Event";
 export class UserResponse {
     readonly id: String;
     readonly userId: String;
-    readonly eventId: String;
+    readonly event: Event;
     chosenTimes: Date[];
 
 
-    constructor(id: String, userId: String, eventId: String, chosenTimes: Date[]) {
+    constructor(id: String, userId: String, event: Event, chosenTimes: Date[]) {
         this.id = id;
         this.userId = userId;
-        this.eventId = eventId;
+        this.event = event;
         this.chosenTimes = chosenTimes;
     }
 
