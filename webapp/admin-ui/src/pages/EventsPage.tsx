@@ -11,7 +11,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import useEventClient from "../client/EventClient.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {Event} from "../model/Event.ts";
-import {Alert, LinearProgress} from "@mui/material";
+import {Alert, LinearProgress, Tooltip} from "@mui/material";
 import DisplayCollectLinks from "../components/DisplayCollectLinks.tsx";
 
 function EventsPage() {
@@ -73,12 +73,12 @@ function EventsPage() {
                 />,
                 <GridActionsCellItem
                     label={"Collect"}
-                    icon={<SendIcon/>}
+                    icon={(<Tooltip title={"Create collect links for users"}><SendIcon/></Tooltip>)}
                     onClick={() => createResponses(params.row)}
                 />,
                 <GridActionsCellItem
                     label={"See collect links"}
-                    icon={<VisibilityIcon/>}
+                    icon={(<Tooltip title={"See collect links"}><VisibilityIcon/></Tooltip>)}
                     onClick={() => setDisplayCollectLinksForEvent(params.row.id)}
                 />
             ]
