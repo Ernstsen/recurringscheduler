@@ -47,7 +47,7 @@ export default function useUserResponseClient(responseKey: string): [
         , [responseKey])
 
     const updateResponse = (userResponse: UserResponse) => {
-        console.log("Updating user response", userResponse)
+        // console.log("Updating user response", userResponse)
         fetch('/api/userResponse/' + userResponse.id + "/", {
             method: 'PUT',
             headers: {

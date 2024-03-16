@@ -6,3 +6,12 @@
     margin: 5vh auto auto auto;
     text-align: center;
 }
+
+.Card {
+    margin: 10px;
+    padding: 10px;
+    display: inline-block;
+    width: 200px;
+    height: 200px;
+    text-align: center;
+}
