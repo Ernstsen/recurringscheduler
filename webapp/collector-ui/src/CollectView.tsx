@@ -1,7 +1,7 @@
-import React from 'react'
+import React, {useState} from 'react'
 import {Box, Button, Grid, IconButton, Paper} from "@mui/material";
 import styles from "./CollectView.module.css";
-import {Add} from "@mui/icons-material";
+import {Check, Close} from "@mui/icons-material";
 import useUserResponseClient from "../client/UserResponseClient.ts";
 import {UserResponse} from "../model/UserResponse.ts";
 
@@ -31,14 +31,27 @@ export const ErrorView = () => {
     )
 }
 
+class PossibleDate {
+    date: Date;
+    available: boolean;
+
+    constructor(date: Date, available: boolean) {
+        this.date = date;
+        this.available = available;
+    }
+
+}
+
+
 function CollectViewContent({userResponse, updateResponse}: {
     userResponse: UserResponse,
     updateResponse: (userResponse: UserResponse) => void
 }) {
+    const [chosenDates, setChosenDates] = useState(userResponse.chosenTimes || [])
 
     let possibleTimes = userResponse.event.possibleTimes;
 
-    let chosenDates = userResponse.chosenTimes || [];
+    let currentDatesState = possibleTimes.map(dateOption => new PossibleDate(dateOption, chosenDates.includes(dateOption)));
 
     return (
         <Paper className={styles.Paper} elevation={10} variant={"elevation"}>
@@ -47,37 +60,38 @@ function CollectViewContent({userResponse, updateResponse}: {
 
             <Box sx={{flexGrow: 1}}>
                 <Grid container spacing={{xs: 2, md: 3}} columns={{xs: 4, sm: 8, md: 12}}>
-                    {possibleTimes.map(dateOption => {
-                        let isChosen = chosenDates.filter(d => d.toLocaleDateString() === dateOption.toLocaleDateString()).length > 0;
-                        return (
-                            <Grid item xs={2} sm={4} md={4} key={dateOption.toLocaleDateString()}>
-                                <Box
-                                    display="flex"
-                                    p={1.5}
-                                    gap={2}
-                                    bgcolor={"#f5f5f5"}
-                                    borderRadius={4}
-                                    sx={{alignItems: "center"}}
-                                >
-                                    <Box sx={{flex: "auto"}}>
-                                        <h3>{["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"][dateOption.getDay()]}. {dateOption.toLocaleDateString()}</h3>
-                                        <p>{isChosen ? "Available" : "Unavailable"}</p>
-                                    </Box>
-                                    <Box ml={1}>
-                                        <IconButton size="small"
-                                                    action={() => console.log("Toggle for date: " + dateOption.toLocaleDateString())}
-                                        >
-                                            <Add/>
-                                        </IconButton>
-                                    </Box>
+                    {currentDatesState.map(dateOption => (
+                        <Grid item xs={2} sm={4} md={4} key={dateOption.date.toLocaleDateString()}>
+                            <Box
+                                display="flex"
+                                p={1.5}
+                                gap={2}
+                                bgcolor={"#f5f5f5"}
+                                borderRadius={4}
+                                sx={{alignItems: "center"}}
+                            >
+                                <Box sx={{flex: "auto"}}>
+                                    <h3>{["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"][dateOption.date.getDay()]}. {dateOption.date.toLocaleDateString()}</h3>
+                                    <p>{dateOption.available ? "Available" : "Unavailable"}</p>
                                 </Box>
-                            </Grid>
-                        )
-                    })}
+                                <Box ml={1}>
+                                    <IconButton size="small"
+                                            onClick={() => {
+                                                setChosenDates(dateOption.available ? chosenDates.filter(date => date !== dateOption.date) : [...chosenDates, dateOption.date])
+                                                ;
+                                                console.log("lol")
+                                            }}
+                                    >
+                                        {dateOption.available ? <Close/> : <Check/>}
+                                    </IconButton>
+                                </Box>
+                            </Box>
+                        </Grid>
+                    ))}
                 </Grid>
             </Box>
 
-            <Button title={"Submit"} action={() => updateResponse(userResponse)}>Submit</Button>
+            <Button title={"Submit"} onClick={() => updateResponse(userResponse)}>Submit</Button>
         </Paper>
     )
 }
@@ -94,18 +108,16 @@ export const CollectView: React.FC<CollectViewProps> = ({collectId}) => {
         return <LoadingView/>
     }
 
-    if (error) {
+    if (error || !userResponse) {
         return <ErrorView/>
     }
 
     return (
         <React.Fragment>
-            {((!loading && !error) && userResponse) ?
-                (<CollectViewContent
-                    userResponse={userResponse}
-                    updateResponse={updateResponse}/>) :
-                (<p>Error</p>)
-            }
+            <CollectViewContent
+                userResponse={userResponse}
+                updateResponse={updateResponse}/>
+
         </React.Fragment>
     )
 }
