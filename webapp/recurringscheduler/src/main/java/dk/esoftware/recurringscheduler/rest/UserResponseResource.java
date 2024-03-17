@@ -142,7 +142,6 @@ public class UserResponseResource {
         }
 
         entity.setUserEntity(managerProvider.getUserManager().getEntity(payload.userEntityId()));
-        entity.setEvent(managerProvider.getEventManager().getEntity(payload.event().id()));
         entity.setChosenDates(payload.chosenDates());
 
         return Response.status(201).entity(UserResponseDTO.createUserResponseDTO(entity)).build();

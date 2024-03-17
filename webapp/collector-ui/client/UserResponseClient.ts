@@ -35,8 +35,9 @@ export default function useUserResponseClient(responseKey: string): [
                     }
                 })
                 .then(data => {
-                    setUserResponse(data)
+                    data.chosenDates = data.chosenDates.map(stringToDate)
                     data.event = deserializeDatesInIncomingEvent(data.event)
+                    setUserResponse(data)
                     setLoading(false)
                 }, () => {
                     setError(true)

@@ -3,14 +3,14 @@ export class UserResponse {
     readonly id: String;
     readonly userId: String;
     readonly event: Event;
-    chosenTimes: Date[];
+    chosenDates: Date[];
 
 
-    constructor(id: String, userId: String, event: Event, chosenTimes: Date[]) {
+    constructor(id: String, userId: String, event: Event, chosenDates: Date[]) {
         this.id = id;
         this.userId = userId;
         this.event = event;
-        this.chosenTimes = chosenTimes;
+        this.chosenDates = chosenDates;
     }
 
     toString() {

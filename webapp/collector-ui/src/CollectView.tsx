@@ -47,11 +47,11 @@ function CollectViewContent({userResponse, updateResponse}: {
     userResponse: UserResponse,
     updateResponse: (userResponse: UserResponse) => void
 }) {
-    const [chosenDates, setChosenDates] = useState(userResponse.chosenTimes || [])
+    const [chosenDates, setChosenDates] = useState(userResponse.chosenDates || [])
 
     let possibleTimes = userResponse.event.possibleTimes;
 
-    let currentDatesState = possibleTimes.map(dateOption => new PossibleDate(dateOption, chosenDates.includes(dateOption)));
+    let currentDatesState = possibleTimes.map(dateOption => new PossibleDate(dateOption, chosenDates.map(pd => pd.toLocaleDateString()).includes(dateOption.toLocaleDateString())));
 
     return (
         <Paper className={styles.Paper} elevation={10} variant={"elevation"}>
@@ -72,15 +72,13 @@ function CollectViewContent({userResponse, updateResponse}: {
                             >
                                 <Box sx={{flex: "auto"}}>
                                     <h3>{["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"][dateOption.date.getDay()]}. {dateOption.date.toLocaleDateString()}</h3>
-                                    <p>{dateOption.available ? "Available" : "Unavailable"}</p>
+                                    <p>{dateOption.available ? "I'm Available" : "I'm unavailable"}</p>
                                 </Box>
                                 <Box ml={1}>
                                     <IconButton size="small"
-                                            onClick={() => {
-                                                setChosenDates(dateOption.available ? chosenDates.filter(date => date !== dateOption.date) : [...chosenDates, dateOption.date])
-                                                ;
-                                                console.log("lol")
-                                            }}
+                                                onClick={() => {
+                                                    setChosenDates(dateOption.available ? chosenDates.filter(date => date.toLocaleDateString() !== dateOption.date.toLocaleDateString()) : [...chosenDates, dateOption.date])
+                                                }}
                                     >
                                         {dateOption.available ? <Close/> : <Check/>}
                                     </IconButton>
@@ -91,7 +89,10 @@ function CollectViewContent({userResponse, updateResponse}: {
                 </Grid>
             </Box>
 
-            <Button title={"Submit"} onClick={() => updateResponse(userResponse)}>Submit</Button>
+            <Button title={"Submit"} onClick={() => {
+                userResponse.chosenDates = chosenDates;
+                updateResponse(userResponse)
+            }}>Submit</Button>
         </Paper>
     )
 }
