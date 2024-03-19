@@ -66,9 +66,8 @@ function CollectViewContent({userResponse, updateResponse}: {
                                 display="flex"
                                 p={1.5}
                                 gap={2}
-                                bgcolor={"#f5f5f5"}
+                                className={styles.Card}
                                 borderRadius={4}
-                                sx={{alignItems: "center"}}
                             >
                                 <Box sx={{flex: "auto"}}>
                                     <h3>{["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"][dateOption.date.getDay()]}. {dateOption.date.toLocaleDateString()}</h3>
