@@ -59,7 +59,7 @@ function CollectViewContent({userResponse, updateResponse}: {
             <h2>{userResponse.event.name}</h2>
 
             <Box sx={{flexGrow: 1}}>
-                <Grid container spacing={{xs: 2, md: 3}} columns={{xs: 4, sm: 8, md: 12}}>
+                <Grid container spacing={{xs: 2, md: 3}} columns={{xs: 4, sm: 8, md: 12}} margin={"1vh"} height={"60vh"}>
                     {currentDatesState.map(dateOption => (
                         <Grid item xs={2} sm={4} md={4} key={dateOption.date.toLocaleDateString()}>
                             <Box
@@ -91,7 +91,10 @@ function CollectViewContent({userResponse, updateResponse}: {
             <Button title={"Submit"} onClick={() => {
                 userResponse.chosenDates = chosenDates;
                 updateResponse(userResponse)
-            }}>Submit</Button>
+            }}
+                    variant={"contained"}
+                    color={"primary"}
+            >Submit</Button>
         </Paper>
     )
 }
