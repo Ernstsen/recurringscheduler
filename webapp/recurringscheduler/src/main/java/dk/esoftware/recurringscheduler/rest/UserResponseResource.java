@@ -4,10 +4,8 @@ package dk.esoftware.recurringscheduler.rest;
 import dk.esoftware.recurringscheduler.domain.ManagerProvider;
 import dk.esoftware.recurringscheduler.domain.RecurringSchedulerAdministration;
 import dk.esoftware.recurringscheduler.persistence.Event;
-import dk.esoftware.recurringscheduler.persistence.EventType;
 import dk.esoftware.recurringscheduler.persistence.UserEntity;
 import dk.esoftware.recurringscheduler.persistence.UserResponse;
-import dk.esoftware.recurringscheduler.rest.dto.EventDTO;
 import dk.esoftware.recurringscheduler.rest.dto.UserResponseDTO;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -16,6 +14,7 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
@@ -24,6 +23,7 @@ import java.util.stream.Collectors;
 
 @Path("/userResponse")
 public class UserResponseResource {
+    private static final Logger logger = LoggerFactory.getLogger(UserResponseResource.class);
 
     @Inject
     RecurringSchedulerAdministration recurringSchedulerAdministration;
@@ -45,7 +45,7 @@ public class UserResponseResource {
 
 
         final UserResponse userResponseEntity = new UserResponse(
-                managerProvider.getEventManager().getEntity(newResponse.eventId()),
+                managerProvider.getEventManager().getEntity(newResponse.event().getId()),
                 managerProvider.getUserManager().getEntity(newResponse.userEntityId()),
                 newResponse.chosenDates()
         );
@@ -71,18 +71,48 @@ public class UserResponseResource {
         return Response.status(201).entity(event.getUserResponses().stream().map(UserResponseDTO::createUserResponseDTO).collect(Collectors.toList())).build();
     }
 
-    @GET
+    @POST
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{id}")
+    @Consumes("*/*")
     @Transactional
-    public Response getUserResponse(@Context HttpHeaders headers, @PathParam("id") UUID id) {
+    @Path("/events/{eventId}")
+    public Response createUserResponsesFromEvent(@Context HttpHeaders headers, @PathParam("eventId") UUID eventId) {
         final String token = HeaderUtilities.getAuthorizationHeader(headers);
         final boolean isAuthenticated = recurringSchedulerAdministration.isUserAuthenticated(token);
 
         if (!isAuthenticated) {
-            return Response.status(401).entity("Must be authenticated to get event").build();
+            return Response.status(401).entity("Must be authenticated to get events").build();
         }
 
+        final Event event = managerProvider.getEventManager().getEntity(eventId);
+
+        try {
+            final List<UserEntity> usersWithCollects = event.getUserResponses().stream()
+                    .map(UserResponse::getUserEntity).toList();
+
+            event.getEventType().getParticipatingUsers()
+                    .stream().filter(user -> !usersWithCollects.contains(user))
+                    .forEach(user -> {
+                        final UserResponse userResponseEntity = new UserResponse(
+                                event,
+                                user,
+                                event.getPossibleTimes()
+                        );
+                        managerProvider.getUserResponseManager().createEntity(userResponseEntity);
+                    });
+        } catch (Exception e) {
+            logger.error("Failed to create user responses", e);
+            return Response.status(500).entity("Failed to create user responses").build();
+        }
+
+        return Response.status(201).build();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{id}")
+    @Transactional
+    public Response getUserResponse(@PathParam("id") UUID id) {
         final UserResponse entity = managerProvider.getUserResponseManager().getEntity(id);
 
         if (entity != null) {
@@ -99,13 +129,7 @@ public class UserResponseResource {
     @Consumes({MediaType.APPLICATION_JSON})
     @Path("/{id}")
     @Transactional
-    public Response updateUserResponse(@Context HttpHeaders headers, @PathParam("id") UUID id, UserResponseDTO payload) {
-        final String token = HeaderUtilities.getAuthorizationHeader(headers);
-        final boolean isAuthenticated = recurringSchedulerAdministration.isUserAuthenticated(token);
-
-        if (!isAuthenticated) {
-            return Response.status(401).entity("Must be authenticated to update event").build();
-        }
+    public Response updateUserResponse(@PathParam("id") UUID id, UserResponseDTO payload) {
 
         if (!id.equals(payload.id())) {
             return Response.status(400).entity("Id from path and payload must match").build();
@@ -118,7 +142,6 @@ public class UserResponseResource {
         }
 
         entity.setUserEntity(managerProvider.getUserManager().getEntity(payload.userEntityId()));
-        entity.setEvent(managerProvider.getEventManager().getEntity(payload.eventId()));
         entity.setChosenDates(payload.chosenDates());
 
         return Response.status(201).entity(UserResponseDTO.createUserResponseDTO(entity)).build();

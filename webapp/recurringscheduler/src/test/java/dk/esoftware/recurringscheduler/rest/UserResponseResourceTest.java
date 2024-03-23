@@ -26,7 +26,10 @@ public class UserResponseResourceTest extends DefaultCRUDResourceTest<UserRespon
     private EventDTO event;
 
     public UserResponseResourceTest() {
-        super("userResponse");
+        super(
+                "userResponse",
+                Map.of("userResponse", "GET;PUT")
+        );
     }
 
     @BeforeEach
@@ -40,8 +43,17 @@ public class UserResponseResourceTest extends DefaultCRUDResourceTest<UserRespon
                         new TypeReference<>() {
                         });
 
+        // Create User
+        UserDTO createUser1 = new UserDTO(null, "User1" + rand.nextInt(), "EventTestUser1" + rand.nextInt() + "@mail.com", null);
+
+        final Response userResponse1 = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login.token())
+                .when().body(createUser1).post("/users")
+                .thenReturn();
+        user = mapper.readValue(userResponse1.asByteArray(), UserDTO.class);
+
         // Create Entity
-        final EventTypeDTO creationTestEntity = new EventTypeDTO("eventType", null, recurrenceConfigurations.get(1), new ArrayList<>());
+        final EventTypeDTO creationTestEntity = new EventTypeDTO("eventType", null, recurrenceConfigurations.get(1), Collections.singletonList(user));
 
         final Response response = given().contentType(ContentType.JSON)
                 .header("Authorization", "Bearer " + login.token())
@@ -52,14 +64,6 @@ public class UserResponseResourceTest extends DefaultCRUDResourceTest<UserRespon
         List<EventTypeDTO> eventTypes = new ArrayList<>();
         eventTypes.add(mapper.readValue(response.asByteArray(), EventTypeDTO.class));
 
-        // Create User
-        UserDTO createUser1 = new UserDTO(null, "User1" + rand.nextInt(), "EventTestUser1" + rand.nextInt() + "@mail.com", null);
-
-        final Response userResponse1 = given().contentType(ContentType.JSON)
-                .header("Authorization", "Bearer " + login.token())
-                .when().body(createUser1).post("/users")
-                .thenReturn();
-        user = mapper.readValue(userResponse1.asByteArray(), UserDTO.class);
 
         // Create Event
 
@@ -72,6 +76,53 @@ public class UserResponseResourceTest extends DefaultCRUDResourceTest<UserRespon
                 .thenReturn();
 
         event = mapper.readValue(responseEvent.asByteArray(), EventDTO.class);
+    }
+
+    @Test
+    void testCreateFromType() throws IOException {
+        final Response response = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login().token())
+                .when().post("/userResponse/events/" + event.id())
+                .thenReturn();
+
+        assertEquals(201, response.getStatusCode());
+
+        final Response getFromEvent = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login().token())
+                .when().get("/userResponse/events/" + event.id())
+                .thenReturn();
+
+        final List<UserResponseDTO> userResponses = mapper.readValue(getFromEvent.asByteArray(), new TypeReference<>() {
+        });
+
+        assertEquals(1, userResponses.size());
+    }
+
+    @Test
+    void testCreateFromTypeIdempotent() throws IOException {
+        final Response response = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login().token())
+                .when().post("/userResponse/events/" + event.id())
+                .thenReturn();
+
+        assertEquals(201, response.getStatusCode());
+
+        final Response response2 = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login().token())
+                .when().post("/userResponse/events/" + event.id())
+                .thenReturn();
+
+        assertEquals(201, response2.getStatusCode());
+
+        final Response getFromEvent = given().contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + login().token())
+                .when().get("/userResponse/events/" + event.id())
+                .thenReturn();
+
+        final List<UserResponseDTO> userResponses = mapper.readValue(getFromEvent.asByteArray(), new TypeReference<>() {
+        });
+
+        assertEquals(1, userResponses.size());
     }
 
     @Test
@@ -100,7 +151,7 @@ public class UserResponseResourceTest extends DefaultCRUDResourceTest<UserRespon
     @Override
     protected UserResponseDTO createNewEntity() {
         return new UserResponseDTO(null,
-                event.id(), user.id(),
+                event, user.id(),
                 event.possibleTimes()
         );
     }
@@ -111,10 +162,9 @@ public class UserResponseResourceTest extends DefaultCRUDResourceTest<UserRespon
 
         return new UserResponseDTO(
                 entity.id(),
-                entity.eventId(),
+                entity.event(),
                 entity.userEntityId(),
                 newPossibleTimes.subList(0, newPossibleTimes.size() - 1)
-//                new ArrayList<>()
         );
     }
 }

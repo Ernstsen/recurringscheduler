@@ -7,6 +7,7 @@ import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,4 +64,32 @@ public class DefaultInitializationUtility {
         return defaults;
     }
 
+    @Transactional
+    public static void initializeStorageWithDemoData(EntityManager entityManager) {
+        UserEntityManager userManager = new UserEntityManager(entityManager);
+
+        final UserEntity user1 = new UserEntity("john.doe@demo.local", "John Doe");
+        userManager.createEntity(user1);
+
+        final RecurrenceConfiguration onceAWeek = new DefaultEntityManager<>(entityManager, RecurrenceConfiguration.class)
+                .getEntities().stream().filter(r -> r.getName().contains("week")).
+                findFirst().orElseThrow(() -> new IllegalStateException("Did not find default recurrence configuration 'Once a week' in DB"));
+
+        final DefaultEntityManager<EventType> eventManager = new DefaultEntityManager<>(entityManager, EventType.class);
+        final EventType eventType = new EventType("Dungeons and Dragons", onceAWeek);
+        eventManager.createEntity(eventType);
+        eventType.getParticipatingUsers().add(user1);
+
+        new DefaultEntityManager<>(entityManager, Event.class).createEntity(new Event(
+                "Dungeons and Dragons - Session 1",
+                eventType,
+                user1,
+                List.of(
+                        LocalDate.of(2024, 3, 2),
+                        LocalDate.of(2024, 3, 9),
+                        LocalDate.of(2024, 3, 16)
+                ),
+                null
+        ));
+    }
 }

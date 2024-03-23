@@ -6,14 +6,18 @@ import {DataGrid, GridActionsCellItem, GridColDef, GridValueGetterParams} from '
 import {EditEventDialogue, ModifyEventDialogue} from "../components/EditEventDialogue.tsx";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import SendIcon from '@mui/icons-material/Send';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import useEventClient from "../client/EventClient.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {Event} from "../model/Event.ts";
-import {Alert, LinearProgress} from "@mui/material";
+import {Alert, LinearProgress, Tooltip} from "@mui/material";
+import DisplayCollectLinks from "../components/DisplayCollectLinks.tsx";
 
 function EventsPage() {
-    const [events, addEvent, updateEvent, deleteEvent, eventError, eventLoading] = useEventClient()
+    const [events, addEvent, updateEvent, deleteEvent, eventError, eventLoading, createResponses] = useEventClient()
     const [createEventOpen, setCreateEventOpen] = useState(false)
+    const [displayCollectLinksForEvent, setDisplayCollectLinksForEvent] = useState<string | undefined>(undefined)
     const {eventId} = useParams()
     const navigate = useNavigate();
 
@@ -51,7 +55,7 @@ function EventsPage() {
         {
             field: 'actions',
             type: 'actions',
-            width: 80,
+            width: 160,
             getActions: (params) => [
                 <GridActionsCellItem
                     label="Edit"
@@ -67,6 +71,16 @@ function EventsPage() {
                     onClick={() => deleteEvent(params.row)}
 
                 />,
+                <GridActionsCellItem
+                    label={"Collect"}
+                    icon={(<Tooltip title={"Create collect links for users"}><SendIcon/></Tooltip>)}
+                    onClick={() => createResponses(params.row)}
+                />,
+                <GridActionsCellItem
+                    label={"See collect links"}
+                    icon={(<Tooltip title={"See collect links"}><VisibilityIcon/></Tooltip>)}
+                    onClick={() => setDisplayCollectLinksForEvent(params.row.id)}
+                />
             ]
         },
     ];
@@ -114,6 +128,11 @@ function EventsPage() {
                     <AddIcon/>
                 </Fab>
             </Box>
+            {displayCollectLinksForEvent &&
+                <DisplayCollectLinks
+                    eventId={displayCollectLinksForEvent}
+                    onClose={() => setDisplayCollectLinksForEvent(undefined)}/>
+            }
         </>
     );
 }

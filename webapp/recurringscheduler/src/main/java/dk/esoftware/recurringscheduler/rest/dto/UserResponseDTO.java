@@ -6,13 +6,12 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 /**
  * DTO for {@link dk.esoftware.recurringscheduler.persistence.UserResponse}
  */
-public record UserResponseDTO(UUID id, UUID eventId, UUID userEntityId,
+public record UserResponseDTO(UUID id, EventDTO event, UUID userEntityId,
                               List<LocalDate> chosenDates) implements Serializable, Identifiable {
 
     public static UserResponseDTO createUserResponseDTO(UserResponse userResponse) {
@@ -22,7 +21,7 @@ public record UserResponseDTO(UUID id, UUID eventId, UUID userEntityId,
 
         return new UserResponseDTO(
                 userResponse.getId(),
-                userResponse.getEvent().getId(),
+                EventDTO.createEventTypeDTO(userResponse.getEvent()),
                 userResponse.getUserEntity().getId(),
                 new ArrayList<>(userResponse.getChosenDates())
         );
