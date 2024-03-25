@@ -30,7 +30,7 @@ export const ProtectedRoute: FC<{ children?: ReactNode }> = ({children}) => {
 const router = createBrowserRouter([
     {
         path: "/Login",
-        element:  <LoginPage/>,
+        element: <LoginPage/>,
     },
     {
         path: "/",
@@ -76,7 +76,9 @@ const router = createBrowserRouter([
             }
         ]
     }
-])
+], {
+    basename: "/admin/",
+})
 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

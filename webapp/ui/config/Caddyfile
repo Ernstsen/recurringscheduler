@@ -1,0 +1,15 @@
+:80 {
+    redir /admin /admin/
+    handle_path /admin/* {
+        root * /var/www/html/admin
+        try_files {path} /index.html
+        file_server
+    }
+
+    redir /collect /collect/
+    handle_path /collect/* {
+        root * /var/www/html/collect
+        try_files {path} /index.html
+        file_server
+    }
+}
