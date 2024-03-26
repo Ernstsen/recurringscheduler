@@ -1,0 +1,13 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - ./apps/postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=pw-that-is-n0t-used-in-prod
+      - POSTGRES_USER=recurringscheduler
+      - POSTGRES_DB=recurringscheduler
