@@ -11,4 +11,4 @@ npm run build
 cd ../../../
 
 cd webapp/ui || exit
-docker build -t tester .
+docker build -t ernstsen/recurringschedulerfrontend .
