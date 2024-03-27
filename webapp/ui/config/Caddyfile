@@ -13,6 +13,7 @@
         file_server
     }
 
+    redir / /admin/
     handle_path / {
         reverse_proxy {$BACKEND_URL}:{$BACKEND_PORT:8080}
     }
