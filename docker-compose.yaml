@@ -13,14 +13,14 @@ services:
       - POSTGRES_DB=recurringscheduler
 
   frontend:
-    image: ernstsen/recurringschedulerfrontend
+    image: ernstsen/recurringscheduler-frontend:0.0.1-SNAPSHOT
     ports:
       - 8080:80
     environment:
       - BACKEND_URL=backend
 
   backend:
-    image: ernstsen/recurringschedulerbackend:1.0.0-SNAPSHOT
+    image: ernstsen/recurringscheduler-backend:0.0.1-SNAPSHOT
     ports:
       - 8081:8080
     environment:

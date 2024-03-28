@@ -21,4 +21,4 @@ npm run build
 cd ../../../
 
 cd webapp/ui || exit
-docker build -t ernstsen/recurringschedulerfrontend:"${version}" .
+docker build -t ernstsen/recurringscheduler-frontend:"${version}" .
