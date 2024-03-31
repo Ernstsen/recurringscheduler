@@ -38,7 +38,12 @@ dependencies {
 }
 
 group 'dk.e-software'
-version '1.0.0-SNAPSHOT'
+def buildProperties = new Properties()
+file("../../version.properties").withInputStream { buildProperties.load(it) }
+version buildProperties.getProperty("version")
+
+System.setProperty("quarkus.container-image.group", "ernstsen")
+System.setProperty("quarkus.container-image.name", "recurringscheduler-backend")
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17

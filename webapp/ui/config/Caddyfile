@@ -1,0 +1,22 @@
+s:80 {
+    log
+
+    redir /admin /admin/
+    handle_path /admin/* {
+        root * /var/www/html/admin
+        try_files {path} /index.html
+        file_server
+    }
+
+    redir /collect /collect/
+    handle_path /collect/* {
+        root * /var/www/html/collect
+        try_files {path} /index.html
+        file_server
+    }
+
+    redir / /admin/
+    handle_path / {
+        reverse_proxy {$BACKEND_URL}:{$BACKEND_PORT:8080}
+    }
+}

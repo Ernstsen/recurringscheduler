@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import {Box, Button, Grid, IconButton, Paper} from "@mui/material";
-import styles from "./CollectView.module.css";
+import useStyles from "./CollectView.module.css";
 import {Check, Close} from "@mui/icons-material";
 import useUserResponseClient from "../client/UserResponseClient.ts";
 import {UserResponse} from "../model/UserResponse.ts";
@@ -54,7 +54,7 @@ function CollectViewContent({userResponse, updateResponse}: {
     let currentDatesState = possibleTimes.map(dateOption => new PossibleDate(dateOption, chosenDates.map(pd => pd.toLocaleDateString()).includes(dateOption.toLocaleDateString())));
 
     return (
-        <Paper className={styles.Paper} elevation={10} variant={"elevation"}>
+        <Paper className={useStyles.Paper} elevation={10} variant={"elevation"}>
             <h1>Choose dates available</h1>
             <h2>{userResponse.event.name}</h2>
 
@@ -66,7 +66,7 @@ function CollectViewContent({userResponse, updateResponse}: {
                                 display="flex"
                                 p={1.5}
                                 gap={2}
-                                className={styles.Card}
+                                className={useStyles.Card}
                                 borderRadius={4}
                             >
                                 <Box sx={{flex: "auto"}}>

@@ -6,7 +6,6 @@ build/
 .project
 .classpath
 .settings/
-bin/
 
 # IntelliJ
 .idea
@@ -44,3 +43,5 @@ nb-configuration.xml
 
 # Docker Compose volumes
 apps/**
+
+**/dist/**

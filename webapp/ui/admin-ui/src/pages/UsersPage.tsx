@@ -2,7 +2,7 @@ import Box from '@mui/material/Box';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import {useState} from "react";
-import {DataGrid, GridActionsCellItem, GridColDef} from '@mui/x-data-grid';
+import {DataGrid, GridActionsCellItem, GridColDef, GridRowParams} from '@mui/x-data-grid';
 import {EditUserDialogue, ModifyUserDialogue} from "../components/EditUserDialogue.tsx";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -36,7 +36,7 @@ function UsersPage() {
             field: 'actions',
             type: 'actions',
             width: 80,
-            getActions: (params) => [
+            getActions: (params: GridRowParams) => [
                 <GridActionsCellItem
                     label="Edit"
                     icon={<EditIcon/>}

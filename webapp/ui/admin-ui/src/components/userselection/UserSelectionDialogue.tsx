@@ -4,7 +4,7 @@ import {User} from "../../model/User.ts";
 import {Alert, Dialog, DialogContent, DialogContentText, DialogTitle, LinearProgress} from "@mui/material";
 import Button from "@mui/material/Button";
 import DialogActions from "@mui/material/DialogActions";
-import {DataGrid, GridColDef} from "@mui/x-data-grid";
+import {DataGrid, GridColDef, GridRowSelectionModel} from "@mui/x-data-grid";
 import useUserClient from "../../client/UserClient.ts";
 
 interface UserSelectionDialogueProps {
@@ -56,7 +56,7 @@ const UserSelectionDialogue: React.FC<UserSelectionDialogueProps> =
                         pageSizeOptions={[5, 10]}
                         checkboxSelection={true}
                         rowSelection={true}
-                        onRowSelectionModelChange={(newRowSelectionModel) => {
+                        onRowSelectionModelChange={(newRowSelectionModel: GridRowSelectionModel) => {
                             setInternalUsers(existingUsers.filter(user => newRowSelectionModel.includes(user.id || "")))
                         }}
                         rowSelectionModel={internalUsers.map(user => user.id || "")}

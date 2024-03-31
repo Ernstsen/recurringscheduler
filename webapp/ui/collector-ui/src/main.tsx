@@ -14,7 +14,9 @@ const router = createBrowserRouter([
         path: "/:collectId",
         element: <App/>,
     }
-])
+], {
+    basename: "/collect/",
+})
 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

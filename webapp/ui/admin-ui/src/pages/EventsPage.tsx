@@ -25,7 +25,7 @@ function EventsPage() {
         return <Alert severity="error">Failed to read Events from server</Alert>
     }
 
-    const editingEvent: Event | null = eventId ? events.filter(event => event.id === eventId)[0] : null
+    const editingEvent: Event | null = eventId ? events.filter((event: Event) => event.id === eventId)[0] : null
 
     if (eventId && !editingEvent) {
         navigate('/events')
@@ -50,7 +50,7 @@ function EventsPage() {
             field: 'possibleTimes',
             headerName: 'Available Dates',
             width: 300,
-            valueGetter: (input: GridValueGetterParams<Event>) => input.row.possibleTimes.map(date => date.toLocaleDateString("da")).join(", ")
+            valueGetter: (input: GridValueGetterParams<Event>) => input.row.possibleTimes.map((date: Date) => date.toLocaleDateString("da")).join(", ")
         },
         {
             field: 'actions',
