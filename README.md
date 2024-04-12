@@ -1,6 +1,8 @@
 # RecurringScheduler
 
 [![Webapp Testsuite](https://github.com/Ernstsen/recurringscheduler/actions/workflows/recurringscheduler_test.yml/badge.svg)](https://github.com/Ernstsen/recurringscheduler/actions/workflows/recurringscheduler_test.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 
 Scheduler for recurring events
 
