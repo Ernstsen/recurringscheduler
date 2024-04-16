@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DatabaseMigrationSettings" lastSelectedDirectory="db/changelog/v.${semVer.getMajor()}.${semVer.getMinor()}.${semVer.getPatch()}" mainChangeLogDir="db/changelog/v.${semVer.getMajor()}.${semVer.getMinor()}.${semVer.getPatch()}" mainChangeLogName="#increment(1, 1, &quot;00&quot;)-changelog">
+    <database-infos>
+      <database-info>
+        <option name="enabled" value="true" />
+        <dbms-id>postgres</dbms-id>
+      </database-info>
+    </database-infos>
+  </component>
+  <component name="PersistenceUnitSettings">
+    <persistence-units>
+      <persistence-unit name="Default" persistenceXmlPath="webapp/recurringscheduler/src/main/resources/db/changeLog.xml" defaultIncludeChangeLogFile="webapp/recurringscheduler/src/main/resources/db/changeLog.xml">
+        <packages>
+          <package value="dk.esoftware.recurringscheduler.persistence" />
+        </packages>
+      </persistence-unit>
+    </persistence-units>
+  </component>
+</project>
