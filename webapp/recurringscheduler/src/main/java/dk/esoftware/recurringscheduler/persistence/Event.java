@@ -20,7 +20,7 @@ public class Event {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToOne()
+    @ManyToOne()s
     @JoinColumn(name = "event_type")
     private EventType eventType;
 

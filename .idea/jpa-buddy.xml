@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="JpaBuddyIdeaProjectConfig" ddlActionDbType="hsql">
+  <component name="JpaBuddyIdeaProjectConfig" ddlActionDbType="postgres">
     <option name="defaultUnitInitialized" value="true" />
     <option name="renamerInitialized" value="true" />
+    <option name="sourceModelValue" value="Default" />
+    <option name="targetDbValue" value="8eac24ca-373d-4414-be0d-dd339361f631" />
+    <option name="isSnapshotDb" value="false" />
+    <option name="snapshotDbValue" value="8eac24ca-373d-4414-be0d-dd339361f631" />
+    <option name="snapshotModelValue" value="Default" />
+    <option name="updateChangeLogPath" value="webapp/recurringscheduler/src/main/resources/db/changelog.xml" />
+    <option name="updateDbConnectionName" value="37edc21a-8a94-4d02-95dd-a2d71b63b3fa" />
+    <option name="liquibaseAuthor" value="" />
     <option name="newEntityIdStrategy" value="UUID" />
   </component>
 </project>

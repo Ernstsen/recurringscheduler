@@ -68,7 +68,15 @@ public class DefaultInitializationUtility {
     public static void initializeStorageWithDemoData(EntityManager entityManager) {
         UserEntityManager userManager = new UserEntityManager(entityManager);
 
-        final UserEntity user1 = new UserEntity("john.doe@demo.local", "John Doe");
+        final String demoMail = "john.doe@demo.local";
+        final UserEntity user = userManager.getUserByEmail(demoMail);
+
+        if (user != null) {
+            logger.info("Demo user already exists in DB - skipping demo data screation");
+            return;
+        }
+
+        final UserEntity user1 = new UserEntity(demoMail, "John Doe");
         userManager.createEntity(user1);
 
         final RecurrenceConfiguration onceAWeek = new DefaultEntityManager<>(entityManager, RecurrenceConfiguration.class)

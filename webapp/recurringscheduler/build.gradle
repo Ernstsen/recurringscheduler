@@ -20,6 +20,8 @@ dependencies {
     // Hibernate ORM specific dependencies
     implementation("io.quarkus:quarkus-hibernate-orm")
 
+    implementation("io.quarkus:quarkus-liquibase")
+
     // JDBC driver dependencies
     implementation("io.quarkus:quarkus-jdbc-h2")
     implementation("io.quarkus:quarkus-jdbc-postgresql")
