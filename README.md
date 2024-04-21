@@ -3,7 +3,6 @@
 [![Webapp Testsuite](https://github.com/Ernstsen/recurringscheduler/actions/workflows/recurringscheduler_test.yml/badge.svg)](https://github.com/Ernstsen/recurringscheduler/actions/workflows/recurringscheduler_test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-
 Scheduler for recurring events
 
 # Running the application
@@ -36,4 +35,17 @@ You should then set the following environment variables:
 
 Note that thes ``docker-compose.yml`` file contains the DB version used in development, and is the only one
 guaranteed to work with the application.
- 
+
+## Environment variables
+
+| Variable                      | Description                                          | Default                |
+|-------------------------------|------------------------------------------------------|------------------------|
+| QUARKUS_DATASOURCE_DB_VERSION | The version of the postgres database                 | 16                     |
+| QUARKUS_DATASOURCE_USERNAME   | The username for the database                        |                        |
+| QUARKUS_DATASOURCE_PASSWORD   | The password for the database                        |                        |
+| QUARKUS_DATASOURCE_JDBC_URL   | The JDBC URL for the database                        |                        |
+| DEMO_MODE                     | Whether to create demo-data on startup               | false                  |
+| ADMIN_ACCOUNT_EMAIL           | The email of the admin account created on startup    | admin@localhost        |
+| ADMIN_ACCOUNT_NAME            | The name of the admin account created on startup     | admin                  |
+| ADMIN_ACCOUNT_PASSWORD        | The password of the admin account created on startup | superSecretPassword123 |
+
